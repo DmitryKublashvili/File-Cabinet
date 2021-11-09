@@ -124,7 +124,13 @@ namespace FileCabinetApp
             Console.Write("Date of birth: ");
             var dateOfBirth = DateTime.Parse(Console.ReadLine(), CultureInfo.InvariantCulture);
 
-            var id = fileCabinetService.CreateRecord(firstName, lastName, dateOfBirth);
+            Console.Write("Sex (M or F): ");
+            var sex = Console.ReadLine()[0];
+
+            Console.Write("Account balance: ");
+            var accountBalance = decimal.Parse(Console.ReadLine(), cultureInfo);
+
+            var id = fileCabinetService.CreateRecord(firstName, lastName, dateOfBirth, sex, accountBalance);
 
             Console.Write($"Record #{id} is created.");
         }
@@ -137,7 +143,8 @@ namespace FileCabinetApp
             {
                 Console.WriteLine(
                     $"#{list[i].Id}, {list[i].FirstName}, {list[i].LastName}, " +
-                    $"{list[i].DateOfBirth.ToString("yyyy-MMM-d", cultureInfo)}");
+                    $"{list[i].DateOfBirth.ToString("yyyy-MMM-d", cultureInfo)}, " +
+                    $"{list[i].Sex}, {list[i].AccountBalance}");
             }
         }
     }
