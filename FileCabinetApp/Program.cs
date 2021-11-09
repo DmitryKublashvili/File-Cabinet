@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Globalization;
 
 namespace FileCabinetApp
 {
@@ -10,6 +11,8 @@ namespace FileCabinetApp
         private const int DescriptionHelpIndex = 1;
         private const int ExplanationHelpIndex = 2;
 
+        private static CultureInfo cultureInfo = new ("en");
+
         private static bool isRunning = true;
         private static FileCabinetService fileCabinetService = new FileCabinetService();
 
@@ -19,6 +22,7 @@ namespace FileCabinetApp
             new Tuple<string, Action<string>>("exit", Exit),
             new Tuple<string, Action<string>>("stat", Stat),
             new Tuple<string, Action<string>>("create", Create),
+            new Tuple<string, Action<string>>("list", List),
         };
 
         private static string[][] helpMessages = new string[][]
@@ -27,6 +31,7 @@ namespace FileCabinetApp
             new string[] { "exit", "exits the application", "The 'exit' command exits the application." },
             new string[] { "stat", "prints statistic", "The 'stat' command prints statistic." },
             new string[] { "create", "creates new record", "The 'create' command creates new record." },
+            new string[] { "list", "shows records information", "The 'list' command shows records information." },
         };
 
         public static void Main(string[] args)
@@ -117,11 +122,23 @@ namespace FileCabinetApp
             var lastName = Console.ReadLine();
 
             Console.Write("Date of birth: ");
-            var dateOfBirth = DateTime.Parse(Console.ReadLine());
+            var dateOfBirth = DateTime.Parse(Console.ReadLine(), CultureInfo.InvariantCulture);
 
             var id = fileCabinetService.CreateRecord(firstName, lastName, dateOfBirth);
 
             Console.Write($"Record #{id} is created.");
+        }
+
+        private static void List(string parameters)
+        {
+            var list = fileCabinetService.GetRecords();
+
+            for (int i = 0; i < list.Length; i++)
+            {
+                Console.WriteLine(
+                    $"#{list[i].Id}, {list[i].FirstName}, {list[i].LastName}, " +
+                    $"{list[i].DateOfBirth.ToString("yyyy-MMM-d", cultureInfo)}");
+            }
         }
     }
 }

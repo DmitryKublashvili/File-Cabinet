@@ -22,7 +22,7 @@ public class FileCabinetService
 
     public FileCabinetRecord[] GetRecords()
     {
-        return Array.Empty<FileCabinetRecord>();
+        return this.list.ToArray();
     }
 
     public int GetStat()
