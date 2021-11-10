@@ -10,12 +10,9 @@ public class FileCabinetRecord
 
     public DateTime DateOfBirth { get; set; }
 
-    public short FullAge
-    {
-        get { return (short)(DateTime.Now.Year - this.DateOfBirth.Year); }
-    }
-
-    public decimal AccountBalance { get; set; }
-
     public char Sex { get; set; }
+
+    public decimal Salary { get; set; }
+
+    public short YearsOfService { get; set; }
 }
