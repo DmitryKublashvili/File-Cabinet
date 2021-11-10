@@ -5,13 +5,14 @@ public class FileCabinetService
 {
     private readonly List<FileCabinetRecord> list = new List<FileCabinetRecord>();
 
-    public int CreateRecord(string firstName, string lastName, DateTime dateOfBirth, char sex, decimal accountBalance)
+    public int CreateRecord(string firstName, string lastName, DateTime dateOfBirth, char sex, decimal salary, short yearsOfService)
     {
         NamesValidation(firstName, nameof(firstName));
         NamesValidation(lastName, nameof(lastName));
         DateOfBirthValidation(dateOfBirth, nameof(dateOfBirth));
         SexValidation(sex, nameof(sex));
-        AccountBalanceValidation(accountBalance, nameof(accountBalance));
+        SalaryValidation(salary, nameof(salary));
+        YearsOfServiceValidation(yearsOfService, nameof(yearsOfService));
 
         var record = new FileCabinetRecord
         {
@@ -20,7 +21,8 @@ public class FileCabinetService
             LastName = lastName,
             DateOfBirth = dateOfBirth,
             Sex = sex,
-            AccountBalance = accountBalance,
+            Salary = salary,
+            YearsOfService = yearsOfService,
         };
 
         this.list.Add(record);
@@ -36,6 +38,31 @@ public class FileCabinetService
     public int GetStat()
     {
         return this.list.Count;
+    }
+
+    public void EditRecord(int id, string firstName, string lastName, DateTime dateOfBirth, char sex, decimal salary, short yearsOfService)
+    {
+        NamesValidation(firstName, nameof(firstName));
+        NamesValidation(lastName, nameof(lastName));
+        DateOfBirthValidation(dateOfBirth, nameof(dateOfBirth));
+        SexValidation(sex, nameof(sex));
+        SalaryValidation(salary, nameof(salary));
+        YearsOfServiceValidation(yearsOfService, nameof(yearsOfService));
+
+        for (int i = 0; i < this.list.Count; i++)
+        {
+            if (id == this.list[i].Id)
+            {
+                this.list[i].FirstName = firstName;
+                this.list[i].LastName = lastName;
+                this.list[i].DateOfBirth = dateOfBirth;
+                this.list[i].Sex = sex;
+                this.list[i].Salary = salary;
+                return;
+            }
+        }
+
+        throw new ArgumentException($"{id} record is not found.");
     }
 
     private static void NamesValidation(string name, string nameOfParameter)
@@ -79,13 +106,23 @@ public class FileCabinetService
         }
     }
 
-    private static void AccountBalanceValidation(decimal accountBalance, string nameOfParameter)
+    private static void SalaryValidation(decimal salary, string nameOfParameter)
     {
-        if (accountBalance < -50_000 || accountBalance > 1_000_000_000)
+        if (salary < 2_000 || salary > 100_000)
         {
             throw new ArgumentException(
-                "The account balance must be greater than or equal to -50,000 " +
-                "and less than or equal to 1,000,000,000", nameOfParameter);
+                "The salary must be greater than or equal to 2 000 " +
+                "and less than or equal to 100 000", nameOfParameter);
+        }
+    }
+
+    private static void YearsOfServiceValidation(short yearsOfService, string nameOfParameter)
+    {
+        if (yearsOfService < 0 || yearsOfService > 50)
+        {
+            throw new ArgumentException(
+                "The years of service parameter must be greater than or equal to 0 " +
+                "and less than or equal to 50", nameOfParameter);
         }
     }
 }

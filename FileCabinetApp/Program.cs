@@ -12,6 +12,7 @@ namespace FileCabinetApp
         private const int ExplanationHelpIndex = 2;
 
         private static CultureInfo cultureInfo = new ("en");
+        private static string secondParameterOfCommand = string.Empty;
 
         private static bool isRunning = true;
         private static FileCabinetService fileCabinetService = new FileCabinetService();
@@ -23,7 +24,59 @@ namespace FileCabinetApp
             new Tuple<string, Action<string>>("stat", Stat),
             new Tuple<string, Action<string>>("create", Create),
             new Tuple<string, Action<string>>("list", List),
+            new Tuple<string, Action<string>>("edit", Edit),
         };
+
+        private static void Edit(string parameter)
+        {
+            int index = GetIndexOfRecord();
+
+            if (index == -1)
+            {
+                Console.WriteLine($"{secondParameterOfCommand} record is not found.");
+                return;
+            }
+
+            string firstName = GetCheckedName("First name");
+
+            string lastName = GetCheckedName("Last name");
+
+            DateTime dateOfBirth = GetCheckedDateOfBirth();
+
+            char sex = GetCheckedSex();
+
+            decimal salary = GetCheckedSalary();
+
+            short yearsOfService = GetCheckedYearsOfService();
+
+            var id = fileCabinetService.GetRecords()[index].Id;
+
+            fileCabinetService.EditRecord(id, firstName, lastName, dateOfBirth, sex, salary, yearsOfService);
+
+            Console.Write($"Record #{id} is updated.");
+        }
+
+        private static int GetIndexOfRecord()
+        {
+            int id;
+
+            if (!int.TryParse(secondParameterOfCommand, out id))
+            {
+                return -1;
+            }
+
+            var list = fileCabinetService.GetRecords();
+
+            for (int i = 0; i < list.Length; i++)
+            {
+                if (id == list[i].Id)
+                {
+                    return i;
+                }
+            }
+
+            return -1;
+        }
 
         private static string[][] helpMessages = new string[][]
         {
@@ -31,6 +84,7 @@ namespace FileCabinetApp
             new string[] { "exit", "exits the application", "The 'exit' command exits the application." },
             new string[] { "stat", "prints statistic", "The 'stat' command prints statistic." },
             new string[] { "create", "creates new record", "The 'create' command creates new record." },
+            new string[] { "edit", "edits selected (by id) record", "The 'edit' command allows to edit selected by Id record." },
             new string[] { "list", "shows records information", "The 'list' command shows records information." },
         };
 
@@ -43,7 +97,7 @@ namespace FileCabinetApp
             do
             {
                 Console.Write("> ");
-                var inputs = Console.ReadLine().Split(' ', 2);
+                string[] inputs = Console.ReadLine().Split(' ', 2);
                 const int commandIndex = 0;
                 var command = inputs[commandIndex];
 
@@ -51,6 +105,15 @@ namespace FileCabinetApp
                 {
                     Console.WriteLine(Program.HintMessage);
                     continue;
+                }
+
+                if (inputs.Length >= 2)
+                {
+                    secondParameterOfCommand = inputs[1];
+                }
+                else
+                {
+                    secondParameterOfCommand = string.Empty;
                 }
 
                 var index = Array.FindIndex(commands, 0, commands.Length, i => i.Item1.Equals(command, StringComparison.InvariantCultureIgnoreCase));
@@ -123,9 +186,11 @@ namespace FileCabinetApp
 
             char sex = GetCheckedSex();
 
-            decimal accountBalance = GetCheckedAccountBalance();
+            decimal salary = GetCheckedSalary();
 
-            var id = fileCabinetService.CreateRecord(firstName, lastName, dateOfBirth, sex, accountBalance);
+            short yearsOfService = GetCheckedYearsOfService();
+
+            var id = fileCabinetService.CreateRecord(firstName, lastName, dateOfBirth, sex, salary, yearsOfService);
 
             Console.Write($"Record #{id} is created.");
         }
@@ -171,32 +236,32 @@ namespace FileCabinetApp
             return name;
         }
 
-        private static decimal GetCheckedAccountBalance()
+        private static decimal GetCheckedSalary()
         {
-            decimal accountBalance;
+            decimal salary;
             bool isValid;
 
             do
             {
-                Console.Write("Account balance: ");
+                Console.Write("Salary: ");
 
-                while (!decimal.TryParse(Console.ReadLine(), NumberStyles.AllowDecimalPoint, cultureInfo, out accountBalance))
+                while (!decimal.TryParse(Console.ReadLine(), NumberStyles.AllowDecimalPoint, cultureInfo, out salary))
                 {
                     Console.WriteLine("Incorrect summ, please enter again");
                 }
 
-                isValid = accountBalance >= -50_000 && accountBalance <= 1_000_000_000;
+                isValid = salary >= 2_000 && salary <= 100_000;
 
                 if (!isValid)
                 {
                     Console.WriteLine(
-                        "The account balance must be greater than or equal to -50,000 " +
-                        "and less than or equal to 1,000,000,000");
+                        "The salary must be greater than or equal to 2 000 " +
+                        "and less than or equal to 100 000");
                 }
             }
             while (!isValid);
 
-            return accountBalance;
+            return salary;
         }
 
         private static char GetCheckedSex()
@@ -257,6 +322,34 @@ namespace FileCabinetApp
             return dateOfBirth;
         }
 
+        private static short GetCheckedYearsOfService()
+        {
+            short yearsOfService;
+            bool isValid;
+
+            do
+            {
+                Console.Write("Years Of Service: ");
+
+                while (!short.TryParse(Console.ReadLine(), out yearsOfService))
+                {
+                    Console.WriteLine("Incorrect value, only integers in 0-50 interval are available. Please enter again");
+                }
+
+                isValid = yearsOfService >= 0 && yearsOfService <= 50;
+
+                if (!isValid)
+                {
+                    Console.WriteLine(
+                        "The years of service parameter must be greater than or equal to 0 " +
+                        "and less than or equal to 50");
+                }
+            }
+            while (!isValid);
+
+            return yearsOfService;
+        }
+
         private static void List(string parameters)
         {
             var list = fileCabinetService.GetRecords();
@@ -271,8 +364,9 @@ namespace FileCabinetApp
             {
                 Console.WriteLine(
                     $"#{list[i].Id}, {list[i].FirstName}, {list[i].LastName}, " +
-                    $"{list[i].DateOfBirth.ToString("yyyy-MMM-d", cultureInfo)}, Age {list[i].FullAge}, " +
-                    $"Sex - {list[i].Sex}, Balance {list[i].AccountBalance.ToString(cultureInfo)}");
+                    $"{list[i].DateOfBirth.ToString("yyyy-MMM-d", cultureInfo)}, " +
+                    $"Sex - {list[i].Sex}, Salary {list[i].Salary.ToString(cultureInfo)}, " +
+                    $"{list[i].YearsOfService} years Of Service, ");
             }
         }
     }
