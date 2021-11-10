@@ -49,13 +49,21 @@ public class FileCabinetService
         {
             throw new ArgumentException("The first name must be 2-60 characters long", nameOfParameter);
         }
+
+        for (int i = 0; i < name.Length; i++)
+        {
+            if (!char.IsLetter(name[i]))
+            {
+                throw new ArgumentException("The name must consists of only letters", nameOfParameter);
+            }
+        }
     }
 
     private static void DateOfBirthValidation(DateTime dateOfBirth, string nameOfParameter)
     {
-        DateTime checkingDate = new (1950, 1, 1);
+        DateTime minDate = new (1950, 1, 1);
 
-        if (dateOfBirth < checkingDate || dateOfBirth > DateTime.Now)
+        if (dateOfBirth < minDate || dateOfBirth > DateTime.Now)
         {
             throw new ArgumentException(
                 "Date of birth must be no earlier than January 1, 1950 " +
