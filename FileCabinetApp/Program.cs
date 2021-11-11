@@ -23,6 +23,7 @@ namespace FileCabinetApp
             new Tuple<string, Action<string>>("create", Create),
             new Tuple<string, Action<string>>("list", List),
             new Tuple<string, Action<string>>("edit", Edit),
+            new Tuple<string, Action<string>>("find", Find),
         };
 
         private static string[][] helpMessages = new string[][]
@@ -33,6 +34,7 @@ namespace FileCabinetApp
             new string[] { "create", "creates new record", "The 'create' command creates new record." },
             new string[] { "edit", "edits selected (by id) record", "The 'edit' command allows to edit selected by Id record." },
             new string[] { "list", "shows records information", "The 'list' command shows records information." },
+            new string[] { "find", "finds records by the specified parameter", "The 'find' command shows a list of records in which the specified parameter was found." },
         };
 
         public static void Main(string[] args)
@@ -130,7 +132,7 @@ namespace FileCabinetApp
 
             var id = fileCabinetService.CreateRecord(firstName, lastName, dateOfBirth, sex, salary, yearsOfService);
 
-            Console.Write($"Record #{id} is created.");
+            Console.WriteLine($"Record #{id} is created.");
         }
 
         private static void Edit(string parameter)
@@ -179,6 +181,35 @@ namespace FileCabinetApp
                     $"{list[i].DateOfBirth.ToString("yyyy-MMM-d", cultureInfo)}, " +
                     $"Sex - {list[i].Sex}, Salary {list[i].Salary.ToString(cultureInfo)}, " +
                     $"{list[i].YearsOfService} years Of Service, ");
+            }
+        }
+
+        private static void Find(string parametres)
+        {
+            string[] inputs = parametres.Split(new char[] { ' ', '"' }, 2, StringSplitOptions.RemoveEmptyEntries);
+
+            if (inputs[0].ToUpperInvariant() != "FIRSTNAME")
+            {
+                Console.WriteLine($"Unknown parameter '{inputs[0]}'.");
+                return;
+            }
+
+            string name = inputs[1].Trim('"', ' ').ToUpperInvariant();
+            var findedRecords = fileCabinetService.FindByFirstName(name);
+
+            if (findedRecords.Length == 0)
+            {
+                Console.WriteLine($"No matches were found.");
+                return;
+            }
+
+            for (int i = 0; i < findedRecords.Length; i++)
+            {
+                Console.WriteLine(
+                    $"#{findedRecords[i].Id}, {findedRecords[i].FirstName}, {findedRecords[i].LastName}, " +
+                    $"{findedRecords[i].DateOfBirth.ToString("yyyy-MMM-d", cultureInfo)}, " +
+                    $"Sex - {findedRecords[i].Sex}, Salary {findedRecords[i].Salary.ToString(cultureInfo)}, " +
+                    $"{findedRecords[i].YearsOfService} years Of Service, ");
             }
         }
 
