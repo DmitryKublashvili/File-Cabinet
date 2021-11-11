@@ -12,8 +12,6 @@ namespace FileCabinetApp
         private const int ExplanationHelpIndex = 2;
 
         private static CultureInfo cultureInfo = new ("en");
-        private static string secondParameterOfCommand = string.Empty;
-
         private static bool isRunning = true;
         private static FileCabinetService fileCabinetService = new FileCabinetService();
 
@@ -26,57 +24,6 @@ namespace FileCabinetApp
             new Tuple<string, Action<string>>("list", List),
             new Tuple<string, Action<string>>("edit", Edit),
         };
-
-        private static void Edit(string parameter)
-        {
-            int index = GetIndexOfRecord();
-
-            if (index == -1)
-            {
-                Console.WriteLine($"{secondParameterOfCommand} record is not found.");
-                return;
-            }
-
-            string firstName = GetCheckedName("First name");
-
-            string lastName = GetCheckedName("Last name");
-
-            DateTime dateOfBirth = GetCheckedDateOfBirth();
-
-            char sex = GetCheckedSex();
-
-            decimal salary = GetCheckedSalary();
-
-            short yearsOfService = GetCheckedYearsOfService();
-
-            var id = fileCabinetService.GetRecords()[index].Id;
-
-            fileCabinetService.EditRecord(id, firstName, lastName, dateOfBirth, sex, salary, yearsOfService);
-
-            Console.Write($"Record #{id} is updated.");
-        }
-
-        private static int GetIndexOfRecord()
-        {
-            int id;
-
-            if (!int.TryParse(secondParameterOfCommand, out id))
-            {
-                return -1;
-            }
-
-            var list = fileCabinetService.GetRecords();
-
-            for (int i = 0; i < list.Length; i++)
-            {
-                if (id == list[i].Id)
-                {
-                    return i;
-                }
-            }
-
-            return -1;
-        }
 
         private static string[][] helpMessages = new string[][]
         {
@@ -105,15 +52,6 @@ namespace FileCabinetApp
                 {
                     Console.WriteLine(Program.HintMessage);
                     continue;
-                }
-
-                if (inputs.Length >= 2)
-                {
-                    secondParameterOfCommand = inputs[1];
-                }
-                else
-                {
-                    secondParameterOfCommand = string.Empty;
                 }
 
                 var index = Array.FindIndex(commands, 0, commands.Length, i => i.Item1.Equals(command, StringComparison.InvariantCultureIgnoreCase));
@@ -193,6 +131,55 @@ namespace FileCabinetApp
             var id = fileCabinetService.CreateRecord(firstName, lastName, dateOfBirth, sex, salary, yearsOfService);
 
             Console.Write($"Record #{id} is created.");
+        }
+
+        private static void Edit(string parameter)
+        {
+            int index = GetIndexOfRecord(parameter);
+
+            if (index == -1)
+            {
+                Console.WriteLine($"#{parameter} record is not found.");
+                return;
+            }
+
+            string firstName = GetCheckedName("First name");
+
+            string lastName = GetCheckedName("Last name");
+
+            DateTime dateOfBirth = GetCheckedDateOfBirth();
+
+            char sex = GetCheckedSex();
+
+            decimal salary = GetCheckedSalary();
+
+            short yearsOfService = GetCheckedYearsOfService();
+
+            var id = fileCabinetService.GetRecords()[index].Id;
+
+            fileCabinetService.EditRecord(id, firstName, lastName, dateOfBirth, sex, salary, yearsOfService);
+
+            Console.Write($"Record #{id} is updated.");
+        }
+
+        private static void List(string parameters)
+        {
+            var list = fileCabinetService.GetRecords();
+
+            if (list is null || list.Length == 0)
+            {
+                Console.WriteLine("There are no records yet");
+                return;
+            }
+
+            for (int i = 0; i < list.Length; i++)
+            {
+                Console.WriteLine(
+                    $"#{list[i].Id}, {list[i].FirstName}, {list[i].LastName}, " +
+                    $"{list[i].DateOfBirth.ToString("yyyy-MMM-d", cultureInfo)}, " +
+                    $"Sex - {list[i].Sex}, Salary {list[i].Salary.ToString(cultureInfo)}, " +
+                    $"{list[i].YearsOfService} years Of Service, ");
+            }
         }
 
         private static string GetCheckedName(string paramName)
@@ -350,24 +337,26 @@ namespace FileCabinetApp
             return yearsOfService;
         }
 
-        private static void List(string parameters)
+        private static int GetIndexOfRecord(string parameter)
         {
-            var list = fileCabinetService.GetRecords();
+            int id;
 
-            if (list is null || list.Length == 0)
+            if (!int.TryParse(parameter, out id))
             {
-                Console.WriteLine("There are no records yet");
-                return;
+                return -1;
             }
+
+            var list = fileCabinetService.GetRecords();
 
             for (int i = 0; i < list.Length; i++)
             {
-                Console.WriteLine(
-                    $"#{list[i].Id}, {list[i].FirstName}, {list[i].LastName}, " +
-                    $"{list[i].DateOfBirth.ToString("yyyy-MMM-d", cultureInfo)}, " +
-                    $"Sex - {list[i].Sex}, Salary {list[i].Salary.ToString(cultureInfo)}, " +
-                    $"{list[i].YearsOfService} years Of Service, ");
+                if (id == list[i].Id)
+                {
+                    return i;
+                }
             }
+
+            return -1;
         }
     }
 }
