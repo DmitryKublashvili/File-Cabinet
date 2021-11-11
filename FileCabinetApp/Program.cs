@@ -162,7 +162,7 @@ namespace FileCabinetApp
 
             fileCabinetService.EditRecord(id, firstName, lastName, dateOfBirth, sex, salary, yearsOfService);
 
-            Console.Write($"Record #{id} is updated.");
+            Console.WriteLine($"Record #{id} is updated.");
         }
 
         private static void List(string parameters)

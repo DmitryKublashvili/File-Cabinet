@@ -4,6 +4,7 @@ using System.Collections.Generic;
 public class FileCabinetService
 {
     private readonly List<FileCabinetRecord> list = new List<FileCabinetRecord>();
+    private readonly Dictionary<string, List<FileCabinetRecord>> firstNameDictionary = new Dictionary<string, List<FileCabinetRecord>>();
 
     public int CreateRecord(string firstName, string lastName, DateTime dateOfBirth, char sex, decimal salary, short yearsOfService)
     {
@@ -26,6 +27,15 @@ public class FileCabinetService
         };
 
         this.list.Add(record);
+
+        if (this.firstNameDictionary.ContainsKey(firstName.ToUpperInvariant()))
+        {
+            this.firstNameDictionary[firstName.ToUpperInvariant()].Add(record);
+        }
+        else
+        {
+            this.firstNameDictionary.Add(key: firstName.ToUpperInvariant(), new List<FileCabinetRecord>() { record });
+        }
 
         return record.Id;
     }
@@ -53,11 +63,25 @@ public class FileCabinetService
         {
             if (id == this.list[i].Id)
             {
+                string previousFirstname = this.list[i].FirstName.ToUpperInvariant();
+
                 this.list[i].FirstName = firstName;
                 this.list[i].LastName = lastName;
                 this.list[i].DateOfBirth = dateOfBirth;
                 this.list[i].Sex = sex;
                 this.list[i].Salary = salary;
+
+                this.firstNameDictionary[previousFirstname].Remove(this.list[i]);
+
+                if (this.firstNameDictionary.ContainsKey(firstName.ToUpperInvariant()))
+                {
+                    this.firstNameDictionary[firstName.ToUpperInvariant()].Add(this.list[i]);
+                }
+                else
+                {
+                    this.firstNameDictionary.Add(key: firstName.ToUpperInvariant(), new List<FileCabinetRecord>() { this.list[i] });
+                }
+
                 return;
             }
         }
@@ -74,17 +98,14 @@ public class FileCabinetService
 
         firstName = firstName.ToUpperInvariant();
 
-        List<FileCabinetRecord> findingRecords = new List<FileCabinetRecord>();
-
-        for (int i = 0; i < this.list.Count; i++)
+        if (this.firstNameDictionary.ContainsKey(firstName))
         {
-            if (this.list[i].FirstName.ToUpperInvariant().Equals(firstName, StringComparison.InvariantCultureIgnoreCase))
-            {
-                findingRecords.Add(this.list[i]);
-            }
+            return this.firstNameDictionary[firstName].ToArray();
         }
-
-        return findingRecords.ToArray();
+        else
+        {
+            return Array.Empty<FileCabinetRecord>();
+        }
     }
 
     public FileCabinetRecord[] FindByLastName(string lastName)
