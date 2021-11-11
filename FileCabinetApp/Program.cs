@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Globalization;
 
 namespace FileCabinetApp
@@ -188,14 +189,36 @@ namespace FileCabinetApp
         {
             string[] inputs = parametres.Split(new char[] { ' ', '"' }, 2, StringSplitOptions.RemoveEmptyEntries);
 
-            if (inputs[0].ToUpperInvariant() != "FIRSTNAME")
+            List<string> commandParametres = new List<string>()
+            {
+                "FIRSTNAME",
+                "LASTNAME",
+                "DATEOFBIRTH",
+            };
+
+            string commandParameter = inputs[0].ToUpperInvariant();
+
+            if (!commandParametres.Contains(commandParameter))
             {
                 Console.WriteLine($"Unknown parameter '{inputs[0]}'.");
                 return;
             }
 
             string name = inputs[1].Trim('"', ' ').ToUpperInvariant();
-            var findedRecords = fileCabinetService.FindByFirstName(name);
+            FileCabinetRecord[] findedRecords;
+
+            if (commandParameter == "FIRSTNAME")
+            {
+                findedRecords = fileCabinetService.FindByFirstName(name);
+            }
+            else if (commandParameter == "LASTNAME")
+            {
+                findedRecords = fileCabinetService.FindByLastName(name);
+            }
+            else
+            {
+                return;
+            }
 
             if (findedRecords.Length == 0)
             {

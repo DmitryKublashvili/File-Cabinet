@@ -87,6 +87,28 @@ public class FileCabinetService
         return findingRecords.ToArray();
     }
 
+    public FileCabinetRecord[] FindByLastName(string lastName)
+    {
+        if (string.IsNullOrEmpty(lastName))
+        {
+            throw new ArgumentException("first name was null or empty", nameof(lastName));
+        }
+
+        lastName = lastName.ToUpperInvariant();
+
+        List<FileCabinetRecord> findingRecords = new List<FileCabinetRecord>();
+
+        for (int i = 0; i < this.list.Count; i++)
+        {
+            if (this.list[i].LastName.ToUpperInvariant().Equals(lastName, StringComparison.InvariantCultureIgnoreCase))
+            {
+                findingRecords.Add(this.list[i]);
+            }
+        }
+
+        return findingRecords.ToArray();
+    }
+
     private static void NamesValidation(string name, string nameOfParameter)
     {
         if (string.IsNullOrWhiteSpace(name))
