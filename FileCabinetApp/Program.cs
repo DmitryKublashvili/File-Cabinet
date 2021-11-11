@@ -189,35 +189,43 @@ namespace FileCabinetApp
         {
             string[] inputs = parametres.Split(new char[] { ' ', '"' }, 2, StringSplitOptions.RemoveEmptyEntries);
 
-            List<string> commandParametres = new List<string>()
+            List<string> commandSecondParts = new List<string>()
             {
                 "FIRSTNAME",
                 "LASTNAME",
                 "DATEOFBIRTH",
             };
 
-            string commandParameter = inputs[0].ToUpperInvariant();
+            string commandSecondPart = inputs[0].ToUpperInvariant();
 
-            if (!commandParametres.Contains(commandParameter))
+            if (!commandSecondParts.Contains(commandSecondPart))
             {
                 Console.WriteLine($"Unknown parameter '{inputs[0]}'.");
                 return;
             }
 
-            string name = inputs[1].Trim('"', ' ').ToUpperInvariant();
+            string parameter = inputs[1].Trim('"', ' ').ToUpperInvariant();
             FileCabinetRecord[] findedRecords;
 
-            if (commandParameter == "FIRSTNAME")
+            if (commandSecondPart == "FIRSTNAME")
             {
-                findedRecords = fileCabinetService.FindByFirstName(name);
+                findedRecords = fileCabinetService.FindByFirstName(parameter);
             }
-            else if (commandParameter == "LASTNAME")
+            else if (commandSecondPart == "LASTNAME")
             {
-                findedRecords = fileCabinetService.FindByLastName(name);
+                findedRecords = fileCabinetService.FindByLastName(parameter);
             }
             else
             {
-                return;
+                if (DateTime.TryParse(parameter, cultureInfo, DateTimeStyles.AdjustToUniversal, out DateTime date))
+                {
+                    findedRecords = fileCabinetService.FindByDateOfBirth(date);
+                }
+                else
+                {
+                    Console.WriteLine($"Date of birth '{parameter}' was incorrect format.");
+                    return;
+                }
             }
 
             if (findedRecords.Length == 0)

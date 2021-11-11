@@ -109,6 +109,21 @@ public class FileCabinetService
         return findingRecords.ToArray();
     }
 
+    public FileCabinetRecord[] FindByDateOfBirth(DateTime date)
+    {
+        List<FileCabinetRecord> findingRecords = new List<FileCabinetRecord>();
+
+        for (int i = 0; i < this.list.Count; i++)
+        {
+            if (this.list[i].DateOfBirth.ToShortDateString() == date.ToShortDateString())
+            {
+                findingRecords.Add(this.list[i]);
+            }
+        }
+
+        return findingRecords.ToArray();
+    }
+
     private static void NamesValidation(string name, string nameOfParameter)
     {
         if (string.IsNullOrWhiteSpace(name))
