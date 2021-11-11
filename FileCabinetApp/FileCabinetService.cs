@@ -6,6 +6,7 @@ public class FileCabinetService
     private readonly List<FileCabinetRecord> list = new List<FileCabinetRecord>();
     private readonly Dictionary<string, List<FileCabinetRecord>> firstNameDictionary = new Dictionary<string, List<FileCabinetRecord>>();
     private readonly Dictionary<string, List<FileCabinetRecord>> lastNameDictionary = new Dictionary<string, List<FileCabinetRecord>>();
+    private readonly Dictionary<DateTime, List<FileCabinetRecord>> DateOfBirthDictionary = new Dictionary<DateTime, List<FileCabinetRecord>>();
 
     public int CreateRecord(string firstName, string lastName, DateTime dateOfBirth, char sex, decimal salary, short yearsOfService)
     {
@@ -49,6 +50,16 @@ public class FileCabinetService
             this.lastNameDictionary.Add(key: lastName.ToUpperInvariant(), new List<FileCabinetRecord>() { record });
         }
 
+        // adding in DateOfBirthDictionary
+        if (this.DateOfBirthDictionary.ContainsKey(dateOfBirth))
+        {
+            this.DateOfBirthDictionary[dateOfBirth].Add(record);
+        }
+        else
+        {
+            this.DateOfBirthDictionary.Add(key: dateOfBirth, new List<FileCabinetRecord>() { record });
+        }
+
         return record.Id;
     }
 
@@ -77,6 +88,7 @@ public class FileCabinetService
             {
                 string previousFirstname = this.list[i].FirstName.ToUpperInvariant();
                 string previousLastname = this.list[i].LastName.ToUpperInvariant();
+                DateTime previousDateOfBirth = this.list[i].DateOfBirth;
 
                 this.list[i].FirstName = firstName;
                 this.list[i].LastName = lastName;
@@ -107,6 +119,18 @@ public class FileCabinetService
                 else
                 {
                     this.lastNameDictionary.Add(key: lastName.ToUpperInvariant(), new List<FileCabinetRecord>() { this.list[i] });
+                }
+
+                // adding changes in lastNameDictionary
+                this.DateOfBirthDictionary[previousDateOfBirth].Remove(this.list[i]);
+
+                if (this.DateOfBirthDictionary.ContainsKey(dateOfBirth))
+                {
+                    this.DateOfBirthDictionary[dateOfBirth].Add(this.list[i]);
+                }
+                else
+                {
+                    this.DateOfBirthDictionary.Add(key: dateOfBirth, new List<FileCabinetRecord>() { this.list[i] });
                 }
 
                 return;
@@ -156,17 +180,14 @@ public class FileCabinetService
 
     public FileCabinetRecord[] FindByDateOfBirth(DateTime date)
     {
-        List<FileCabinetRecord> findingRecords = new List<FileCabinetRecord>();
-
-        for (int i = 0; i < this.list.Count; i++)
+        if (this.DateOfBirthDictionary.ContainsKey(date))
         {
-            if (this.list[i].DateOfBirth.ToShortDateString() == date.ToShortDateString())
-            {
-                findingRecords.Add(this.list[i]);
-            }
+            return this.DateOfBirthDictionary[date].ToArray();
         }
-
-        return findingRecords.ToArray();
+        else
+        {
+            return Array.Empty<FileCabinetRecord>();
+        }
     }
 
     private static void NamesValidation(string name, string nameOfParameter)
