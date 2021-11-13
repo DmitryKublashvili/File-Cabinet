@@ -1,3 +1,4 @@
+using FileCabinetApp;
 using System;
 using System.Collections.Generic;
 
@@ -18,7 +19,7 @@ public class FileCabinetService
     private const int MinYearsOfService = 0;
     private const int MaxYearsOfService = 50;
 
-    private static DateTime minDateOfBirth = new (1950, 1, 1);
+    private static DateTime minDateOfBirth = new(1950, 1, 1);
 
     private readonly List<FileCabinetRecord> list = new List<FileCabinetRecord>();
     private readonly Dictionary<string, List<FileCabinetRecord>> firstNameDictionary = new Dictionary<string, List<FileCabinetRecord>>();
@@ -28,15 +29,22 @@ public class FileCabinetService
     /// <summary>
     /// Creates a record.
     /// </summary>
-    /// <param name="firstName">First name.</param>
-    /// <param name="lastName">Last name.</param>
-    /// <param name="dateOfBirth">Date of birth.</param>
-    /// <param name="sex">Sex of person.</param>
-    /// <param name="salary">Salary.</param>
-    /// <param name="yearsOfService">Count years of service.</param>
+    /// <param name="parametresOfRecord">ParametresOfRecord.</param>
     /// <returns>New created record.</returns>
-    public int CreateRecord(string firstName, string lastName, DateTime dateOfBirth, char sex, decimal salary, short yearsOfService)
+    public int CreateRecord(ParametresOfRecord parametresOfRecord)
     {
+        if (parametresOfRecord is null)
+        {
+            throw new ArgumentNullException(nameof(parametresOfRecord));
+        }
+
+        var firstName = parametresOfRecord.FirstName;
+        var lastName = parametresOfRecord.LastName;
+        var dateOfBirth = parametresOfRecord.DateOfBirth;
+        var sex = parametresOfRecord.Sex;
+        var salary = parametresOfRecord.Salary;
+        var yearsOfService = parametresOfRecord.YearsOfService;
+
         NamesValidation(firstName, nameof(firstName));
         NamesValidation(lastName, nameof(lastName));
         DateOfBirthValidation(dateOfBirth, nameof(dateOfBirth));
@@ -111,15 +119,22 @@ public class FileCabinetService
     /// <summary>
     /// Edits selected (by ID) record.
     /// </summary>
-    /// <param name="id">ID of edited record.</param>
-    /// <param name="firstName">First name.</param>
-    /// <param name="lastName">Last name.</param>
-    /// <param name="dateOfBirth">Date of birth.</param>
-    /// <param name="sex">Sex of person.</param>
-    /// <param name="salary">Salary.</param>
-    /// <param name="yearsOfService">Count years of service.</param>
-    public void EditRecord(int id, string firstName, string lastName, DateTime dateOfBirth, char sex, decimal salary, short yearsOfService)
+    /// <param name="parametresOfRecord">ParametresOfRecord.</param>
+    public void EditRecord(ParametresOfRecord parametresOfRecord)
     {
+        if (parametresOfRecord is null)
+        {
+            throw new ArgumentNullException(nameof(parametresOfRecord));
+        }
+
+        var id = parametresOfRecord.Id;
+        var firstName = parametresOfRecord.FirstName;
+        var lastName = parametresOfRecord.LastName;
+        var dateOfBirth = parametresOfRecord.DateOfBirth;
+        var sex = parametresOfRecord.Sex;
+        var salary = parametresOfRecord.Salary;
+        var yearsOfService = parametresOfRecord.YearsOfService;
+
         NamesValidation(firstName, nameof(firstName));
         NamesValidation(lastName, nameof(lastName));
         DateOfBirthValidation(dateOfBirth, nameof(dateOfBirth));

@@ -154,7 +154,7 @@ namespace FileCabinetApp
 
             short yearsOfService = GetCheckedYearsOfService();
 
-            var id = fileCabinetService.CreateRecord(firstName, lastName, dateOfBirth, sex, salary, yearsOfService);
+            var id = fileCabinetService.CreateRecord(new ParametresOfRecord(firstName, lastName, dateOfBirth, sex, salary, yearsOfService));
 
             Console.WriteLine($"Record #{id} is created.");
         }
@@ -183,7 +183,7 @@ namespace FileCabinetApp
 
             var id = fileCabinetService.GetRecords()[indexOfRecord].Id;
 
-            fileCabinetService.EditRecord(id, firstName, lastName, dateOfBirth, sex, salary, yearsOfService);
+            fileCabinetService.EditRecord(new ParametresOfRecord(id, firstName, lastName, dateOfBirth, sex, salary, yearsOfService));
 
             Console.WriteLine($"Record #{id} is updated.");
         }
