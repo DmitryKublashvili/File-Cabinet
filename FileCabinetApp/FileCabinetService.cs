@@ -6,7 +6,11 @@ public class FileCabinetService
     private readonly List<FileCabinetRecord> list = new List<FileCabinetRecord>();
     private readonly Dictionary<string, List<FileCabinetRecord>> firstNameDictionary = new Dictionary<string, List<FileCabinetRecord>>();
     private readonly Dictionary<string, List<FileCabinetRecord>> lastNameDictionary = new Dictionary<string, List<FileCabinetRecord>>();
-    private readonly Dictionary<DateTime, List<FileCabinetRecord>> DateOfBirthDictionary = new Dictionary<DateTime, List<FileCabinetRecord>>();
+    private readonly Dictionary<DateTime, List<FileCabinetRecord>> dateOfBirthDictionary = new Dictionary<DateTime, List<FileCabinetRecord>>();
+
+    private const string FindingEmptyNameMessage = "Finding name was null or empty";
+    private const string NotValidEmptyNameMessage = "The name must not be null or contain only spaces";
+    private const string NotValidSimbolsInNameMessage = "The name must consists of only letters";
 
     public int CreateRecord(string firstName, string lastName, DateTime dateOfBirth, char sex, decimal salary, short yearsOfService)
     {
@@ -51,13 +55,13 @@ public class FileCabinetService
         }
 
         // adding in DateOfBirthDictionary
-        if (this.DateOfBirthDictionary.ContainsKey(dateOfBirth))
+        if (this.dateOfBirthDictionary.ContainsKey(dateOfBirth))
         {
-            this.DateOfBirthDictionary[dateOfBirth].Add(record);
+            this.dateOfBirthDictionary[dateOfBirth].Add(record);
         }
         else
         {
-            this.DateOfBirthDictionary.Add(key: dateOfBirth, new List<FileCabinetRecord>() { record });
+            this.dateOfBirthDictionary.Add(key: dateOfBirth, new List<FileCabinetRecord>() { record });
         }
 
         return record.Id;
@@ -122,15 +126,15 @@ public class FileCabinetService
                 }
 
                 // adding changes in lastNameDictionary
-                this.DateOfBirthDictionary[previousDateOfBirth].Remove(this.list[i]);
+                this.dateOfBirthDictionary[previousDateOfBirth].Remove(this.list[i]);
 
-                if (this.DateOfBirthDictionary.ContainsKey(dateOfBirth))
+                if (this.dateOfBirthDictionary.ContainsKey(dateOfBirth))
                 {
-                    this.DateOfBirthDictionary[dateOfBirth].Add(this.list[i]);
+                    this.dateOfBirthDictionary[dateOfBirth].Add(this.list[i]);
                 }
                 else
                 {
-                    this.DateOfBirthDictionary.Add(key: dateOfBirth, new List<FileCabinetRecord>() { this.list[i] });
+                    this.dateOfBirthDictionary.Add(key: dateOfBirth, new List<FileCabinetRecord>() { this.list[i] });
                 }
 
                 return;
@@ -144,7 +148,7 @@ public class FileCabinetService
     {
         if (string.IsNullOrEmpty(firstName))
         {
-            throw new ArgumentException("first name was null or empty", nameof(firstName));
+            throw new ArgumentException(FindingEmptyNameMessage, nameof(firstName));
         }
 
         firstName = firstName.ToUpperInvariant();
@@ -163,7 +167,7 @@ public class FileCabinetService
     {
         if (string.IsNullOrEmpty(lastName))
         {
-            throw new ArgumentException("first name was null or empty", nameof(lastName));
+            throw new ArgumentException(FindingEmptyNameMessage, nameof(lastName));
         }
 
         lastName = lastName.ToUpperInvariant();
@@ -180,9 +184,9 @@ public class FileCabinetService
 
     public FileCabinetRecord[] FindByDateOfBirth(DateTime date)
     {
-        if (this.DateOfBirthDictionary.ContainsKey(date))
+        if (this.dateOfBirthDictionary.ContainsKey(date))
         {
-            return this.DateOfBirthDictionary[date].ToArray();
+            return this.dateOfBirthDictionary[date].ToArray();
         }
         else
         {
@@ -194,12 +198,12 @@ public class FileCabinetService
     {
         if (string.IsNullOrWhiteSpace(name))
         {
-            throw new ArgumentNullException(nameOfParameter, "The name must not be null or contain only spaces");
+            throw new ArgumentNullException(nameOfParameter, NotValidEmptyNameMessage);
         }
 
         if (name.Length is < 2 or > 60)
         {
-            throw new ArgumentException("The first name must be 2-60 characters long", nameOfParameter);
+            throw new ArgumentException("The name must be 2-60 characters long", nameOfParameter);
         }
 
         for (int i = 0; i < name.Length; i++)

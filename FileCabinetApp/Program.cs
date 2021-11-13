@@ -8,10 +8,26 @@ namespace FileCabinetApp
     {
         private const string DeveloperName = "Dmitry Kublashvili";
         private const string HintMessage = "Enter your command, or enter 'help' to get help.";
+        private const string ExitMessage = "Exiting an application...";
+        private const string ThereAreNoRecordsMessage = "There are no records yet.";
+        private const string NoMatchesMessage = "No matches were found.";
+        private const string NotValidEmptyNameMessage = "The name must not be null or contain only spaces";
+        private const string NotValidSimbolsInNameMessage = "The name must consists of only letters";
+        private const string NotParsedSalaryMessage = "Incorrect summ, please enter again";
+        private const string IncorrectSexMessage = "Incorrect. Please, enter one letter of M or F";
+        private const string IncorrectDateOfBirthFormatMessage = "Incorrect format of date, enter the date in format mm/dd/yyyy please.";
+
         private const int CommandHelpIndex = 0;
         private const int DescriptionHelpIndex = 1;
         private const int ExplanationHelpIndex = 2;
+        private const int MinLettersCountInName = 2;
+        private const int MaxLettersCountInName = 60;
+        private const int MinSalary = 2_000;
+        private const int MaxSalary = 100_000;
+        private const int MinYearsOfService = 0;
+        private const int MaxYearsOfService = 50;
 
+        private static DateTime minDateOfBirth = new (1950, 1, 1);
         private static CultureInfo cultureInfo = new ("en");
         private static bool isRunning = true;
         private static FileCabinetService fileCabinetService = new FileCabinetService();
@@ -107,7 +123,7 @@ namespace FileCabinetApp
 
         private static void Exit(string parameters)
         {
-            Console.WriteLine("Exiting an application...");
+            Console.WriteLine(ExitMessage);
             isRunning = false;
         }
 
@@ -136,13 +152,13 @@ namespace FileCabinetApp
             Console.WriteLine($"Record #{id} is created.");
         }
 
-        private static void Edit(string parameter)
+        private static void Edit(string userEnter)
         {
-            int index = GetIndexOfRecord(parameter);
+            int indexOfRecord = GetIndexOfRecord(userEnter);
 
-            if (index == -1)
+            if (indexOfRecord == -1)
             {
-                Console.WriteLine($"#{parameter} record is not found.");
+                Console.WriteLine($"#{userEnter} record is not found.");
                 return;
             }
 
@@ -158,7 +174,7 @@ namespace FileCabinetApp
 
             short yearsOfService = GetCheckedYearsOfService();
 
-            var id = fileCabinetService.GetRecords()[index].Id;
+            var id = fileCabinetService.GetRecords()[indexOfRecord].Id;
 
             fileCabinetService.EditRecord(id, firstName, lastName, dateOfBirth, sex, salary, yearsOfService);
 
@@ -171,7 +187,7 @@ namespace FileCabinetApp
 
             if (list is null || list.Length == 0)
             {
-                Console.WriteLine("There are no records yet");
+                Console.WriteLine(ThereAreNoRecordsMessage);
                 return;
             }
 
@@ -187,92 +203,92 @@ namespace FileCabinetApp
 
         private static void Find(string parametres)
         {
-            string[] inputs = parametres.Split(new char[] { ' ', '"' }, 2, StringSplitOptions.RemoveEmptyEntries);
+            string[] userCommandParameters = parametres.Split(new char[] { ' ', '"' }, 2, StringSplitOptions.RemoveEmptyEntries);
 
-            List<string> commandSecondParts = new List<string>()
+            List<string> commandParametres = new List<string>()
             {
                 "FIRSTNAME",
                 "LASTNAME",
                 "DATEOFBIRTH",
             };
 
-            string commandSecondPart = inputs[0].ToUpperInvariant();
+            string firstParameter = userCommandParameters[0].ToUpperInvariant();
 
-            if (!commandSecondParts.Contains(commandSecondPart))
+            if (!commandParametres.Contains(firstParameter))
             {
-                Console.WriteLine($"Unknown parameter '{inputs[0]}'.");
+                Console.WriteLine($"Unknown parameter '{userCommandParameters[0]}'.");
                 return;
             }
 
-            string parameter = inputs[1].Trim('"', ' ').ToUpperInvariant();
-            FileCabinetRecord[] findedRecords;
+            string secondParameter = userCommandParameters[1].Trim('"', ' ').ToUpperInvariant();
+            FileCabinetRecord[] foundRecords;
 
-            if (commandSecondPart == "FIRSTNAME")
+            if (firstParameter == "FIRSTNAME")
             {
-                findedRecords = fileCabinetService.FindByFirstName(parameter);
+                foundRecords = fileCabinetService.FindByFirstName(secondParameter);
             }
-            else if (commandSecondPart == "LASTNAME")
+            else if (firstParameter == "LASTNAME")
             {
-                findedRecords = fileCabinetService.FindByLastName(parameter);
+                foundRecords = fileCabinetService.FindByLastName(secondParameter);
             }
             else
             {
-                if (DateTime.TryParse(parameter, cultureInfo, DateTimeStyles.AdjustToUniversal, out DateTime date))
+                if (DateTime.TryParse(secondParameter, cultureInfo, DateTimeStyles.AdjustToUniversal, out DateTime date))
                 {
-                    findedRecords = fileCabinetService.FindByDateOfBirth(date);
+                    foundRecords = fileCabinetService.FindByDateOfBirth(date);
                 }
                 else
                 {
-                    Console.WriteLine($"Date of birth '{parameter}' was incorrect format.");
+                    Console.WriteLine($"Date of birth '{secondParameter}' was incorrect format.");
                     return;
                 }
             }
 
-            if (findedRecords.Length == 0)
+            if (foundRecords.Length == 0)
             {
-                Console.WriteLine($"No matches were found.");
+                Console.WriteLine(NoMatchesMessage);
                 return;
             }
 
-            for (int i = 0; i < findedRecords.Length; i++)
+            for (int i = 0; i < foundRecords.Length; i++)
             {
                 Console.WriteLine(
-                    $"#{findedRecords[i].Id}, {findedRecords[i].FirstName}, {findedRecords[i].LastName}, " +
-                    $"{findedRecords[i].DateOfBirth.ToString("yyyy-MMM-d", cultureInfo)}, " +
-                    $"Sex - {findedRecords[i].Sex}, Salary {findedRecords[i].Salary.ToString(cultureInfo)}, " +
-                    $"{findedRecords[i].YearsOfService} years Of Service, ");
+                    $"#{foundRecords[i].Id}, {foundRecords[i].FirstName}, {foundRecords[i].LastName}, " +
+                    $"{foundRecords[i].DateOfBirth.ToString("yyyy-MMM-d", cultureInfo)}, " +
+                    $"Sex - {foundRecords[i].Sex}, Salary {foundRecords[i].Salary.ToString(cultureInfo)}, " +
+                    $"{foundRecords[i].YearsOfService} years Of Service, ");
             }
         }
 
-        private static string GetCheckedName(string paramName)
+        private static string GetCheckedName(string typeOfName)
         {
-            string name;
+            string checkedName;
             bool isValid = false;
 
             do
             {
-                Console.Write($"{paramName}: ");
-                name = Console.ReadLine();
+                Console.Write($"{typeOfName}: ");
+                checkedName = Console.ReadLine();
 
-                if (string.IsNullOrWhiteSpace(name) || name.Length == 0)
+                if (string.IsNullOrWhiteSpace(checkedName) || checkedName.Length == 0)
                 {
-                    Console.WriteLine("The name must not be null or contain only spaces");
+                    Console.WriteLine(NotValidEmptyNameMessage);
                     continue;
                 }
 
-                if (name.Length is < 2 or > 60)
+                if (checkedName.Length is < MinLettersCountInName or > MaxLettersCountInName)
                 {
-                    Console.WriteLine("The first name must be 2-60 characters long");
+                    Console.WriteLine($"The name must be {MinLettersCountInName}-{MaxLettersCountInName} characters long");
                     continue;
                 }
 
                 bool isOnlyLettersInside = true;
 
-                for (int i = 0; i < name.Length; i++)
+                for (int i = 0; i < checkedName.Length; i++)
                 {
-                    if (!char.IsLetter(name[i]))
+                    if (!char.IsLetter(checkedName[i]))
                     {
-                        Console.WriteLine("The name must consists of only letters");
+                        Console.WriteLine(NotValidSimbolsInNameMessage);
                         isOnlyLettersInside = false;
                         break;
                     }
@@ -282,140 +298,137 @@ namespace FileCabinetApp
             }
             while (!isValid);
 
-            return name;
+            return checkedName;
         }
 
         private static decimal GetCheckedSalary()
         {
-            decimal salary;
+            decimal checkedSalary;
             bool isValid;
 
             do
             {
                 Console.Write("Salary: ");
 
-                while (!decimal.TryParse(Console.ReadLine(), NumberStyles.AllowDecimalPoint, cultureInfo, out salary))
+                while (!decimal.TryParse(Console.ReadLine(), NumberStyles.AllowDecimalPoint, cultureInfo, out checkedSalary))
                 {
-                    Console.WriteLine("Incorrect summ, please enter again");
+                    Console.WriteLine(NotParsedSalaryMessage);
                 }
 
-                isValid = salary >= 2_000 && salary <= 100_000;
+                isValid = checkedSalary >= MinSalary && checkedSalary <= MaxSalary;
 
                 if (!isValid)
                 {
                     Console.WriteLine(
-                        "The salary must be greater than or equal to 2 000 " +
-                        "and less than or equal to 100 000");
+                        $"The salary must be greater than or equal to {MinSalary} " +
+                        $"and less than or equal to {MaxSalary}");
                 }
             }
             while (!isValid);
 
-            return salary;
+            return checkedSalary;
         }
 
         private static char GetCheckedSex()
         {
             bool isValid = false;
-            string userEnter;
+            string checkedSex;
 
             do
             {
                 Console.Write("Sex (M or F): ");
-                userEnter = Console.ReadLine().ToUpperInvariant();
+                checkedSex = Console.ReadLine().ToUpperInvariant();
 
-                if (string.IsNullOrWhiteSpace(userEnter) || userEnter.Length != 1)
+                if (string.IsNullOrWhiteSpace(checkedSex) || checkedSex.Length != 1)
                 {
-                    Console.WriteLine("Incorrect. Please, enter one letter of M or F");
+                    Console.WriteLine(IncorrectSexMessage);
                     continue;
                 }
 
-                isValid = userEnter[0] == 'M' || userEnter[0] == 'F';
+                isValid = checkedSex[0] == 'M' || checkedSex[0] == 'F';
 
                 if (!isValid)
                 {
-                    Console.WriteLine("Incorrect. Please, enter one letter of M or F");
+                    Console.WriteLine(IncorrectSexMessage);
                 }
             }
             while (!isValid);
 
-            return userEnter[0];
+            return checkedSex[0];
         }
 
         private static DateTime GetCheckedDateOfBirth()
         {
-            DateTime minDate = new (1950, 1, 1);
-            DateTime dateOfBirth;
+            DateTime checkedDateOfBirth;
             bool isValid;
 
             do
             {
                 Console.Write("Date of birth: ");
 
-                while (!DateTime.TryParse(Console.ReadLine(), cultureInfo, DateTimeStyles.AdjustToUniversal, out dateOfBirth))
+                while (!DateTime.TryParse(Console.ReadLine(), cultureInfo, DateTimeStyles.AdjustToUniversal, out checkedDateOfBirth))
                 {
-                    Console.WriteLine("Incorrect format of date, enter the date in format mm/dd/yyyy please.");
+                    Console.WriteLine(IncorrectDateOfBirthFormatMessage);
                     Console.Write("Date of birth: ");
                 }
 
-                isValid = dateOfBirth >= minDate && dateOfBirth <= DateTime.Now;
+                isValid = checkedDateOfBirth >= minDateOfBirth && checkedDateOfBirth <= DateTime.Now;
 
                 if (!isValid)
                 {
                     Console.WriteLine(
-                          "Date of birth must be no earlier than January 1, 1950 " +
+                          $"Date of birth must be no earlier than {minDateOfBirth.ToShortDateString()} " +
                           "and no later than the current date");
                 }
             }
             while (!isValid);
 
-            return dateOfBirth;
+            return checkedDateOfBirth;
         }
 
         private static short GetCheckedYearsOfService()
         {
-            short yearsOfService;
+            short checkedYearsOfService;
             bool isValid;
 
             do
             {
                 Console.Write("Years Of Service: ");
 
-                while (!short.TryParse(Console.ReadLine(), out yearsOfService))
+                while (!short.TryParse(Console.ReadLine(), out checkedYearsOfService))
                 {
                     Console.WriteLine("Incorrect value, only integers in 0-50 interval are available. Please enter again");
                 }
 
-                isValid = yearsOfService >= 0 && yearsOfService <= 50;
+                isValid = checkedYearsOfService >= MinYearsOfService && checkedYearsOfService <= MaxYearsOfService;
 
                 if (!isValid)
                 {
                     Console.WriteLine(
-                        "The years of service parameter must be greater than or equal to 0 " +
-                        "and less than or equal to 50");
+                        $"The years of service parameter must be greater than or equal to {MinYearsOfService} " +
+                        $"and less than or equal to {MaxYearsOfService}");
                 }
             }
             while (!isValid);
 
-            return yearsOfService;
+            return checkedYearsOfService;
         }
 
         private static int GetIndexOfRecord(string parameter)
         {
-            int id;
-
-            if (!int.TryParse(parameter, out id))
+            if (int.TryParse(parameter, out int id))
             {
-                return -1;
-            }
+                FileCabinetRecord[] listOfRecords = fileCabinetService.GetRecords();
 
-            var list = fileCabinetService.GetRecords();
-
-            for (int i = 0; i < list.Length; i++)
-            {
-                if (id == list[i].Id)
+                for (int i = 0; i < listOfRecords.Length; i++)
                 {
-                    return i;
+                    if (id == listOfRecords[i].Id)
+                    {
+                        return i;
+                    }
                 }
+
+                return -1;
             }
 
             return -1;
