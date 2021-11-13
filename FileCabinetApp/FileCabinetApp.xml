@@ -4,5 +4,132 @@
         <name>FileCabinetApp</name>
     </assembly>
     <members>
+        <member name="T:FileCabinetRecord">
+            <summary>
+            Implements model of file cabinet record.
+            </summary>
+        </member>
+        <member name="P:FileCabinetRecord.Id">
+            <summary>
+            Gets or sets record ID.
+            </summary>
+            <value> Integer num of record.
+            </value>
+        </member>
+        <member name="P:FileCabinetRecord.FirstName">
+            <summary>
+            Gets or sets first name.
+            </summary>
+            <value> String value of first name.
+            </value>
+        </member>
+        <member name="P:FileCabinetRecord.LastName">
+            <summary>
+            Gets or sets last name.
+            </summary>
+            <value> String value of last name.
+            </value>
+        </member>
+        <member name="P:FileCabinetRecord.DateOfBirth">
+            <summary>
+            Gets or sets date of birth.
+            </summary>
+            <value> DateTime value of birth date.
+            </value>
+        </member>
+        <member name="P:FileCabinetRecord.Sex">
+            <summary>
+            Gets or sets sex of person.
+            </summary>
+            <value> Char (one letter of M or F) representation of person gender.
+            </value>
+        </member>
+        <member name="P:FileCabinetRecord.Salary">
+            <summary>
+            Gets or sets salary.
+            </summary>
+            <value> Decimal amount of salary.
+            </value>
+        </member>
+        <member name="P:FileCabinetRecord.YearsOfService">
+            <summary>
+            Gets or sets count years of service.
+            </summary>
+            <value> Short (integer) count years of service.
+            </value>
+        </member>
+        <member name="T:FileCabinetService">
+            <summary>
+            Implements functions of file cabinet.
+            </summary>
+        </member>
+        <member name="M:FileCabinetService.CreateRecord(System.String,System.String,System.DateTime,System.Char,System.Decimal,System.Int16)">
+            <summary>
+            Creates a record.
+            </summary>
+            <param name="firstName">First name.</param>
+            <param name="lastName">Last name.</param>
+            <param name="dateOfBirth">Date of birth.</param>
+            <param name="sex">Sex of person.</param>
+            <param name="salary">Salary.</param>
+            <param name="yearsOfService">Count years of service.</param>
+            <returns>New created record.</returns>
+        </member>
+        <member name="M:FileCabinetService.GetRecords">
+            <summary>
+            Gets array of all records.
+            </summary>
+            <returns>Array of all records.</returns>
+        </member>
+        <member name="M:FileCabinetService.GetStat">
+            <summary>
+            Gets records count.
+            </summary>
+            <returns>Records count.</returns>
+        </member>
+        <member name="M:FileCabinetService.EditRecord(System.Int32,System.String,System.String,System.DateTime,System.Char,System.Decimal,System.Int16)">
+            <summary>
+            Edits selected (by ID) record.
+            </summary>
+            <param name="id">ID of edited record.</param>
+            <param name="firstName">First name.</param>
+            <param name="lastName">Last name.</param>
+            <param name="dateOfBirth">Date of birth.</param>
+            <param name="sex">Sex of person.</param>
+            <param name="salary">Salary.</param>
+            <param name="yearsOfService">Count years of service.</param>
+        </member>
+        <member name="M:FileCabinetService.FindByFirstName(System.String)">
+            <summary>
+            Gets an array of records that have that first name.
+            </summary>
+            <param name="firstName">Search first name.</param>
+            <returns>Array of records that have that first name.</returns>
+        </member>
+        <member name="M:FileCabinetService.FindByLastName(System.String)">
+            <summary>
+            Gets an array of records that have that last name.
+            </summary>
+            <param name="lastName">Search last name.</param>
+            <returns>Array of records that have that last name.</returns>
+        </member>
+        <member name="M:FileCabinetService.FindByDateOfBirth(System.DateTime)">
+            <summary>
+            Gets an array of records that have that date of birth.
+            </summary>
+            <param name="date">Search birth date.</param>
+            <returns>Array of records that have that birth date.</returns>
+        </member>
+        <member name="T:FileCabinetApp.Program">
+            <summary>
+            Program class. Starts the program and implements the file cabinet menu functions.
+            </summary>
+        </member>
+        <member name="M:FileCabinetApp.Program.Main(System.String[])">
+            <summary>
+            Starts the program and implements the menu functions.
+            </summary>
+            <param name="args">Params.</param>
+        </member>
     </members>
 </doc>

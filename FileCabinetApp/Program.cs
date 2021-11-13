@@ -4,6 +4,9 @@ using System.Globalization;
 
 namespace FileCabinetApp
 {
+    /// <summary>
+    /// Program class. Starts the program and implements the file cabinet menu functions.
+    /// </summary>
     public static class Program
     {
         private const string DeveloperName = "Dmitry Kublashvili";
@@ -54,6 +57,10 @@ namespace FileCabinetApp
             new string[] { "find", "finds records by the specified parameter", "The 'find' command shows a list of records in which the specified parameter was found." },
         };
 
+        /// <summary>
+        /// Starts the program and implements the menu functions.
+        /// </summary>
+        /// <param name="args">Params.</param>
         public static void Main(string[] args)
         {
             Console.WriteLine($"File Cabinet Application, developed by {Program.DeveloperName}");
