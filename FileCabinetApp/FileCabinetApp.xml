@@ -124,27 +124,116 @@
             </summary>
             <param name="parametresOfRecord">Parametres of record.</param>
         </member>
-        <member name="T:FileCabinetApp.FileCabinetCustomService">
+        <member name="T:FileCabinetApp.FileCabinetRecord">
             <summary>
-            File cabinet default service.
+            Implements model of file cabinet record.
             </summary>
         </member>
-        <member name="M:FileCabinetApp.FileCabinetCustomService.#ctor(FileCabinetApp.IRecordValidator)">
+        <member name="P:FileCabinetApp.FileCabinetRecord.Id">
             <summary>
-            Initializes a new instance of the <see cref="T:FileCabinetApp.FileCabinetCustomService"/> class.
+            Gets or sets record ID.
+            </summary>
+            <value> Integer num of record.
+            </value>
+        </member>
+        <member name="P:FileCabinetApp.FileCabinetRecord.FirstName">
+            <summary>
+            Gets or sets first name.
+            </summary>
+            <value> String value of first name.
+            </value>
+        </member>
+        <member name="P:FileCabinetApp.FileCabinetRecord.LastName">
+            <summary>
+            Gets or sets last name.
+            </summary>
+            <value> String value of last name.
+            </value>
+        </member>
+        <member name="P:FileCabinetApp.FileCabinetRecord.DateOfBirth">
+            <summary>
+            Gets or sets date of birth.
+            </summary>
+            <value> DateTime value of birth date.
+            </value>
+        </member>
+        <member name="P:FileCabinetApp.FileCabinetRecord.Sex">
+            <summary>
+            Gets or sets sex of person.
+            </summary>
+            <value> Char (one letter of M or F) representation of person gender.
+            </value>
+        </member>
+        <member name="P:FileCabinetApp.FileCabinetRecord.Salary">
+            <summary>
+            Gets or sets salary.
+            </summary>
+            <value> Decimal amount of salary.
+            </value>
+        </member>
+        <member name="P:FileCabinetApp.FileCabinetRecord.YearsOfService">
+            <summary>
+            Gets or sets count years of service.
+            </summary>
+            <value> Short (integer) count years of service.
+            </value>
+        </member>
+        <member name="T:FileCabinetApp.FileCabinetService">
+            <summary>
+            Implements functions of file cabinet.
+            </summary>
+        </member>
+        <member name="M:FileCabinetApp.FileCabinetService.#ctor(FileCabinetApp.IRecordValidator)">
+            <summary>
+            Initializes a new instance of the <see cref="T:FileCabinetApp.FileCabinetService"/> class.
             </summary>
             <param name="recordValidator">Instance of IRecordValidator.</param>
         </member>
-        <member name="T:FileCabinetApp.FileCabinetDefaultService">
+        <member name="M:FileCabinetApp.FileCabinetService.CreateRecord(FileCabinetApp.ParametresOfRecord)">
             <summary>
-            File cabinet default service.
+            Creates a record.
             </summary>
+            <param name="parametresOfRecord">ParametresOfRecord.</param>
+            <returns>New created record.</returns>
         </member>
-        <member name="M:FileCabinetApp.FileCabinetDefaultService.#ctor(FileCabinetApp.IRecordValidator)">
+        <member name="M:FileCabinetApp.FileCabinetService.GetRecords">
             <summary>
-            Initializes a new instance of the <see cref="T:FileCabinetApp.FileCabinetDefaultService"/> class.
+            Gets array of all records.
             </summary>
-            <param name="recordValidator">Instance of IRecordValidator.</param>
+            <returns>Array of all records.</returns>
+        </member>
+        <member name="M:FileCabinetApp.FileCabinetService.GetStat">
+            <summary>
+            Gets records count.
+            </summary>
+            <returns>Records count.</returns>
+        </member>
+        <member name="M:FileCabinetApp.FileCabinetService.EditRecord(FileCabinetApp.ParametresOfRecord)">
+            <summary>
+            Edits selected (by ID) record.
+            </summary>
+            <param name="parametresOfRecord">Parametres of record.</param>
+        </member>
+        <member name="M:FileCabinetApp.FileCabinetService.FindByFirstName(System.String)">
+            <summary>
+            Gets an array of records that have that first name.
+            </summary>
+            <param name="firstName">Search first name.</param>
+            <returns>Array of records that have that first name.</returns>
+        </member>
+        <member name="M:FileCabinetApp.FileCabinetService.FindByLastName(System.String)">
+            <summary>
+            Gets an array of records that have that last name.
+            </summary>
+            <param name="lastName">Search last name.</param>
+            <returns>Array of records that have that last name.</returns>
+        </member>
+        <member name="M:FileCabinetApp.FileCabinetService.FindByDateOfBirth(System.DateTime)">
+            <summary>
+            Gets an array of records that have that date of birth.
+            </summary>
+            <param name="date">Search birth date.</param>
+            <returns>Array of records that have that birth date.</returns>
         </member>
         <member name="T:FileCabinetApp.IRecordValidator">
             <summary>
@@ -293,117 +382,6 @@
             Starts the program and implements the menu functions.
             </summary>
             <param name="args">Params.</param>
-        </member>
-        <member name="T:FileCabinetRecord">
-            <summary>
-            Implements model of file cabinet record.
-            </summary>
-        </member>
-        <member name="P:FileCabinetRecord.Id">
-            <summary>
-            Gets or sets record ID.
-            </summary>
-            <value> Integer num of record.
-            </value>
-        </member>
-        <member name="P:FileCabinetRecord.FirstName">
-            <summary>
-            Gets or sets first name.
-            </summary>
-            <value> String value of first name.
-            </value>
-        </member>
-        <member name="P:FileCabinetRecord.LastName">
-            <summary>
-            Gets or sets last name.
-            </summary>
-            <value> String value of last name.
-            </value>
-        </member>
-        <member name="P:FileCabinetRecord.DateOfBirth">
-            <summary>
-            Gets or sets date of birth.
-            </summary>
-            <value> DateTime value of birth date.
-            </value>
-        </member>
-        <member name="P:FileCabinetRecord.Sex">
-            <summary>
-            Gets or sets sex of person.
-            </summary>
-            <value> Char (one letter of M or F) representation of person gender.
-            </value>
-        </member>
-        <member name="P:FileCabinetRecord.Salary">
-            <summary>
-            Gets or sets salary.
-            </summary>
-            <value> Decimal amount of salary.
-            </value>
-        </member>
-        <member name="P:FileCabinetRecord.YearsOfService">
-            <summary>
-            Gets or sets count years of service.
-            </summary>
-            <value> Short (integer) count years of service.
-            </value>
-        </member>
-        <member name="T:FileCabinetService">
-            <summary>
-            Implements functions of file cabinet.
-            </summary>
-        </member>
-        <member name="M:FileCabinetService.#ctor(FileCabinetApp.IRecordValidator)">
-            <summary>
-            Initializes a new instance of the <see cref="T:FileCabinetService"/> class.
-            </summary>
-            <param name="recordValidator">Instance of IRecordValidator.</param>
-        </member>
-        <member name="M:FileCabinetService.CreateRecord(FileCabinetApp.ParametresOfRecord)">
-            <summary>
-            Creates a record.
-            </summary>
-            <param name="parametresOfRecord">ParametresOfRecord.</param>
-            <returns>New created record.</returns>
-        </member>
-        <member name="M:FileCabinetService.GetRecords">
-            <summary>
-            Gets array of all records.
-            </summary>
-            <returns>Array of all records.</returns>
-        </member>
-        <member name="M:FileCabinetService.GetStat">
-            <summary>
-            Gets records count.
-            </summary>
-            <returns>Records count.</returns>
-        </member>
-        <member name="M:FileCabinetService.EditRecord(FileCabinetApp.ParametresOfRecord)">
-            <summary>
-            Edits selected (by ID) record.
-            </summary>
-            <param name="parametresOfRecord">Parametres of record.</param>
-        </member>
-        <member name="M:FileCabinetService.FindByFirstName(System.String)">
-            <summary>
-            Gets an array of records that have that first name.
-            </summary>
-            <param name="firstName">Search first name.</param>
-            <returns>Array of records that have that first name.</returns>
-        </member>
-        <member name="M:FileCabinetService.FindByLastName(System.String)">
-            <summary>
-            Gets an array of records that have that last name.
-            </summary>
-            <param name="lastName">Search last name.</param>
-            <returns>Array of records that have that last name.</returns>
-        </member>
-        <member name="M:FileCabinetService.FindByDateOfBirth(System.DateTime)">
-            <summary>
-            Gets an array of records that have that date of birth.
-            </summary>
-            <param name="date">Search birth date.</param>
-            <returns>Array of records that have that birth date.</returns>
         </member>
     </members>
 </doc>

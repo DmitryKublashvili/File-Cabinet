@@ -30,7 +30,7 @@ namespace FileCabinetApp
         private static bool isRunning = true;
         private static bool isDefaultValidatoinRules = true;
         private static IRecordValidator validator = new DefaultValidator();
-        private static FileCabinetService fileCabinetService = new FileCabinetDefaultService(validator);
+        private static FileCabinetService fileCabinetService = new FileCabinetService(validator);
 
         private static Tuple<string, Action<string>>[] commands = new Tuple<string, Action<string>>[]
         {
@@ -69,7 +69,7 @@ namespace FileCabinetApp
                 {
                     isDefaultValidatoinRules = false;
                     validator = new CustomValidator();
-                    fileCabinetService = new FileCabinetCustomService(validator);
+                    fileCabinetService = new FileCabinetService(validator);
                 }
             }
 
