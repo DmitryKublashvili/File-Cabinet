@@ -44,7 +44,7 @@ namespace FileCabinetApp
         /// </summary>
         /// <value> Count of years.
         /// </value>
-        public int MinYearsOfService { get; } = 0;
+        public int MinYearsOfService { get; }
 
         /// <summary>
         /// Gets max valid years of service.

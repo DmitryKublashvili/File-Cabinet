@@ -3,7 +3,7 @@
 namespace FileCabinetApp
 {
     /// <summary>
-    /// Parametres validator.
+    /// Custom validator.
     /// </summary>
     public class CustomValidator : IRecordValidator
     {
@@ -23,7 +23,7 @@ namespace FileCabinetApp
         /// </summary>
         /// <value> Count of leters.
         /// </value>
-        public int MaxLettersCountInName { get; } = 30;
+        public int MaxLettersCountInName { get; } = 20;
 
         /// <summary>
         /// Gets min amount of salary.
