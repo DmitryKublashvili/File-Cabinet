@@ -198,9 +198,9 @@
         </member>
         <member name="M:FileCabinetApp.FileCabinetService.GetRecords">
             <summary>
-            Gets array of all records.
+            Gets ReadOnlyCollection of all records.
             </summary>
-            <returns>Array of all records.</returns>
+            <returns>ReadOnlyCollection of all records.</returns>
         </member>
         <member name="M:FileCabinetApp.FileCabinetService.GetStat">
             <summary>
@@ -216,24 +216,75 @@
         </member>
         <member name="M:FileCabinetApp.FileCabinetService.FindByFirstName(System.String)">
             <summary>
-            Gets an array of records that have that first name.
+            Gets an ReadOnlyCollection of records that have that first name.
             </summary>
             <param name="firstName">Search first name.</param>
-            <returns>Array of records that have that first name.</returns>
+            <returns>ReadOnlyCollection of records that have that first name.</returns>
         </member>
         <member name="M:FileCabinetApp.FileCabinetService.FindByLastName(System.String)">
             <summary>
-            Gets an array of records that have that last name.
+            Gets an ReadOnlyCollection of records that have that last name.
             </summary>
             <param name="lastName">Search last name.</param>
-            <returns>Array of records that have that last name.</returns>
+            <returns>ReadOnlyCollection of records that have that last name.</returns>
         </member>
         <member name="M:FileCabinetApp.FileCabinetService.FindByDateOfBirth(System.DateTime)">
             <summary>
-            Gets an array of records that have that date of birth.
+            Gets an ReadOnlyCollection of records that have that date of birth.
             </summary>
             <param name="date">Search birth date.</param>
-            <returns>Array of records that have that birth date.</returns>
+            <returns>ReadOnlyCollection of records that have that birth date.</returns>
+        </member>
+        <member name="T:FileCabinetApp.IFileCabinetService">
+            <summary>
+            Defines functions of file cabinet.
+            </summary>
+        </member>
+        <member name="M:FileCabinetApp.IFileCabinetService.CreateRecord(FileCabinetApp.ParametresOfRecord)">
+            <summary>
+            Creates a record.
+            </summary>
+            <param name="parametresOfRecord">ParametresOfRecord.</param>
+            <returns>New created record.</returns>
+        </member>
+        <member name="M:FileCabinetApp.IFileCabinetService.EditRecord(FileCabinetApp.ParametresOfRecord)">
+            <summary>
+            Edits selected (by ID) record.
+            </summary>
+            <param name="parametresOfRecord">Parametres of record.</param>
+        </member>
+        <member name="M:FileCabinetApp.IFileCabinetService.FindByDateOfBirth(System.DateTime)">
+            <summary>
+            Gets an ReadOnlyCollection of records that have that date of birth.
+            </summary>
+            <param name="searchingDate">Search birth date.</param>
+            <returns>ReadOnlyCollection of records that have that birth date.</returns>
+        </member>
+        <member name="M:FileCabinetApp.IFileCabinetService.FindByFirstName(System.String)">
+            <summary>
+            Gets an ReadOnlyCollection of records that have that first name.
+            </summary>
+            <param name="firstName">Search first name.</param>
+            <returns>ReadOnlyCollection of records that have that first name.</returns>
+        </member>
+        <member name="M:FileCabinetApp.IFileCabinetService.FindByLastName(System.String)">
+            <summary>
+            Gets an ReadOnlyCollection of records that have that last name.
+            </summary>
+            <param name="lastName">Search last name.</param>
+            <returns>ReadOnlyCollection of records that have that last name.</returns>
+        </member>
+        <member name="M:FileCabinetApp.IFileCabinetService.GetRecords">
+            <summary>
+            Gets array of all records.
+            </summary>
+            <returns>ReadOnlyCollection of all records.</returns>
+        </member>
+        <member name="M:FileCabinetApp.IFileCabinetService.GetStat">
+            <summary>
+            Gets records count.
+            </summary>
+            <returns>Records count.</returns>
         </member>
         <member name="T:FileCabinetApp.IRecordValidator">
             <summary>

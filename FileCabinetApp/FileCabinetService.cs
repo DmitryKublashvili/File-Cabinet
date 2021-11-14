@@ -7,7 +7,7 @@ namespace FileCabinetApp
     /// <summary>
     /// Implements functions of file cabinet.
     /// </summary>
-    public class FileCabinetService
+    public class FileCabinetService : IFileCabinetService
     {
         private readonly List<FileCabinetRecord> list = new List<FileCabinetRecord>();
         private readonly Dictionary<string, List<FileCabinetRecord>> firstNameDictionary = new Dictionary<string, List<FileCabinetRecord>>();
@@ -93,9 +93,9 @@ namespace FileCabinetApp
         }
 
         /// <summary>
-        /// Gets array of all records.
+        /// Gets ReadOnlyCollection of all records.
         /// </summary>
-        /// <returns>Array of all records.</returns>
+        /// <returns>ReadOnlyCollection of all records.</returns>
         public ReadOnlyCollection<FileCabinetRecord> GetRecords()
         {
             return new ReadOnlyCollection<FileCabinetRecord>(this.list);
@@ -190,10 +190,10 @@ namespace FileCabinetApp
         }
 
         /// <summary>
-        /// Gets an array of records that have that first name.
+        /// Gets an ReadOnlyCollection of records that have that first name.
         /// </summary>
         /// <param name="firstName">Search first name.</param>
-        /// <returns>Array of records that have that first name.</returns>
+        /// <returns>ReadOnlyCollection of records that have that first name.</returns>
         public ReadOnlyCollection<FileCabinetRecord> FindByFirstName(string firstName)
         {
             if (string.IsNullOrEmpty(firstName))
@@ -214,10 +214,10 @@ namespace FileCabinetApp
         }
 
         /// <summary>
-        /// Gets an array of records that have that last name.
+        /// Gets an ReadOnlyCollection of records that have that last name.
         /// </summary>
         /// <param name="lastName">Search last name.</param>
-        /// <returns>Array of records that have that last name.</returns>
+        /// <returns>ReadOnlyCollection of records that have that last name.</returns>
         public ReadOnlyCollection<FileCabinetRecord> FindByLastName(string lastName)
         {
             if (string.IsNullOrEmpty(lastName))
@@ -238,10 +238,10 @@ namespace FileCabinetApp
         }
 
         /// <summary>
-        /// Gets an array of records that have that date of birth.
+        /// Gets an ReadOnlyCollection of records that have that date of birth.
         /// </summary>
         /// <param name="date">Search birth date.</param>
-        /// <returns>Array of records that have that birth date.</returns>
+        /// <returns>ReadOnlyCollection of records that have that birth date.</returns>
         public ReadOnlyCollection<FileCabinetRecord> FindByDateOfBirth(DateTime date)
         {
             if (this.dateOfBirthDictionary.ContainsKey(date))
