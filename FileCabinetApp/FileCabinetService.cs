@@ -1,253 +1,257 @@
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 
-public class FileCabinetService
+namespace FileCabinetApp
 {
-    private readonly List<FileCabinetRecord> list = new List<FileCabinetRecord>();
-    private readonly Dictionary<string, List<FileCabinetRecord>> firstNameDictionary = new Dictionary<string, List<FileCabinetRecord>>();
-    private readonly Dictionary<string, List<FileCabinetRecord>> lastNameDictionary = new Dictionary<string, List<FileCabinetRecord>>();
-    private readonly Dictionary<DateTime, List<FileCabinetRecord>> DateOfBirthDictionary = new Dictionary<DateTime, List<FileCabinetRecord>>();
-
-    public int CreateRecord(string firstName, string lastName, DateTime dateOfBirth, char sex, decimal salary, short yearsOfService)
+    /// <summary>
+    /// Implements functions of file cabinet.
+    /// </summary>
+    public class FileCabinetService : IFileCabinetService
     {
-        NamesValidation(firstName, nameof(firstName));
-        NamesValidation(lastName, nameof(lastName));
-        DateOfBirthValidation(dateOfBirth, nameof(dateOfBirth));
-        SexValidation(sex, nameof(sex));
-        SalaryValidation(salary, nameof(salary));
-        YearsOfServiceValidation(yearsOfService, nameof(yearsOfService));
+        private readonly List<FileCabinetRecord> list = new List<FileCabinetRecord>();
+        private readonly Dictionary<string, List<FileCabinetRecord>> firstNameDictionary = new Dictionary<string, List<FileCabinetRecord>>();
+        private readonly Dictionary<string, List<FileCabinetRecord>> lastNameDictionary = new Dictionary<string, List<FileCabinetRecord>>();
+        private readonly Dictionary<DateTime, List<FileCabinetRecord>> dateOfBirthDictionary = new Dictionary<DateTime, List<FileCabinetRecord>>();
 
-        var record = new FileCabinetRecord
-        {
-            Id = this.list.Count + 1,
-            FirstName = firstName,
-            LastName = lastName,
-            DateOfBirth = dateOfBirth,
-            Sex = sex,
-            Salary = salary,
-            YearsOfService = yearsOfService,
-        };
+        private readonly IRecordValidator recordValidator;
 
-        this.list.Add(record);
-
-        // adding in firstNameDictionary
-        if (this.firstNameDictionary.ContainsKey(firstName.ToUpperInvariant()))
+        /// <summary>
+        /// Initializes a new instance of the <see cref="FileCabinetService"/> class.
+        /// </summary>
+        /// <param name="recordValidator">Instance of IRecordValidator.</param>
+        public FileCabinetService(IRecordValidator recordValidator)
         {
-            this.firstNameDictionary[firstName.ToUpperInvariant()].Add(record);
-        }
-        else
-        {
-            this.firstNameDictionary.Add(key: firstName.ToUpperInvariant(), new List<FileCabinetRecord>() { record });
+            this.recordValidator = recordValidator;
         }
 
-        // adding in lastNameDictionary
-        if (this.lastNameDictionary.ContainsKey(lastName.ToUpperInvariant()))
+        /// <summary>
+        /// Creates a record.
+        /// </summary>
+        /// <param name="parametresOfRecord">ParametresOfRecord.</param>
+        /// <returns>New created record.</returns>
+        public int CreateRecord(ParametresOfRecord parametresOfRecord)
         {
-            this.lastNameDictionary[lastName.ToUpperInvariant()].Add(record);
-        }
-        else
-        {
-            this.lastNameDictionary.Add(key: lastName.ToUpperInvariant(), new List<FileCabinetRecord>() { record });
-        }
-
-        // adding in DateOfBirthDictionary
-        if (this.DateOfBirthDictionary.ContainsKey(dateOfBirth))
-        {
-            this.DateOfBirthDictionary[dateOfBirth].Add(record);
-        }
-        else
-        {
-            this.DateOfBirthDictionary.Add(key: dateOfBirth, new List<FileCabinetRecord>() { record });
-        }
-
-        return record.Id;
-    }
-
-    public FileCabinetRecord[] GetRecords()
-    {
-        return this.list.ToArray();
-    }
-
-    public int GetStat()
-    {
-        return this.list.Count;
-    }
-
-    public void EditRecord(int id, string firstName, string lastName, DateTime dateOfBirth, char sex, decimal salary, short yearsOfService)
-    {
-        NamesValidation(firstName, nameof(firstName));
-        NamesValidation(lastName, nameof(lastName));
-        DateOfBirthValidation(dateOfBirth, nameof(dateOfBirth));
-        SexValidation(sex, nameof(sex));
-        SalaryValidation(salary, nameof(salary));
-        YearsOfServiceValidation(yearsOfService, nameof(yearsOfService));
-
-        for (int i = 0; i < this.list.Count; i++)
-        {
-            if (id == this.list[i].Id)
+            if (parametresOfRecord is null)
             {
-                string previousFirstname = this.list[i].FirstName.ToUpperInvariant();
-                string previousLastname = this.list[i].LastName.ToUpperInvariant();
-                DateTime previousDateOfBirth = this.list[i].DateOfBirth;
+                throw new ArgumentNullException(nameof(parametresOfRecord));
+            }
 
-                this.list[i].FirstName = firstName;
-                this.list[i].LastName = lastName;
-                this.list[i].DateOfBirth = dateOfBirth;
-                this.list[i].Sex = sex;
-                this.list[i].Salary = salary;
+            this.recordValidator.ValidateParameters(parametresOfRecord);
 
+            var firstName = parametresOfRecord.FirstName;
+            var lastName = parametresOfRecord.LastName;
+            var dateOfBirth = parametresOfRecord.DateOfBirth;
+            var sex = parametresOfRecord.Sex;
+            var salary = parametresOfRecord.Salary;
+            var yearsOfService = parametresOfRecord.YearsOfService;
 
-                // adding changes in firstNameDictionary
-                this.firstNameDictionary[previousFirstname].Remove(this.list[i]);
+            var record = new FileCabinetRecord
+            {
+                Id = this.list.Count + 1,
+                FirstName = firstName,
+                LastName = lastName,
+                DateOfBirth = dateOfBirth,
+                Sex = sex,
+                Salary = salary,
+                YearsOfService = yearsOfService,
+            };
 
-                if (this.firstNameDictionary.ContainsKey(firstName.ToUpperInvariant()))
+            this.list.Add(record);
+
+            // adding in firstNameDictionary
+            if (this.firstNameDictionary.ContainsKey(firstName.ToUpperInvariant()))
+            {
+                this.firstNameDictionary[firstName.ToUpperInvariant()].Add(record);
+            }
+            else
+            {
+                this.firstNameDictionary.Add(key: firstName.ToUpperInvariant(), new List<FileCabinetRecord>() { record });
+            }
+
+            // adding in lastNameDictionary
+            if (this.lastNameDictionary.ContainsKey(lastName.ToUpperInvariant()))
+            {
+                this.lastNameDictionary[lastName.ToUpperInvariant()].Add(record);
+            }
+            else
+            {
+                this.lastNameDictionary.Add(key: lastName.ToUpperInvariant(), new List<FileCabinetRecord>() { record });
+            }
+
+            // adding in DateOfBirthDictionary
+            if (this.dateOfBirthDictionary.ContainsKey(dateOfBirth))
+            {
+                this.dateOfBirthDictionary[dateOfBirth].Add(record);
+            }
+            else
+            {
+                this.dateOfBirthDictionary.Add(key: dateOfBirth, new List<FileCabinetRecord>() { record });
+            }
+
+            return record.Id;
+        }
+
+        /// <summary>
+        /// Gets ReadOnlyCollection of all records.
+        /// </summary>
+        /// <returns>ReadOnlyCollection of all records.</returns>
+        public ReadOnlyCollection<FileCabinetRecord> GetRecords()
+        {
+            return new ReadOnlyCollection<FileCabinetRecord>(this.list);
+        }
+
+        /// <summary>
+        /// Gets records count.
+        /// </summary>
+        /// <returns>Records count.</returns>
+        public int GetStat()
+        {
+            return this.list.Count;
+        }
+
+        /// <summary>
+        /// Edits selected (by ID) record.
+        /// </summary>
+        /// <param name="parametresOfRecord">Parametres of record.</param>
+        public void EditRecord(ParametresOfRecord parametresOfRecord)
+        {
+            if (parametresOfRecord is null)
+            {
+                throw new ArgumentNullException(nameof(parametresOfRecord));
+            }
+
+            this.recordValidator.ValidateParameters(parametresOfRecord);
+
+            var id = parametresOfRecord.Id;
+            var firstName = parametresOfRecord.FirstName;
+            var lastName = parametresOfRecord.LastName;
+            var dateOfBirth = parametresOfRecord.DateOfBirth;
+            var sex = parametresOfRecord.Sex;
+            var salary = parametresOfRecord.Salary;
+            var yearsOfService = parametresOfRecord.YearsOfService;
+
+            for (int i = 0; i < this.list.Count; i++)
+            {
+                if (id == this.list[i].Id)
                 {
-                    this.firstNameDictionary[firstName.ToUpperInvariant()].Add(this.list[i]);
-                }
-                else
-                {
-                    this.firstNameDictionary.Add(key: firstName.ToUpperInvariant(), new List<FileCabinetRecord>() { this.list[i] });
-                }
+                    string previousFirstname = this.list[i].FirstName.ToUpperInvariant();
+                    string previousLastname = this.list[i].LastName.ToUpperInvariant();
+                    DateTime previousDateOfBirth = this.list[i].DateOfBirth;
 
-                // adding changes in lastNameDictionary
-                this.lastNameDictionary[previousLastname].Remove(this.list[i]);
+                    this.list[i].FirstName = firstName;
+                    this.list[i].LastName = lastName;
+                    this.list[i].DateOfBirth = dateOfBirth;
+                    this.list[i].Sex = sex;
+                    this.list[i].Salary = salary;
+                    this.list[i].YearsOfService = yearsOfService;
 
-                if (this.lastNameDictionary.ContainsKey(lastName.ToUpperInvariant()))
-                {
-                    this.lastNameDictionary[lastName.ToUpperInvariant()].Add(this.list[i]);
-                }
-                else
-                {
-                    this.lastNameDictionary.Add(key: lastName.ToUpperInvariant(), new List<FileCabinetRecord>() { this.list[i] });
-                }
+                    // adding changes in firstNameDictionary
+                    this.firstNameDictionary[previousFirstname].Remove(this.list[i]);
 
-                // adding changes in lastNameDictionary
-                this.DateOfBirthDictionary[previousDateOfBirth].Remove(this.list[i]);
+                    if (this.firstNameDictionary.ContainsKey(firstName.ToUpperInvariant()))
+                    {
+                        this.firstNameDictionary[firstName.ToUpperInvariant()].Add(this.list[i]);
+                    }
+                    else
+                    {
+                        this.firstNameDictionary.Add(key: firstName.ToUpperInvariant(), new List<FileCabinetRecord>() { this.list[i] });
+                    }
 
-                if (this.DateOfBirthDictionary.ContainsKey(dateOfBirth))
-                {
-                    this.DateOfBirthDictionary[dateOfBirth].Add(this.list[i]);
-                }
-                else
-                {
-                    this.DateOfBirthDictionary.Add(key: dateOfBirth, new List<FileCabinetRecord>() { this.list[i] });
-                }
+                    // adding changes in lastNameDictionary
+                    this.lastNameDictionary[previousLastname].Remove(this.list[i]);
 
-                return;
+                    if (this.lastNameDictionary.ContainsKey(lastName.ToUpperInvariant()))
+                    {
+                        this.lastNameDictionary[lastName.ToUpperInvariant()].Add(this.list[i]);
+                    }
+                    else
+                    {
+                        this.lastNameDictionary.Add(key: lastName.ToUpperInvariant(), new List<FileCabinetRecord>() { this.list[i] });
+                    }
+
+                    // adding changes in lastNameDictionary
+                    this.dateOfBirthDictionary[previousDateOfBirth].Remove(this.list[i]);
+
+                    if (this.dateOfBirthDictionary.ContainsKey(dateOfBirth))
+                    {
+                        this.dateOfBirthDictionary[dateOfBirth].Add(this.list[i]);
+                    }
+                    else
+                    {
+                        this.dateOfBirthDictionary.Add(key: dateOfBirth, new List<FileCabinetRecord>() { this.list[i] });
+                    }
+
+                    return;
+                }
+            }
+
+            throw new ArgumentException($"{id} record is not found.");
+        }
+
+        /// <summary>
+        /// Gets an ReadOnlyCollection of records that have that first name.
+        /// </summary>
+        /// <param name="firstName">Search first name.</param>
+        /// <returns>ReadOnlyCollection of records that have that first name.</returns>
+        public ReadOnlyCollection<FileCabinetRecord> FindByFirstName(string firstName)
+        {
+            if (string.IsNullOrEmpty(firstName))
+            {
+                throw new ArgumentException("Wanted name was null or empty", nameof(firstName));
+            }
+
+            firstName = firstName.ToUpperInvariant();
+
+            if (this.firstNameDictionary.ContainsKey(firstName))
+            {
+                return new ReadOnlyCollection<FileCabinetRecord>(this.firstNameDictionary[firstName]);
+            }
+            else
+            {
+                return new ReadOnlyCollection<FileCabinetRecord>(Array.Empty<FileCabinetRecord>());
             }
         }
 
-        throw new ArgumentException($"{id} record is not found.");
-    }
-
-    public FileCabinetRecord[] FindByFirstName(string firstName)
-    {
-        if (string.IsNullOrEmpty(firstName))
+        /// <summary>
+        /// Gets an ReadOnlyCollection of records that have that last name.
+        /// </summary>
+        /// <param name="lastName">Search last name.</param>
+        /// <returns>ReadOnlyCollection of records that have that last name.</returns>
+        public ReadOnlyCollection<FileCabinetRecord> FindByLastName(string lastName)
         {
-            throw new ArgumentException("first name was null or empty", nameof(firstName));
-        }
-
-        firstName = firstName.ToUpperInvariant();
-
-        if (this.firstNameDictionary.ContainsKey(firstName))
-        {
-            return this.firstNameDictionary[firstName].ToArray();
-        }
-        else
-        {
-            return Array.Empty<FileCabinetRecord>();
-        }
-    }
-
-    public FileCabinetRecord[] FindByLastName(string lastName)
-    {
-        if (string.IsNullOrEmpty(lastName))
-        {
-            throw new ArgumentException("first name was null or empty", nameof(lastName));
-        }
-
-        lastName = lastName.ToUpperInvariant();
-
-        if (this.lastNameDictionary.ContainsKey(lastName))
-        {
-            return this.lastNameDictionary[lastName].ToArray();
-        }
-        else
-        {
-            return Array.Empty<FileCabinetRecord>();
-        }
-    }
-
-    public FileCabinetRecord[] FindByDateOfBirth(DateTime date)
-    {
-        if (this.DateOfBirthDictionary.ContainsKey(date))
-        {
-            return this.DateOfBirthDictionary[date].ToArray();
-        }
-        else
-        {
-            return Array.Empty<FileCabinetRecord>();
-        }
-    }
-
-    private static void NamesValidation(string name, string nameOfParameter)
-    {
-        if (string.IsNullOrWhiteSpace(name))
-        {
-            throw new ArgumentNullException(nameOfParameter, "The name must not be null or contain only spaces");
-        }
-
-        if (name.Length is < 2 or > 60)
-        {
-            throw new ArgumentException("The first name must be 2-60 characters long", nameOfParameter);
-        }
-
-        for (int i = 0; i < name.Length; i++)
-        {
-            if (!char.IsLetter(name[i]))
+            if (string.IsNullOrEmpty(lastName))
             {
-                throw new ArgumentException("The name must consists of only letters", nameOfParameter);
+                throw new ArgumentException("Wanted name was null or empty", nameof(lastName));
+            }
+
+            lastName = lastName.ToUpperInvariant();
+
+            if (this.lastNameDictionary.ContainsKey(lastName))
+            {
+                return new ReadOnlyCollection<FileCabinetRecord>(this.lastNameDictionary[lastName]);
+            }
+            else
+            {
+                return new ReadOnlyCollection<FileCabinetRecord>(Array.Empty<FileCabinetRecord>());
             }
         }
-    }
 
-    private static void DateOfBirthValidation(DateTime dateOfBirth, string nameOfParameter)
-    {
-        DateTime minDate = new (1950, 1, 1);
-
-        if (dateOfBirth < minDate || dateOfBirth > DateTime.Now)
+        /// <summary>
+        /// Gets an ReadOnlyCollection of records that have that date of birth.
+        /// </summary>
+        /// <param name="date">Search birth date.</param>
+        /// <returns>ReadOnlyCollection of records that have that birth date.</returns>
+        public ReadOnlyCollection<FileCabinetRecord> FindByDateOfBirth(DateTime date)
         {
-            throw new ArgumentException(
-                "Date of birth must be no earlier than January 1, 1950 " +
-                "and no later than the current date", nameOfParameter);
-        }
-    }
-
-    private static void SexValidation(char sex, string nameOfParameter)
-    {
-        if (char.ToUpperInvariant(sex) != 'M' && char.ToUpperInvariant(sex) != 'F')
-        {
-            throw new ArgumentException("Only the letters 'M' or 'F' are valid", nameOfParameter);
-        }
-    }
-
-    private static void SalaryValidation(decimal salary, string nameOfParameter)
-    {
-        if (salary < 2_000 || salary > 100_000)
-        {
-            throw new ArgumentException(
-                "The salary must be greater than or equal to 2 000 " +
-                "and less than or equal to 100 000", nameOfParameter);
-        }
-    }
-
-    private static void YearsOfServiceValidation(short yearsOfService, string nameOfParameter)
-    {
-        if (yearsOfService < 0 || yearsOfService > 50)
-        {
-            throw new ArgumentException(
-                "The years of service parameter must be greater than or equal to 0 " +
-                "and less than or equal to 50", nameOfParameter);
+            if (this.dateOfBirthDictionary.ContainsKey(date))
+            {
+                return new ReadOnlyCollection<FileCabinetRecord>(this.dateOfBirthDictionary[date]);
+            }
+            else
+            {
+                return new ReadOnlyCollection<FileCabinetRecord>(Array.Empty<FileCabinetRecord>());
+            }
         }
     }
 }
