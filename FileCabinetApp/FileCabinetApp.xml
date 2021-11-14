@@ -6,7 +6,7 @@
     <members>
         <member name="T:FileCabinetApp.CustomValidator">
             <summary>
-            Parametres validator.
+            Custom validator.
             </summary>
         </member>
         <member name="P:FileCabinetApp.CustomValidator.MinLettersCountInName">
@@ -129,22 +129,22 @@
             File cabinet default service.
             </summary>
         </member>
-        <member name="M:FileCabinetApp.FileCabinetCustomService.CreateValidator">
+        <member name="M:FileCabinetApp.FileCabinetCustomService.#ctor(FileCabinetApp.IRecordValidator)">
             <summary>
-            Creates instance of the DefaultValidator.
+            Initializes a new instance of the <see cref="T:FileCabinetApp.FileCabinetCustomService"/> class.
             </summary>
-            <returns>DefaultValidator instance.</returns>
+            <param name="recordValidator">Instance of IRecordValidator.</param>
         </member>
         <member name="T:FileCabinetApp.FileCabinetDefaultService">
             <summary>
             File cabinet default service.
             </summary>
         </member>
-        <member name="M:FileCabinetApp.FileCabinetDefaultService.CreateValidator">
+        <member name="M:FileCabinetApp.FileCabinetDefaultService.#ctor(FileCabinetApp.IRecordValidator)">
             <summary>
-            Creates instance of the DefaultValidator.
+            Initializes a new instance of the <see cref="T:FileCabinetApp.FileCabinetDefaultService"/> class.
             </summary>
-            <returns>DefaultValidator instance.</returns>
+            <param name="recordValidator">Instance of IRecordValidator.</param>
         </member>
         <member name="T:FileCabinetApp.IRecordValidator">
             <summary>
@@ -353,6 +353,12 @@
             Implements functions of file cabinet.
             </summary>
         </member>
+        <member name="M:FileCabinetService.#ctor(FileCabinetApp.IRecordValidator)">
+            <summary>
+            Initializes a new instance of the <see cref="T:FileCabinetService"/> class.
+            </summary>
+            <param name="recordValidator">Instance of IRecordValidator.</param>
+        </member>
         <member name="M:FileCabinetService.CreateRecord(FileCabinetApp.ParametresOfRecord)">
             <summary>
             Creates a record.
@@ -398,12 +404,6 @@
             </summary>
             <param name="date">Search birth date.</param>
             <returns>Array of records that have that birth date.</returns>
-        </member>
-        <member name="M:FileCabinetService.CreateValidator">
-            <summary>
-            Creates instance of the class, which implements IRecordValidator interface.
-            </summary>
-            <returns>Validator instance.</returns>
         </member>
     </members>
 </doc>

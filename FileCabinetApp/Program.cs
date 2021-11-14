@@ -29,8 +29,8 @@ namespace FileCabinetApp
         private static CultureInfo cultureInfo = new ("en");
         private static bool isRunning = true;
         private static bool isDefaultValidatoinRules = true;
-        private static FileCabinetService fileCabinetService = new FileCabinetDefaultService();
-        private static IRecordValidator validator = fileCabinetService.CreateValidator();
+        private static IRecordValidator validator = new DefaultValidator();
+        private static FileCabinetService fileCabinetService = new FileCabinetDefaultService(validator);
 
         private static Tuple<string, Action<string>>[] commands = new Tuple<string, Action<string>>[]
         {
@@ -68,8 +68,8 @@ namespace FileCabinetApp
                 if (parameterOfValidation.Contains("CUSTOM"))
                 {
                     isDefaultValidatoinRules = false;
-                    fileCabinetService = new FileCabinetCustomService();
-                    validator = fileCabinetService.CreateValidator();
+                    validator = new CustomValidator();
+                    fileCabinetService = new FileCabinetCustomService(validator);
                 }
             }
 

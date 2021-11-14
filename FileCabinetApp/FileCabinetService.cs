@@ -12,6 +12,17 @@ public abstract class FileCabinetService
     private readonly Dictionary<string, List<FileCabinetRecord>> lastNameDictionary = new Dictionary<string, List<FileCabinetRecord>>();
     private readonly Dictionary<DateTime, List<FileCabinetRecord>> dateOfBirthDictionary = new Dictionary<DateTime, List<FileCabinetRecord>>();
 
+    private readonly IRecordValidator recordValidator;
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="FileCabinetService"/> class.
+    /// </summary>
+    /// <param name="recordValidator">Instance of IRecordValidator.</param>
+    protected FileCabinetService(IRecordValidator recordValidator)
+    {
+        this.recordValidator = recordValidator;
+    }
+
     /// <summary>
     /// Creates a record.
     /// </summary>
@@ -24,7 +35,7 @@ public abstract class FileCabinetService
             throw new ArgumentNullException(nameof(parametresOfRecord));
         }
 
-        this.CreateValidator().ValidateParameters(parametresOfRecord);
+        this.recordValidator.ValidateParameters(parametresOfRecord);
 
         var firstName = parametresOfRecord.FirstName;
         var lastName = parametresOfRecord.LastName;
@@ -108,7 +119,7 @@ public abstract class FileCabinetService
             throw new ArgumentNullException(nameof(parametresOfRecord));
         }
 
-        this.CreateValidator().ValidateParameters(parametresOfRecord);
+        this.recordValidator.ValidateParameters(parametresOfRecord);
 
         var id = parametresOfRecord.Id;
         var firstName = parametresOfRecord.FirstName;
@@ -240,10 +251,4 @@ public abstract class FileCabinetService
             return Array.Empty<FileCabinetRecord>();
         }
     }
-
-    /// <summary>
-    /// Creates instance of the class, which implements IRecordValidator interface.
-    /// </summary>
-    /// <returns>Validator instance.</returns>
-    public abstract IRecordValidator CreateValidator();
 }
