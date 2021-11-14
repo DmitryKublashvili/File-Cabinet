@@ -29,7 +29,7 @@ namespace FileCabinetApp
         private static CultureInfo cultureInfo = new ("en");
         private static bool isRunning = true;
         private static bool isDefaultValidatoinRules = true;
-        private static FileCabinetService fileCabinetService = new FileCabinetCustomService();
+        private static FileCabinetService fileCabinetService = new FileCabinetDefaultService();
         private static IRecordValidator validator = fileCabinetService.CreateValidator();
 
         private static Tuple<string, Action<string>>[] commands = new Tuple<string, Action<string>>[]
@@ -60,6 +60,19 @@ namespace FileCabinetApp
         /// <param name="args">Params.</param>
         public static void Main(string[] args)
         {
+            if (!(args is null) && args.Length > 0)
+            {
+                string parameterOfValidation = string.Join(" ", args).ToUpperInvariant();
+                Console.WriteLine(parameterOfValidation);
+
+                if (parameterOfValidation.Contains("CUSTOM"))
+                {
+                    isDefaultValidatoinRules = false;
+                    fileCabinetService = new FileCabinetCustomService();
+                    validator = fileCabinetService.CreateValidator();
+                }
+            }
+
             Console.WriteLine($"File Cabinet Application, developed by {Program.DeveloperName}");
             Console.WriteLine(isDefaultValidatoinRules ? DefaultValidationRulesMessage : CustomValidationRulesMessage);
             Console.WriteLine(Program.HintMessage);
