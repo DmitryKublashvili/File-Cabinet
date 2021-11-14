@@ -10,6 +10,8 @@ namespace FileCabinetApp
     public static class Program
     {
         private const string DeveloperName = "Dmitry Kublashvili";
+        private const string DefaultValidationRulesMessage = "Using default validation rules.";
+        private const string CustomValidationRulesMessage = "Using custom validation rules.";
         private const string HintMessage = "Enter your command, or enter 'help' to get help.";
         private const string ExitMessage = "Exiting an application...";
         private const string ThereAreNoRecordsMessage = "There are no records yet.";
@@ -23,17 +25,12 @@ namespace FileCabinetApp
         private const int CommandHelpIndex = 0;
         private const int DescriptionHelpIndex = 1;
         private const int ExplanationHelpIndex = 2;
-        private const int MinLettersCountInName = 2;
-        private const int MaxLettersCountInName = 60;
-        private const int MinSalary = 2_000;
-        private const int MaxSalary = 100_000;
-        private const int MinYearsOfService = 0;
-        private const int MaxYearsOfService = 50;
 
-        private static DateTime minDateOfBirth = new (1950, 1, 1);
         private static CultureInfo cultureInfo = new ("en");
         private static bool isRunning = true;
-        private static FileCabinetService fileCabinetService = new FileCabinetService();
+        private static bool isDefaultValidatoinRules = true;
+        private static FileCabinetService fileCabinetService = new FileCabinetCustomService();
+        private static IRecordValidator validator = fileCabinetService.CreateValidator();
 
         private static Tuple<string, Action<string>>[] commands = new Tuple<string, Action<string>>[]
         {
@@ -64,6 +61,7 @@ namespace FileCabinetApp
         public static void Main(string[] args)
         {
             Console.WriteLine($"File Cabinet Application, developed by {Program.DeveloperName}");
+            Console.WriteLine(isDefaultValidatoinRules ? DefaultValidationRulesMessage : CustomValidationRulesMessage);
             Console.WriteLine(Program.HintMessage);
             Console.WriteLine();
 
@@ -204,7 +202,7 @@ namespace FileCabinetApp
                     $"#{list[i].Id}, {list[i].FirstName}, {list[i].LastName}, " +
                     $"{list[i].DateOfBirth.ToString("yyyy-MMM-d", cultureInfo)}, " +
                     $"Sex - {list[i].Sex}, Salary {list[i].Salary.ToString(cultureInfo)}, " +
-                    $"{list[i].YearsOfService} years Of Service, ");
+                    $"{list[i].YearsOfService} years Of Service");
             }
         }
 
@@ -271,6 +269,8 @@ namespace FileCabinetApp
         {
             string checkedName;
             bool isValid = false;
+            var minLettersCountInName = validator.MinLettersCountInName;
+            var maxLettersCountInName = validator.MaxLettersCountInName;
 
             do
             {
@@ -283,9 +283,9 @@ namespace FileCabinetApp
                     continue;
                 }
 
-                if (checkedName.Length is < MinLettersCountInName or > MaxLettersCountInName)
+                if (checkedName.Length < minLettersCountInName || checkedName.Length > maxLettersCountInName)
                 {
-                    Console.WriteLine($"The name must be {MinLettersCountInName}-{MaxLettersCountInName} characters long");
+                    Console.WriteLine($"The name must be {minLettersCountInName}-{maxLettersCountInName} characters long");
                     continue;
                 }
 
@@ -312,6 +312,8 @@ namespace FileCabinetApp
         {
             decimal checkedSalary;
             bool isValid;
+            var minSalary = validator.MinSalary;
+            var maxSalary = validator.MaxSalary;
 
             do
             {
@@ -322,13 +324,13 @@ namespace FileCabinetApp
                     Console.WriteLine(NotParsedSalaryMessage);
                 }
 
-                isValid = checkedSalary >= MinSalary && checkedSalary <= MaxSalary;
+                isValid = checkedSalary >= minSalary && checkedSalary <= maxSalary;
 
                 if (!isValid)
                 {
                     Console.WriteLine(
-                        $"The salary must be greater than or equal to {MinSalary} " +
-                        $"and less than or equal to {MaxSalary}");
+                        $"The salary must be greater than or equal to {minSalary} " +
+                        $"and less than or equal to {maxSalary}");
                 }
             }
             while (!isValid);
@@ -368,6 +370,7 @@ namespace FileCabinetApp
         {
             DateTime checkedDateOfBirth;
             bool isValid;
+            var minDateOfBirth = validator.MinDateOfBirth;
 
             do
             {
@@ -397,6 +400,8 @@ namespace FileCabinetApp
         {
             short checkedYearsOfService;
             bool isValid;
+            var minYearsOfService = validator.MinYearsOfService;
+            var maxYearsOfService = validator.MaxYearsOfService;
 
             do
             {
@@ -407,13 +412,13 @@ namespace FileCabinetApp
                     Console.WriteLine("Incorrect value, only integers in 0-50 interval are available. Please enter again");
                 }
 
-                isValid = checkedYearsOfService >= MinYearsOfService && checkedYearsOfService <= MaxYearsOfService;
+                isValid = checkedYearsOfService >= minYearsOfService && checkedYearsOfService <= maxYearsOfService;
 
                 if (!isValid)
                 {
                     Console.WriteLine(
-                        $"The years of service parameter must be greater than or equal to {MinYearsOfService} " +
-                        $"and less than or equal to {MaxYearsOfService}");
+                        $"The years of service parameter must be greater than or equal to {minYearsOfService} " +
+                        $"and less than or equal to {maxYearsOfService}");
                 }
             }
             while (!isValid);

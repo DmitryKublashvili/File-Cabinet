@@ -1,26 +1,12 @@
-using FileCabinetApp;
 using System;
 using System.Collections.Generic;
+using FileCabinetApp;
 
 /// <summary>
 /// Implements functions of file cabinet.
 /// </summary>
-public class FileCabinetService
+public abstract class FileCabinetService
 {
-    private const string FindingEmptyNameMessage = "Finding name was null or empty";
-    private const string NotValidEmptyNameMessage = "The name must not be null or contain only spaces";
-    private const string NotValidSimbolsInNameMessage = "The name must consists of only letters";
-    private const string IncorrectSexMessage = "Only the letters 'M' or 'F' are valid";
-
-    private const int MinLettersCountInName = 2;
-    private const int MaxLettersCountInName = 60;
-    private const int MinSalary = 2_000;
-    private const int MaxSalary = 100_000;
-    private const int MinYearsOfService = 0;
-    private const int MaxYearsOfService = 50;
-
-    private static DateTime minDateOfBirth = new(1950, 1, 1);
-
     private readonly List<FileCabinetRecord> list = new List<FileCabinetRecord>();
     private readonly Dictionary<string, List<FileCabinetRecord>> firstNameDictionary = new Dictionary<string, List<FileCabinetRecord>>();
     private readonly Dictionary<string, List<FileCabinetRecord>> lastNameDictionary = new Dictionary<string, List<FileCabinetRecord>>();
@@ -38,19 +24,14 @@ public class FileCabinetService
             throw new ArgumentNullException(nameof(parametresOfRecord));
         }
 
+        this.CreateValidator().ValidateParameters(parametresOfRecord);
+
         var firstName = parametresOfRecord.FirstName;
         var lastName = parametresOfRecord.LastName;
         var dateOfBirth = parametresOfRecord.DateOfBirth;
         var sex = parametresOfRecord.Sex;
         var salary = parametresOfRecord.Salary;
         var yearsOfService = parametresOfRecord.YearsOfService;
-
-        NamesValidation(firstName, nameof(firstName));
-        NamesValidation(lastName, nameof(lastName));
-        DateOfBirthValidation(dateOfBirth, nameof(dateOfBirth));
-        SexValidation(sex, nameof(sex));
-        SalaryValidation(salary, nameof(salary));
-        YearsOfServiceValidation(yearsOfService, nameof(yearsOfService));
 
         var record = new FileCabinetRecord
         {
@@ -119,13 +100,15 @@ public class FileCabinetService
     /// <summary>
     /// Edits selected (by ID) record.
     /// </summary>
-    /// <param name="parametresOfRecord">ParametresOfRecord.</param>
+    /// <param name="parametresOfRecord">Parametres of record.</param>
     public void EditRecord(ParametresOfRecord parametresOfRecord)
     {
         if (parametresOfRecord is null)
         {
             throw new ArgumentNullException(nameof(parametresOfRecord));
         }
+
+        this.CreateValidator().ValidateParameters(parametresOfRecord);
 
         var id = parametresOfRecord.Id;
         var firstName = parametresOfRecord.FirstName;
@@ -134,13 +117,6 @@ public class FileCabinetService
         var sex = parametresOfRecord.Sex;
         var salary = parametresOfRecord.Salary;
         var yearsOfService = parametresOfRecord.YearsOfService;
-
-        NamesValidation(firstName, nameof(firstName));
-        NamesValidation(lastName, nameof(lastName));
-        DateOfBirthValidation(dateOfBirth, nameof(dateOfBirth));
-        SexValidation(sex, nameof(sex));
-        SalaryValidation(salary, nameof(salary));
-        YearsOfServiceValidation(yearsOfService, nameof(yearsOfService));
 
         for (int i = 0; i < this.list.Count; i++)
         {
@@ -155,6 +131,7 @@ public class FileCabinetService
                 this.list[i].DateOfBirth = dateOfBirth;
                 this.list[i].Sex = sex;
                 this.list[i].Salary = salary;
+                this.list[i].YearsOfService = yearsOfService;
 
                 // adding changes in firstNameDictionary
                 this.firstNameDictionary[previousFirstname].Remove(this.list[i]);
@@ -208,7 +185,7 @@ public class FileCabinetService
     {
         if (string.IsNullOrEmpty(firstName))
         {
-            throw new ArgumentException(FindingEmptyNameMessage, nameof(firstName));
+            throw new ArgumentException("Wanted name was null or empty", nameof(firstName));
         }
 
         firstName = firstName.ToUpperInvariant();
@@ -232,7 +209,7 @@ public class FileCabinetService
     {
         if (string.IsNullOrEmpty(lastName))
         {
-            throw new ArgumentException(FindingEmptyNameMessage, nameof(lastName));
+            throw new ArgumentException("Wanted name was null or empty", nameof(lastName));
         }
 
         lastName = lastName.ToUpperInvariant();
@@ -264,62 +241,9 @@ public class FileCabinetService
         }
     }
 
-    private static void NamesValidation(string name, string nameOfParameter)
-    {
-        if (string.IsNullOrWhiteSpace(name))
-        {
-            throw new ArgumentNullException(nameOfParameter, NotValidEmptyNameMessage);
-        }
-
-        if (name.Length is < MinLettersCountInName or > MaxLettersCountInName)
-        {
-            throw new ArgumentException($"The name must be {MinLettersCountInName}-{MaxLettersCountInName} characters long", nameOfParameter);
-        }
-
-        for (int i = 0; i < name.Length; i++)
-        {
-            if (!char.IsLetter(name[i]))
-            {
-                throw new ArgumentException(NotValidSimbolsInNameMessage, nameOfParameter);
-            }
-        }
-    }
-
-    private static void DateOfBirthValidation(DateTime dateOfBirth, string nameOfParameter)
-    {
-        if (dateOfBirth < minDateOfBirth || dateOfBirth > DateTime.Now)
-        {
-            throw new ArgumentException(
-                $"Date of birth must be no earlier than {minDateOfBirth} " +
-                "and no later than the current date", nameOfParameter);
-        }
-    }
-
-    private static void SexValidation(char sex, string nameOfParameter)
-    {
-        if (char.ToUpperInvariant(sex) != 'M' && char.ToUpperInvariant(sex) != 'F')
-        {
-            throw new ArgumentException(IncorrectSexMessage, nameOfParameter);
-        }
-    }
-
-    private static void SalaryValidation(decimal salary, string nameOfParameter)
-    {
-        if (salary is < MinSalary or > MaxSalary)
-        {
-            throw new ArgumentException(
-                $"The salary must be greater than or equal to {MinSalary} " +
-                $"and less than or equal to {MaxSalary}", nameOfParameter);
-        }
-    }
-
-    private static void YearsOfServiceValidation(short yearsOfService, string nameOfParameter)
-    {
-        if (yearsOfService < MinYearsOfService || yearsOfService > MaxYearsOfService)
-        {
-            throw new ArgumentException(
-                $"The years of service parameter must be greater than or equal to {MinYearsOfService} " +
-                $"and less than or equal to {MaxYearsOfService}", nameOfParameter);
-        }
-    }
+    /// <summary>
+    /// Creates instance of the class, which implements IRecordValidator interface.
+    /// </summary>
+    /// <returns>Validator instance.</returns>
+    public abstract IRecordValidator CreateValidator();
 }

@@ -4,110 +4,207 @@
         <name>FileCabinetApp</name>
     </assembly>
     <members>
-        <member name="T:FileCabinetRecord">
+        <member name="T:FileCabinetApp.CustomValidator">
             <summary>
-            Implements model of file cabinet record.
+            Parametres validator.
             </summary>
         </member>
-        <member name="P:FileCabinetRecord.Id">
+        <member name="P:FileCabinetApp.CustomValidator.MinLettersCountInName">
             <summary>
-            Gets or sets record ID.
+            Gets min letters count in name.
             </summary>
-            <value> Integer num of record.
+            <value> Count of leters.
             </value>
         </member>
-        <member name="P:FileCabinetRecord.FirstName">
+        <member name="P:FileCabinetApp.CustomValidator.MaxLettersCountInName">
             <summary>
-            Gets or sets first name.
+            Gets max letters count in name.
             </summary>
-            <value> String value of first name.
+            <value> Count of leters.
             </value>
         </member>
-        <member name="P:FileCabinetRecord.LastName">
+        <member name="P:FileCabinetApp.CustomValidator.MinSalary">
             <summary>
-            Gets or sets last name.
+            Gets min amount of salary.
             </summary>
-            <value> String value of last name.
+            <value> Amount of salary.
             </value>
         </member>
-        <member name="P:FileCabinetRecord.DateOfBirth">
+        <member name="P:FileCabinetApp.CustomValidator.MaxSalary">
             <summary>
-            Gets or sets date of birth.
+            Gets max amount of salary.
             </summary>
-            <value> DateTime value of birth date.
+            <value> Amount of salary.
             </value>
         </member>
-        <member name="P:FileCabinetRecord.Sex">
+        <member name="P:FileCabinetApp.CustomValidator.MinYearsOfService">
             <summary>
-            Gets or sets sex of person.
+            Gets min valid years of service.
             </summary>
-            <value> Char (one letter of M or F) representation of person gender.
+            <value> Count of years.
             </value>
         </member>
-        <member name="P:FileCabinetRecord.Salary">
+        <member name="P:FileCabinetApp.CustomValidator.MaxYearsOfService">
             <summary>
-            Gets or sets salary.
+            Gets max valid years of service.
             </summary>
-            <value> Decimal amount of salary.
+            <value> Count of years.
             </value>
         </member>
-        <member name="P:FileCabinetRecord.YearsOfService">
+        <member name="P:FileCabinetApp.CustomValidator.MinDateOfBirth">
             <summary>
-            Gets or sets count years of service.
+            Gets min date of birth.
             </summary>
-            <value> Short (integer) count years of service.
+            <value> Date of birth.
             </value>
         </member>
-        <member name="T:FileCabinetService">
+        <member name="M:FileCabinetApp.CustomValidator.ValidateParameters(FileCabinetApp.ParametresOfRecord)">
             <summary>
-            Implements functions of file cabinet.
+            Validate parametres.
+            </summary>
+            <param name="parametresOfRecord">Parametres of record.</param>
+        </member>
+        <member name="T:FileCabinetApp.DefaultValidator">
+            <summary>
+            Parametres validator.
             </summary>
         </member>
-        <member name="M:FileCabinetService.CreateRecord(FileCabinetApp.ParametresOfRecord)">
+        <member name="P:FileCabinetApp.DefaultValidator.MinLettersCountInName">
             <summary>
-            Creates a record.
+            Gets min letters count in name.
             </summary>
-            <param name="parametresOfRecord">ParametresOfRecord.</param>
-            <returns>New created record.</returns>
+            <value> Count of leters.
+            </value>
         </member>
-        <member name="M:FileCabinetService.GetRecords">
+        <member name="P:FileCabinetApp.DefaultValidator.MaxLettersCountInName">
             <summary>
-            Gets array of all records.
+            Gets max letters count in name.
             </summary>
-            <returns>Array of all records.</returns>
+            <value> Count of leters.
+            </value>
         </member>
-        <member name="M:FileCabinetService.GetStat">
+        <member name="P:FileCabinetApp.DefaultValidator.MinSalary">
             <summary>
-            Gets records count.
+            Gets min amount of salary.
             </summary>
-            <returns>Records count.</returns>
+            <value> Amount of salary.
+            </value>
         </member>
-        <member name="M:FileCabinetService.EditRecord(FileCabinetApp.ParametresOfRecord)">
+        <member name="P:FileCabinetApp.DefaultValidator.MaxSalary">
             <summary>
-            Edits selected (by ID) record.
+            Gets max amount of salary.
             </summary>
-            <param name="parametresOfRecord">ParametresOfRecord.</param>
+            <value> Amount of salary.
+            </value>
         </member>
-        <member name="M:FileCabinetService.FindByFirstName(System.String)">
+        <member name="P:FileCabinetApp.DefaultValidator.MinYearsOfService">
             <summary>
-            Gets an array of records that have that first name.
+            Gets min valid years of service.
             </summary>
-            <param name="firstName">Search first name.</param>
-            <returns>Array of records that have that first name.</returns>
+            <value> Count of years.
+            </value>
         </member>
-        <member name="M:FileCabinetService.FindByLastName(System.String)">
+        <member name="P:FileCabinetApp.DefaultValidator.MaxYearsOfService">
             <summary>
-            Gets an array of records that have that last name.
+            Gets max valid years of service.
             </summary>
-            <param name="lastName">Search last name.</param>
-            <returns>Array of records that have that last name.</returns>
+            <value> Count of years.
+            </value>
         </member>
-        <member name="M:FileCabinetService.FindByDateOfBirth(System.DateTime)">
+        <member name="P:FileCabinetApp.DefaultValidator.MinDateOfBirth">
             <summary>
-            Gets an array of records that have that date of birth.
+            Gets min date of birth.
             </summary>
-            <param name="date">Search birth date.</param>
-            <returns>Array of records that have that birth date.</returns>
+            <value> Date of birth.
+            </value>
+        </member>
+        <member name="M:FileCabinetApp.DefaultValidator.ValidateParameters(FileCabinetApp.ParametresOfRecord)">
+            <summary>
+            Validate parametres.
+            </summary>
+            <param name="parametresOfRecord">Parametres of record.</param>
+        </member>
+        <member name="T:FileCabinetApp.FileCabinetCustomService">
+            <summary>
+            File cabinet default service.
+            </summary>
+        </member>
+        <member name="M:FileCabinetApp.FileCabinetCustomService.CreateValidator">
+            <summary>
+            Creates instance of the DefaultValidator.
+            </summary>
+            <returns>DefaultValidator instance.</returns>
+        </member>
+        <member name="T:FileCabinetApp.FileCabinetDefaultService">
+            <summary>
+            File cabinet default service.
+            </summary>
+        </member>
+        <member name="M:FileCabinetApp.FileCabinetDefaultService.CreateValidator">
+            <summary>
+            Creates instance of the DefaultValidator.
+            </summary>
+            <returns>DefaultValidator instance.</returns>
+        </member>
+        <member name="T:FileCabinetApp.IRecordValidator">
+            <summary>
+            Define the functionality of validators type.
+            </summary>
+        </member>
+        <member name="P:FileCabinetApp.IRecordValidator.MinLettersCountInName">
+            <summary>
+            Gets min letters count in name.
+            </summary>
+            <value> Count of leters.
+            </value>
+        </member>
+        <member name="P:FileCabinetApp.IRecordValidator.MaxLettersCountInName">
+            <summary>
+            Gets max letters count in name.
+            </summary>
+            <value> Count of leters.
+            </value>
+        </member>
+        <member name="P:FileCabinetApp.IRecordValidator.MinSalary">
+            <summary>
+            Gets min amount of salary.
+            </summary>
+            <value> Amount of salary.
+            </value>
+        </member>
+        <member name="P:FileCabinetApp.IRecordValidator.MaxSalary">
+            <summary>
+            Gets max amount of salary.
+            </summary>
+            <value> Amount of salary.
+            </value>
+        </member>
+        <member name="P:FileCabinetApp.IRecordValidator.MinYearsOfService">
+            <summary>
+            Gets min valid years of service.
+            </summary>
+            <value> Count of years.
+            </value>
+        </member>
+        <member name="P:FileCabinetApp.IRecordValidator.MaxYearsOfService">
+            <summary>
+            Gets max valid years of service.
+            </summary>
+            <value> Count of years.
+            </value>
+        </member>
+        <member name="P:FileCabinetApp.IRecordValidator.MinDateOfBirth">
+            <summary>
+            Gets min date of birth.
+            </summary>
+            <value> Date of birth.
+            </value>
+        </member>
+        <member name="M:FileCabinetApp.IRecordValidator.ValidateParameters(FileCabinetApp.ParametresOfRecord)">
+            <summary>
+            Validate parameters of record.
+            </summary>
+            <param name="parametresOfRecord">ParametresOfRecord instance.</param>
         </member>
         <member name="T:FileCabinetApp.ParametresOfRecord">
             <summary>
@@ -196,6 +293,117 @@
             Starts the program and implements the menu functions.
             </summary>
             <param name="args">Params.</param>
+        </member>
+        <member name="T:FileCabinetRecord">
+            <summary>
+            Implements model of file cabinet record.
+            </summary>
+        </member>
+        <member name="P:FileCabinetRecord.Id">
+            <summary>
+            Gets or sets record ID.
+            </summary>
+            <value> Integer num of record.
+            </value>
+        </member>
+        <member name="P:FileCabinetRecord.FirstName">
+            <summary>
+            Gets or sets first name.
+            </summary>
+            <value> String value of first name.
+            </value>
+        </member>
+        <member name="P:FileCabinetRecord.LastName">
+            <summary>
+            Gets or sets last name.
+            </summary>
+            <value> String value of last name.
+            </value>
+        </member>
+        <member name="P:FileCabinetRecord.DateOfBirth">
+            <summary>
+            Gets or sets date of birth.
+            </summary>
+            <value> DateTime value of birth date.
+            </value>
+        </member>
+        <member name="P:FileCabinetRecord.Sex">
+            <summary>
+            Gets or sets sex of person.
+            </summary>
+            <value> Char (one letter of M or F) representation of person gender.
+            </value>
+        </member>
+        <member name="P:FileCabinetRecord.Salary">
+            <summary>
+            Gets or sets salary.
+            </summary>
+            <value> Decimal amount of salary.
+            </value>
+        </member>
+        <member name="P:FileCabinetRecord.YearsOfService">
+            <summary>
+            Gets or sets count years of service.
+            </summary>
+            <value> Short (integer) count years of service.
+            </value>
+        </member>
+        <member name="T:FileCabinetService">
+            <summary>
+            Implements functions of file cabinet.
+            </summary>
+        </member>
+        <member name="M:FileCabinetService.CreateRecord(FileCabinetApp.ParametresOfRecord)">
+            <summary>
+            Creates a record.
+            </summary>
+            <param name="parametresOfRecord">ParametresOfRecord.</param>
+            <returns>New created record.</returns>
+        </member>
+        <member name="M:FileCabinetService.GetRecords">
+            <summary>
+            Gets array of all records.
+            </summary>
+            <returns>Array of all records.</returns>
+        </member>
+        <member name="M:FileCabinetService.GetStat">
+            <summary>
+            Gets records count.
+            </summary>
+            <returns>Records count.</returns>
+        </member>
+        <member name="M:FileCabinetService.EditRecord(FileCabinetApp.ParametresOfRecord)">
+            <summary>
+            Edits selected (by ID) record.
+            </summary>
+            <param name="parametresOfRecord">Parametres of record.</param>
+        </member>
+        <member name="M:FileCabinetService.FindByFirstName(System.String)">
+            <summary>
+            Gets an array of records that have that first name.
+            </summary>
+            <param name="firstName">Search first name.</param>
+            <returns>Array of records that have that first name.</returns>
+        </member>
+        <member name="M:FileCabinetService.FindByLastName(System.String)">
+            <summary>
+            Gets an array of records that have that last name.
+            </summary>
+            <param name="lastName">Search last name.</param>
+            <returns>Array of records that have that last name.</returns>
+        </member>
+        <member name="M:FileCabinetService.FindByDateOfBirth(System.DateTime)">
+            <summary>
+            Gets an array of records that have that date of birth.
+            </summary>
+            <param name="date">Search birth date.</param>
+            <returns>Array of records that have that birth date.</returns>
+        </member>
+        <member name="M:FileCabinetService.CreateValidator">
+            <summary>
+            Creates instance of the class, which implements IRecordValidator interface.
+            </summary>
+            <returns>Validator instance.</returns>
         </member>
     </members>
 </doc>
