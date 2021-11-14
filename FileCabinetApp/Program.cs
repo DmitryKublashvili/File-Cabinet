@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Globalization;
 
 namespace FileCabinetApp
@@ -203,13 +204,13 @@ namespace FileCabinetApp
         {
             var list = fileCabinetService.GetRecords();
 
-            if (list is null || list.Length == 0)
+            if (list is null || list.Count == 0)
             {
                 Console.WriteLine(ThereAreNoRecordsMessage);
                 return;
             }
 
-            for (int i = 0; i < list.Length; i++)
+            for (int i = 0; i < list.Count; i++)
             {
                 Console.WriteLine(
                     $"#{list[i].Id}, {list[i].FirstName}, {list[i].LastName}, " +
@@ -239,7 +240,7 @@ namespace FileCabinetApp
             }
 
             string secondParameter = userCommandParameters[1].Trim('"', ' ').ToUpperInvariant();
-            FileCabinetRecord[] foundRecords;
+            ReadOnlyCollection<FileCabinetRecord> foundRecords;
 
             if (firstParameter == "FIRSTNAME")
             {
@@ -262,13 +263,13 @@ namespace FileCabinetApp
                 }
             }
 
-            if (foundRecords.Length == 0)
+            if (foundRecords.Count == 0)
             {
                 Console.WriteLine(NoMatchesMessage);
                 return;
             }
 
-            for (int i = 0; i < foundRecords.Length; i++)
+            for (int i = 0; i < foundRecords.Count; i++)
             {
                 Console.WriteLine(
                     $"#{foundRecords[i].Id}, {foundRecords[i].FirstName}, {foundRecords[i].LastName}, " +
@@ -443,9 +444,9 @@ namespace FileCabinetApp
         {
             if (int.TryParse(parameter, out int id))
             {
-                FileCabinetRecord[] listOfRecords = fileCabinetService.GetRecords();
+                ReadOnlyCollection<FileCabinetRecord> listOfRecords = fileCabinetService.GetRecords();
 
-                for (int i = 0; i < listOfRecords.Length; i++)
+                for (int i = 0; i < listOfRecords.Count; i++)
                 {
                     if (id == listOfRecords[i].Id)
                     {
