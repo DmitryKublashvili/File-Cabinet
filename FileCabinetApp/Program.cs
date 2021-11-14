@@ -64,7 +64,6 @@ namespace FileCabinetApp
             if (!(args is null) && args.Length > 0)
             {
                 string parameterOfValidation = string.Join(" ", args).ToUpperInvariant();
-                Console.WriteLine(parameterOfValidation);
 
                 if (parameterOfValidation.Contains("CUSTOM"))
                 {
@@ -154,17 +153,23 @@ namespace FileCabinetApp
 
         private static void Create(string parameters)
         {
-            string firstName = GetCheckedName("First name");
+            Console.Write($"First name: ");
+            string firstName = ReadInput<string>(NamesConverter, NamesValidator);
 
-            string lastName = GetCheckedName("Last name");
+            Console.Write($"Second name: ");
+            string lastName = ReadInput<string>(NamesConverter, NamesValidator);
 
-            DateTime dateOfBirth = GetCheckedDateOfBirth();
+            Console.Write("Date of birth: ");
+            DateTime dateOfBirth = ReadInput<DateTime>(DateOfBirthConverter, DateOfBirthValidator);
 
-            char sex = GetCheckedSex();
+            Console.Write("Sex (M or F): ");
+            char sex = ReadInput<char>(SexConverter, SexValidator);
 
-            decimal salary = GetCheckedSalary();
+            Console.Write("Salary: ");
+            decimal salary = ReadInput<decimal>(SalaryConverter, SalaryValidator);
 
-            short yearsOfService = GetCheckedYearsOfService();
+            Console.Write("Years Of Service: ");
+            short yearsOfService = ReadInput<short>(YearsOfServiceConverter, YearsOfServiceValidator);
 
             var id = fileCabinetService.CreateRecord(new ParametresOfRecord(firstName, lastName, dateOfBirth, sex, salary, yearsOfService));
 
@@ -181,17 +186,23 @@ namespace FileCabinetApp
                 return;
             }
 
-            string firstName = GetCheckedName("First name");
+            Console.Write($"First name: ");
+            string firstName = ReadInput<string>(NamesConverter, NamesValidator);
 
-            string lastName = GetCheckedName("Last name");
+            Console.Write($"Second name: ");
+            string lastName = ReadInput<string>(NamesConverter, NamesValidator);
 
-            DateTime dateOfBirth = GetCheckedDateOfBirth();
+            Console.Write("Date of birth: ");
+            DateTime dateOfBirth = ReadInput<DateTime>(DateOfBirthConverter, DateOfBirthValidator);
 
-            char sex = GetCheckedSex();
+            Console.Write("Sex (M or F): ");
+            char sex = ReadInput<char>(SexConverter, SexValidator);
 
-            decimal salary = GetCheckedSalary();
+            Console.Write("Salary: ");
+            decimal salary = ReadInput<decimal>(SalaryConverter, SalaryValidator);
 
-            short yearsOfService = GetCheckedYearsOfService();
+            Console.Write("Years Of Service: ");
+            short yearsOfService = ReadInput<short>(YearsOfServiceConverter, YearsOfServiceValidator);
 
             var id = fileCabinetService.GetRecords()[indexOfRecord].Id;
 
@@ -279,167 +290,6 @@ namespace FileCabinetApp
             }
         }
 
-        private static string GetCheckedName(string typeOfName)
-        {
-            string checkedName;
-            bool isValid = false;
-            var minLettersCountInName = validator.MinLettersCountInName;
-            var maxLettersCountInName = validator.MaxLettersCountInName;
-
-            do
-            {
-                Console.Write($"{typeOfName}: ");
-                checkedName = Console.ReadLine();
-
-                if (string.IsNullOrWhiteSpace(checkedName) || checkedName.Length == 0)
-                {
-                    Console.WriteLine(NotValidEmptyNameMessage);
-                    continue;
-                }
-
-                if (checkedName.Length < minLettersCountInName || checkedName.Length > maxLettersCountInName)
-                {
-                    Console.WriteLine($"The name must be {minLettersCountInName}-{maxLettersCountInName} characters long");
-                    continue;
-                }
-
-                bool isOnlyLettersInside = true;
-
-                for (int i = 0; i < checkedName.Length; i++)
-                {
-                    if (!char.IsLetter(checkedName[i]))
-                    {
-                        Console.WriteLine(NotValidSimbolsInNameMessage);
-                        isOnlyLettersInside = false;
-                        break;
-                    }
-                }
-
-                isValid = isOnlyLettersInside;
-            }
-            while (!isValid);
-
-            return checkedName;
-        }
-
-        private static decimal GetCheckedSalary()
-        {
-            decimal checkedSalary;
-            bool isValid;
-            var minSalary = validator.MinSalary;
-            var maxSalary = validator.MaxSalary;
-
-            do
-            {
-                Console.Write("Salary: ");
-
-                while (!decimal.TryParse(Console.ReadLine(), NumberStyles.AllowDecimalPoint, cultureInfo, out checkedSalary))
-                {
-                    Console.WriteLine(NotParsedSalaryMessage);
-                }
-
-                isValid = checkedSalary >= minSalary && checkedSalary <= maxSalary;
-
-                if (!isValid)
-                {
-                    Console.WriteLine(
-                        $"The salary must be greater than or equal to {minSalary} " +
-                        $"and less than or equal to {maxSalary}");
-                }
-            }
-            while (!isValid);
-
-            return checkedSalary;
-        }
-
-        private static char GetCheckedSex()
-        {
-            bool isValid = false;
-            string checkedSex;
-
-            do
-            {
-                Console.Write("Sex (M or F): ");
-                checkedSex = Console.ReadLine().ToUpperInvariant();
-
-                if (string.IsNullOrWhiteSpace(checkedSex) || checkedSex.Length != 1)
-                {
-                    Console.WriteLine(IncorrectSexMessage);
-                    continue;
-                }
-
-                isValid = checkedSex[0] == 'M' || checkedSex[0] == 'F';
-
-                if (!isValid)
-                {
-                    Console.WriteLine(IncorrectSexMessage);
-                }
-            }
-            while (!isValid);
-
-            return checkedSex[0];
-        }
-
-        private static DateTime GetCheckedDateOfBirth()
-        {
-            DateTime checkedDateOfBirth;
-            bool isValid;
-            var minDateOfBirth = validator.MinDateOfBirth;
-
-            do
-            {
-                Console.Write("Date of birth: ");
-
-                while (!DateTime.TryParse(Console.ReadLine(), cultureInfo, DateTimeStyles.AdjustToUniversal, out checkedDateOfBirth))
-                {
-                    Console.WriteLine(IncorrectDateOfBirthFormatMessage);
-                    Console.Write("Date of birth: ");
-                }
-
-                isValid = checkedDateOfBirth >= minDateOfBirth && checkedDateOfBirth <= DateTime.Now;
-
-                if (!isValid)
-                {
-                    Console.WriteLine(
-                          $"Date of birth must be no earlier than {minDateOfBirth.ToShortDateString()} " +
-                          "and no later than the current date");
-                }
-            }
-            while (!isValid);
-
-            return checkedDateOfBirth;
-        }
-
-        private static short GetCheckedYearsOfService()
-        {
-            short checkedYearsOfService;
-            bool isValid;
-            var minYearsOfService = validator.MinYearsOfService;
-            var maxYearsOfService = validator.MaxYearsOfService;
-
-            do
-            {
-                Console.Write("Years Of Service: ");
-
-                while (!short.TryParse(Console.ReadLine(), out checkedYearsOfService))
-                {
-                    Console.WriteLine("Incorrect value, only integers in 0-50 interval are available. Please enter again");
-                }
-
-                isValid = checkedYearsOfService >= minYearsOfService && checkedYearsOfService <= maxYearsOfService;
-
-                if (!isValid)
-                {
-                    Console.WriteLine(
-                        $"The years of service parameter must be greater than or equal to {minYearsOfService} " +
-                        $"and less than or equal to {maxYearsOfService}");
-                }
-            }
-            while (!isValid);
-
-            return checkedYearsOfService;
-        }
-
         private static int GetIndexOfRecord(string parameter)
         {
             if (int.TryParse(parameter, out int id))
@@ -458,6 +308,132 @@ namespace FileCabinetApp
             }
 
             return -1;
+        }
+
+        private static T ReadInput<T>(Func<string, Tuple<bool, string, T>> converter, Func<T, Tuple<bool, string>> validator)
+        {
+            do
+            {
+                T value;
+
+                var input = Console.ReadLine();
+                var conversionResult = converter(input);
+
+                if (!conversionResult.Item1)
+                {
+                    Console.WriteLine($"Conversion failed: {conversionResult.Item2}. Please, correct your input.");
+                    continue;
+                }
+
+                value = conversionResult.Item3;
+
+                var validationResult = validator(value);
+                if (!validationResult.Item1)
+                {
+                    Console.WriteLine($"Validation failed: {validationResult.Item2}. Please, correct your input.");
+                    continue;
+                }
+
+                return value;
+            }
+            while (true);
+        }
+
+        private static Tuple<bool, string> YearsOfServiceValidator(short arg)
+        {
+            bool isValid = arg >= validator.MinYearsOfService && arg <= validator.MaxYearsOfService;
+
+            string message = $"The years of service parameter must be greater than or equal to {validator.MinYearsOfService} " +
+                    $"and less than or equal to {validator.MaxYearsOfService}";
+
+            return new Tuple<bool, string>(isValid, message);
+        }
+
+        private static Tuple<bool, string, short> YearsOfServiceConverter(string arg)
+        {
+            bool isConverted = short.TryParse(arg, out short checkedYearsOfService);
+
+            string message = "Incorrect value, only integers in 0-50 interval are available. Please enter again";
+
+            return new Tuple<bool, string, short>(isConverted, message, checkedYearsOfService);
+        }
+
+        private static Tuple<bool, string, char> SexConverter(string arg)
+        {
+            bool isConverted = !string.IsNullOrWhiteSpace(arg) && arg.Length == 1;
+
+            return new Tuple<bool, string, char>(isConverted, IncorrectSexMessage, isConverted ? arg[0] : '_');
+        }
+
+        private static Tuple<bool, string> SexValidator(char arg)
+        {
+            char sexToUpper = char.ToUpperInvariant(arg);
+
+            bool isValid = sexToUpper == 'M' || sexToUpper == 'F';
+
+            return new Tuple<bool, string>(isValid, IncorrectSexMessage);
+        }
+
+        private static Tuple<bool, string, string> NamesConverter(string arg)
+        {
+            return new Tuple<bool, string, string>(true, "name", arg);
+        }
+
+        private static Tuple<bool, string> NamesValidator(string arg)
+        {
+            if (string.IsNullOrWhiteSpace(arg) || arg.Length == 0)
+            {
+                return new Tuple<bool, string>(false, NotValidEmptyNameMessage);
+            }
+
+            if (arg.Length < validator.MinLettersCountInName || arg.Length > validator.MaxLettersCountInName)
+            {
+                return new Tuple<bool, string>(false, $"The name must be {validator.MinLettersCountInName} - {validator.MaxLettersCountInName} characters long");
+            }
+
+            for (int i = 0; i < arg.Length; i++)
+            {
+                if (!char.IsLetter(arg[i]))
+                {
+                    return new Tuple<bool, string>(false, NotValidSimbolsInNameMessage);
+                }
+            }
+
+            return new Tuple<bool, string>(true, "name");
+        }
+
+        private static Tuple<bool, string> SalaryValidator(decimal arg)
+        {
+            bool isValid = arg >= validator.MinSalary && arg <= validator.MaxSalary;
+
+            string message = $"The salary must be greater than or equal to {validator.MinSalary} " +
+                             $"and less than or equal to {validator.MaxSalary}";
+
+            return new Tuple<bool, string>(isValid, message);
+        }
+
+        private static Tuple<bool, string, decimal> SalaryConverter(string arg)
+        {
+            bool isConverted = decimal.TryParse(arg, NumberStyles.AllowDecimalPoint, cultureInfo, out decimal checkedSalary);
+
+            return new Tuple<bool, string, decimal>(isConverted, NotParsedSalaryMessage, checkedSalary);
+        }
+
+        private static Tuple<bool, string, DateTime> DateOfBirthConverter(string arg)
+        {
+            bool isConverted = DateTime.TryParse(arg, cultureInfo, DateTimeStyles.AdjustToUniversal, out DateTime checkedDateOfBirth);
+
+            return new Tuple<bool, string, DateTime>(isConverted, IncorrectDateOfBirthFormatMessage, checkedDateOfBirth);
+        }
+
+        private static Tuple<bool, string> DateOfBirthValidator(DateTime arg)
+        {
+            bool isValid = arg >= validator.MinDateOfBirth && arg <= DateTime.Now;
+
+            string message = $"Date of birth must be no earlier than {validator.MinDateOfBirth.ToShortDateString()} " +
+                      "and no later than the current date";
+
+            return new Tuple<bool, string>(isValid, message);
         }
     }
 }
