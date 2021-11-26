@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Globalization;
+using System.IO;
 
 namespace FileCabinetApp
 {
@@ -42,6 +43,7 @@ namespace FileCabinetApp
             new Tuple<string, Action<string>>("list", List),
             new Tuple<string, Action<string>>("edit", Edit),
             new Tuple<string, Action<string>>("find", Find),
+            new Tuple<string, Action<string>>("export", Export),
         };
 
         private static string[][] helpMessages = new string[][]
@@ -53,6 +55,7 @@ namespace FileCabinetApp
             new string[] { "edit", "edits selected (by id) record", "The 'edit' command allows to edit selected by Id record." },
             new string[] { "list", "shows records information", "The 'list' command shows records information." },
             new string[] { "find", "finds records by the specified parameter", "The 'find' command shows a list of records in which the specified parameter was found." },
+            new string[] { "export", "exports current state in file", "The 'export' exports current state in file according to the specified parameters." },
         };
 
         /// <summary>
@@ -288,6 +291,50 @@ namespace FileCabinetApp
                     $"Sex - {foundRecords[i].Sex}, Salary {foundRecords[i].Salary.ToString(cultureInfo)}, " +
                     $"{foundRecords[i].YearsOfService} years Of Service, ");
             }
+        }
+
+        private static void Export(string value)
+        {
+            var parameters = value.Split(" ");
+
+            if (parameters.Length != 2)
+            {
+                Console.WriteLine("Comand has incorrect format.");
+                return;
+            }
+
+            if (parameters[0].ToUpperInvariant() != "CSV" && parameters[0].ToUpperInvariant() != "XML")
+            {
+                Console.WriteLine("Comand has incorrect format.");
+                return;
+            }
+
+            if (File.Exists(parameters[1]))
+            {
+                Console.WriteLine("File is exist - rewrite {0}[Y / n]", parameters[1]);
+                string answere = Console.ReadLine().ToUpperInvariant();
+
+                while (answere != "Y")
+                {
+                    if (answere == "N")
+                    {
+                        return;
+                    }
+
+                    Console.WriteLine("Incorrect answere. Write 'Y' or 'N' and press Enter, please.");
+
+                    answere = Console.ReadLine().ToUpperInvariant();
+                }
+            }
+
+            using (StreamWriter sw = new StreamWriter(parameters[1]))
+            {
+                IMemento<ReadOnlyCollection<FileCabinetRecord>> snapShot = fileCabinetService.MakeSnapshot();
+
+                snapShot.SaveToCSV(sw);
+            }
+
+            Console.WriteLine("All records are exported to file {0}.", parameters[1]);
         }
 
         private static int GetIndexOfRecord(string parameter)
