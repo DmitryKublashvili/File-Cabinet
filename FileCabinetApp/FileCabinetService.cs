@@ -25,6 +25,35 @@ namespace FileCabinetApp
             this.recordValidator = recordValidator;
         }
 
+        ///// <summary>
+        ///// Export current state in CSV format and save it in file.
+        ///// </summary>
+        ///// <param name="filePath">Path to file.</param>
+        //public void ExportToCSVFile(string filePath)
+        //{
+        //    if (string.IsNullOrWhiteSpace(filePath))
+        //    {
+        //        throw new ArgumentNullException(nameof(filePath));
+        //    }
+
+        //    FileCabinetRecordCsvWriter.Write(filePath, this.MakeSnapshot());
+        //}
+
+        /// <summary>
+        /// Gets FileCabinetService state on current moment.
+        /// </summary>
+        /// <returns>State on the moment of fixation.</returns>
+        public IMemento<ReadOnlyCollection<FileCabinetRecord>> MakeSnapshot()
+        {
+            FileCabinetRecord[] separateListOfRecords = new FileCabinetRecord[this.list.Count];
+
+            this.list.CopyTo(separateListOfRecords);
+
+            var tempList = new List<FileCabinetRecord>(separateListOfRecords);
+
+            return new FileCabinetServiceSnapshot(new ReadOnlyCollection<FileCabinetRecord>(tempList));
+        }
+
         /// <summary>
         /// Creates a record.
         /// </summary>
@@ -240,13 +269,13 @@ namespace FileCabinetApp
         /// <summary>
         /// Gets an ReadOnlyCollection of records that have that date of birth.
         /// </summary>
-        /// <param name="date">Search birth date.</param>
+        /// <param name="searchingDate">Search birth date.</param>
         /// <returns>ReadOnlyCollection of records that have that birth date.</returns>
-        public ReadOnlyCollection<FileCabinetRecord> FindByDateOfBirth(DateTime date)
+        public ReadOnlyCollection<FileCabinetRecord> FindByDateOfBirth(DateTime searchingDate)
         {
-            if (this.dateOfBirthDictionary.ContainsKey(date))
+            if (this.dateOfBirthDictionary.ContainsKey(searchingDate))
             {
-                return new ReadOnlyCollection<FileCabinetRecord>(this.dateOfBirthDictionary[date]);
+                return new ReadOnlyCollection<FileCabinetRecord>(this.dateOfBirthDictionary[searchingDate]);
             }
             else
             {

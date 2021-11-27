@@ -157,6 +157,14 @@
             <value> DateTime value of birth date.
             </value>
         </member>
+        <member name="P:FileCabinetApp.FileCabinetRecord.DateOfBirthString">
+            <summary>
+            Gets or sets value for (de)serialisation property DateOfBirth in short date format
+            </summary>
+            <value>
+            Value for (de)serialisation property DateOfBirth in short date format.
+            </value>
+        </member>
         <member name="P:FileCabinetApp.FileCabinetRecord.Sex">
             <summary>
             Gets or sets sex of person.
@@ -178,6 +186,56 @@
             <value> Short (integer) count years of service.
             </value>
         </member>
+        <member name="T:FileCabinetApp.FileCabinetRecordCsvWriter">
+            <summary>
+            Records state in CSV file.
+            </summary>
+        </member>
+        <member name="M:FileCabinetApp.FileCabinetRecordCsvWriter.#ctor(System.IO.TextWriter)">
+            <summary>
+            Initializes a new instance of the <see cref="T:FileCabinetApp.FileCabinetRecordCsvWriter"/> class.
+            </summary>
+            <param name="textWriter">Some text writer.</param>
+        </member>
+        <member name="P:FileCabinetApp.FileCabinetRecordCsvWriter.Writer">
+            <summary>
+            Gets or sets and sets text writer.
+            </summary>
+            <value>
+            Textwriter for writing text in file.
+            </value>
+        </member>
+        <member name="M:FileCabinetApp.FileCabinetRecordCsvWriter.Write(FileCabinetApp.IMemento{System.Collections.ObjectModel.ReadOnlyCollection{FileCabinetApp.FileCabinetRecord}})">
+            <summary>
+            Writes state to file in CSV format.
+            </summary>
+            <param name="state">State for recording.</param>
+        </member>
+        <member name="T:FileCabinetApp.FileCabinetRecordXmlWriter">
+            <summary>
+            Records state in XML file.
+            </summary>
+        </member>
+        <member name="M:FileCabinetApp.FileCabinetRecordXmlWriter.#ctor(System.IO.TextWriter)">
+            <summary>
+            Initializes a new instance of the <see cref="T:FileCabinetApp.FileCabinetRecordXmlWriter"/> class.
+            </summary>
+            <param name="textWriter">Some text writer.</param>
+        </member>
+        <member name="P:FileCabinetApp.FileCabinetRecordXmlWriter.Writer">
+            <summary>
+            Gets or sets and sets text writer.
+            </summary>
+            <value>
+            Textwriter for writing text in file.
+            </value>
+        </member>
+        <member name="M:FileCabinetApp.FileCabinetRecordXmlWriter.Write(FileCabinetApp.IMemento{System.Collections.ObjectModel.ReadOnlyCollection{FileCabinetApp.FileCabinetRecord}})">
+            <summary>
+            Writes state to file in XML format.
+            </summary>
+            <param name="state">State for recording.</param>
+        </member>
         <member name="T:FileCabinetApp.FileCabinetService">
             <summary>
             Implements functions of file cabinet.
@@ -188,6 +246,12 @@
             Initializes a new instance of the <see cref="T:FileCabinetApp.FileCabinetService"/> class.
             </summary>
             <param name="recordValidator">Instance of IRecordValidator.</param>
+        </member>
+        <member name="M:FileCabinetApp.FileCabinetService.MakeSnapshot">
+            <summary>
+            Gets FileCabinetService state on current moment.
+            </summary>
+            <returns>State on the moment of fixation.</returns>
         </member>
         <member name="M:FileCabinetApp.FileCabinetService.CreateRecord(FileCabinetApp.ParametresOfRecord)">
             <summary>
@@ -232,8 +296,49 @@
             <summary>
             Gets an ReadOnlyCollection of records that have that date of birth.
             </summary>
-            <param name="date">Search birth date.</param>
+            <param name="searchingDate">Search birth date.</param>
             <returns>ReadOnlyCollection of records that have that birth date.</returns>
+        </member>
+        <member name="T:FileCabinetApp.FileCabinetServiceSnapshot">
+            <summary>
+            Creates FileCabinetService state on current moment.
+            </summary>
+        </member>
+        <member name="M:FileCabinetApp.FileCabinetServiceSnapshot.#ctor(System.Collections.ObjectModel.ReadOnlyCollection{FileCabinetApp.FileCabinetRecord})">
+            <summary>
+            Initializes a new instance of the <see cref="T:FileCabinetApp.FileCabinetServiceSnapshot"/> class.
+            </summary>
+            <param name="state">Takes Read Only Collection of FileCabinetRecords.</param>
+        </member>
+        <member name="M:FileCabinetApp.FileCabinetServiceSnapshot.GetState">
+            <summary>
+            Gets state on the moment of fixation.
+            </summary>
+            <returns>State on the moment of fixation.</returns>
+        </member>
+        <member name="M:FileCabinetApp.FileCabinetServiceSnapshot.GetDate">
+            <summary>
+            Gets date and time of state fixation.
+            </summary>
+            <returns>Date and time of state fixation.</returns>
+        </member>
+        <member name="M:FileCabinetApp.FileCabinetServiceSnapshot.GetName">
+            <summary>
+            Gets name of state fixation.
+            </summary>
+            <returns>Name of state fixation.</returns>
+        </member>
+        <member name="M:FileCabinetApp.FileCabinetServiceSnapshot.SaveToCSV(System.IO.TextWriter)">
+            <summary>
+            Saves state to CSV file.
+            </summary>
+            <param name="textWriter">Text writer.</param>
+        </member>
+        <member name="M:FileCabinetApp.FileCabinetServiceSnapshot.SaveToXML(System.IO.TextWriter)">
+            <summary>
+            Saves state to XML file.
+            </summary>
+            <param name="textWriter">Text writer.</param>
         </member>
         <member name="T:FileCabinetApp.IFileCabinetService">
             <summary>
@@ -252,6 +357,12 @@
             Edits selected (by ID) record.
             </summary>
             <param name="parametresOfRecord">Parametres of record.</param>
+        </member>
+        <member name="M:FileCabinetApp.IFileCabinetService.MakeSnapshot">
+            <summary>
+            Gets FileCabinetService state on current moment.
+            </summary>
+            <returns>State on the moment of fixation.</returns>
         </member>
         <member name="M:FileCabinetApp.IFileCabinetService.FindByDateOfBirth(System.DateTime)">
             <summary>
@@ -285,6 +396,42 @@
             Gets records count.
             </summary>
             <returns>Records count.</returns>
+        </member>
+        <member name="T:FileCabinetApp.IMemento`1">
+            <summary>
+            Defines the model of FileCabinetService state.
+            </summary>
+            <typeparam name="T">Type, which stores current state.</typeparam>
+        </member>
+        <member name="M:FileCabinetApp.IMemento`1.GetDate">
+            <summary>
+            Gets date and time of state fixation.
+            </summary>
+            <returns>Date and time of state fixation.</returns>
+        </member>
+        <member name="M:FileCabinetApp.IMemento`1.GetName">
+            <summary>
+            Gets name of state fixation.
+            </summary>
+            <returns>Name of state fixation.</returns>
+        </member>
+        <member name="M:FileCabinetApp.IMemento`1.GetState">
+            <summary>
+            Gets state on the moment of fixation.
+            </summary>
+            <returns>State on the moment of fixation.</returns>
+        </member>
+        <member name="M:FileCabinetApp.IMemento`1.SaveToCSV(System.IO.TextWriter)">
+            <summary>
+            Saves state to CSV file.
+            </summary>
+            <param name="textWriter">Text writer.</param>
+        </member>
+        <member name="M:FileCabinetApp.IMemento`1.SaveToXML(System.IO.TextWriter)">
+            <summary>
+            Saves state to XML file.
+            </summary>
+            <param name="textWriter">Text writer.</param>
         </member>
         <member name="T:FileCabinetApp.IRecordValidator">
             <summary>
