@@ -157,6 +157,14 @@
             <value> DateTime value of birth date.
             </value>
         </member>
+        <member name="P:FileCabinetApp.FileCabinetRecord.DateOfBirthString">
+            <summary>
+            Gets or sets value for (de)serialisation property DateOfBirth in short date format
+            </summary>
+            <value>
+            Value for (de)serialisation property DateOfBirth in short date format.
+            </value>
+        </member>
         <member name="P:FileCabinetApp.FileCabinetRecord.Sex">
             <summary>
             Gets or sets sex of person.
@@ -200,6 +208,31 @@
         <member name="M:FileCabinetApp.FileCabinetRecordCsvWriter.Write(FileCabinetApp.IMemento{System.Collections.ObjectModel.ReadOnlyCollection{FileCabinetApp.FileCabinetRecord}})">
             <summary>
             Writes state to file in CSV format.
+            </summary>
+            <param name="state">State for recording.</param>
+        </member>
+        <member name="T:FileCabinetApp.FileCabinetRecordXmlWriter">
+            <summary>
+            Records state in XML file.
+            </summary>
+        </member>
+        <member name="M:FileCabinetApp.FileCabinetRecordXmlWriter.#ctor(System.IO.TextWriter)">
+            <summary>
+            Initializes a new instance of the <see cref="T:FileCabinetApp.FileCabinetRecordXmlWriter"/> class.
+            </summary>
+            <param name="textWriter">Some text writer.</param>
+        </member>
+        <member name="P:FileCabinetApp.FileCabinetRecordXmlWriter.Writer">
+            <summary>
+            Gets or sets and sets text writer.
+            </summary>
+            <value>
+            Textwriter for writing text in file.
+            </value>
+        </member>
+        <member name="M:FileCabinetApp.FileCabinetRecordXmlWriter.Write(FileCabinetApp.IMemento{System.Collections.ObjectModel.ReadOnlyCollection{FileCabinetApp.FileCabinetRecord}})">
+            <summary>
+            Writes state to file in XML format.
             </summary>
             <param name="state">State for recording.</param>
         </member>
@@ -297,7 +330,13 @@
         </member>
         <member name="M:FileCabinetApp.FileCabinetServiceSnapshot.SaveToCSV(System.IO.TextWriter)">
             <summary>
-            Saves state to file.
+            Saves state to CSV file.
+            </summary>
+            <param name="textWriter">Text writer.</param>
+        </member>
+        <member name="M:FileCabinetApp.FileCabinetServiceSnapshot.SaveToXML(System.IO.TextWriter)">
+            <summary>
+            Saves state to XML file.
             </summary>
             <param name="textWriter">Text writer.</param>
         </member>
@@ -384,7 +423,13 @@
         </member>
         <member name="M:FileCabinetApp.IMemento`1.SaveToCSV(System.IO.TextWriter)">
             <summary>
-            Saves state to file.
+            Saves state to CSV file.
+            </summary>
+            <param name="textWriter">Text writer.</param>
+        </member>
+        <member name="M:FileCabinetApp.IMemento`1.SaveToXML(System.IO.TextWriter)">
+            <summary>
+            Saves state to XML file.
             </summary>
             <param name="textWriter">Text writer.</param>
         </member>

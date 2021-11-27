@@ -59,7 +59,7 @@ namespace FileCabinetApp
         }
 
         /// <summary>
-        /// Saves state to file.
+        /// Saves state to CSV file.
         /// </summary>
         /// <param name="textWriter">Text writer.</param>
         public void SaveToCSV(TextWriter textWriter)
@@ -67,6 +67,17 @@ namespace FileCabinetApp
             FileCabinetRecordCsvWriter csvWriter = new FileCabinetRecordCsvWriter(textWriter);
 
             csvWriter.Write(this);
+        }
+
+        /// <summary>
+        /// Saves state to XML file.
+        /// </summary>
+        /// <param name="textWriter">Text writer.</param>
+        public void SaveToXML(TextWriter textWriter)
+        {
+            FileCabinetRecordXmlWriter xmlWriter = new FileCabinetRecordXmlWriter(textWriter);
+
+            xmlWriter.Write(this);
         }
     }
 }

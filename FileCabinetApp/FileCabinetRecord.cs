@@ -1,4 +1,6 @@
 using System;
+using System.Globalization;
+using System.Xml.Serialization;
 
 namespace FileCabinetApp
 {
@@ -33,7 +35,21 @@ namespace FileCabinetApp
         /// </summary>
         /// <value> DateTime value of birth date.
         /// </value>
+        [XmlIgnore]
         public DateTime DateOfBirth { get; set; }
+
+        /// <summary>
+        /// Gets or sets value for (de)serialisation property DateOfBirth in short date format
+        /// </summary>
+        /// <value>
+        /// Value for (de)serialisation property DateOfBirth in short date format.
+        /// </value>
+        [XmlElement("DateOfBirth")]
+        public string DateOfBirthString
+        {
+            get { return this.DateOfBirth.ToString("dd/MM/yyyy", CultureInfo.InvariantCulture); }
+            set => this.DateOfBirth = DateTime.Parse(value, CultureInfo.InvariantCulture);
+        }
 
         /// <summary>
         /// Gets or sets sex of person.

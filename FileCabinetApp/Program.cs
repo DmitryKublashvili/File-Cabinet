@@ -309,6 +309,12 @@ namespace FileCabinetApp
                 return;
             }
 
+            if (parameters[0].ToUpperInvariant() != parameters[1].Split(".")[^1].ToUpperInvariant())
+            {
+                Console.WriteLine("The export command and file extension must have the same format");
+                return;
+            }
+
             if (File.Exists(parameters[1]))
             {
                 Console.WriteLine("File is exist - rewrite {0}[Y / n]", parameters[1]);
@@ -331,7 +337,14 @@ namespace FileCabinetApp
             {
                 IMemento<ReadOnlyCollection<FileCabinetRecord>> snapShot = fileCabinetService.MakeSnapshot();
 
-                snapShot.SaveToCSV(sw);
+                if (parameters[0].ToUpperInvariant() == "CSV")
+                {
+                    snapShot.SaveToCSV(sw);
+                }
+                else
+                {
+                    snapShot.SaveToXML(sw);
+                }
             }
 
             Console.WriteLine("All records are exported to file {0}.", parameters[1]);

@@ -29,9 +29,15 @@ namespace FileCabinetApp
         T GetState();
 
         /// <summary>
-        /// Saves state to file.
+        /// Saves state to CSV file.
         /// </summary>
         /// <param name="textWriter">Text writer.</param>
         public void SaveToCSV(TextWriter textWriter);
+
+        /// <summary>
+        /// Saves state to XML file.
+        /// </summary>
+        /// <param name="textWriter">Text writer.</param>
+        public void SaveToXML(TextWriter textWriter);
     }
 }
