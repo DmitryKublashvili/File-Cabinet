@@ -8,6 +8,17 @@ namespace FileCabinetApp
     /// </summary>
     public class FileCabinetFilesystemService : IFileCabinetService
     {
+        private readonly IRecordValidator recordValidator;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="FileCabinetFilesystemService"/> class.
+        /// </summary>
+        /// <param name="recordValidator">Instance of IRecordValidator.</param>
+        public FileCabinetFilesystemService(IRecordValidator recordValidator)
+        {
+            this.recordValidator = recordValidator;
+        }
+
         /// <summary>
         /// Creates a record.
         /// </summary>

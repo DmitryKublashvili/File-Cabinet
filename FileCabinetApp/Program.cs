@@ -66,14 +66,7 @@ namespace FileCabinetApp
         {
             if (!(args is null) && args.Length > 0)
             {
-                string parameterOfValidation = string.Join(" ", args).ToUpperInvariant();
-
-                if (parameterOfValidation.Contains("CUSTOM"))
-                {
-                    isDefaultValidatoinRules = false;
-                    validator = new CustomValidator();
-                    fileCabinetService = new FileCabinetMemoryService(validator);
-                }
+                CommandLineArgumentsApplying(args);
             }
 
             Console.WriteLine($"File Cabinet Application, developed by {Program.DeveloperName}");
@@ -107,6 +100,35 @@ namespace FileCabinetApp
                 }
             }
             while (isRunning);
+        }
+
+        private static void CommandLineArgumentsApplying(string[] args)
+        {
+            string parameterOfValidation = string.Join(" ", args).ToUpperInvariant();
+
+            if (parameterOfValidation.Contains("--VALIDATION-RULES=CUSTOM") || parameterOfValidation.Contains("-V CUSTOM"))
+            {
+                isDefaultValidatoinRules = false;
+                validator = new CustomValidator();
+
+                if (parameterOfValidation.Contains("--STORAGE=FILE") || parameterOfValidation.Contains("-S FILE"))
+                {
+                    Console.WriteLine("STORAGE=FILE");
+                    fileCabinetService = new FileCabinetFilesystemService(validator);
+                }
+                else
+                {
+                    fileCabinetService = new FileCabinetMemoryService(validator);
+                }
+            }
+            else
+            {
+                if (parameterOfValidation.Contains("--STORAGE=FILE") || parameterOfValidation.Contains("-S FILE"))
+                {
+                    Console.WriteLine("STORAGE=FILE");
+                    fileCabinetService = new FileCabinetFilesystemService(validator);
+                }
+            }
         }
 
         private static void PrintMissedCommandInfo(string command)
