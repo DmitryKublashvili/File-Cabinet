@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.ObjectModel;
+using System.IO;
+using System.Text;
 
 namespace FileCabinetApp
 {
@@ -9,6 +11,8 @@ namespace FileCabinetApp
     public class FileCabinetFilesystemService : IFileCabinetService
     {
         private readonly IRecordValidator recordValidator;
+
+        private readonly string storageFilePath = "cabinet-records.db";
 
         /// <summary>
         /// Initializes a new instance of the <see cref="FileCabinetFilesystemService"/> class.
@@ -26,7 +30,71 @@ namespace FileCabinetApp
         /// <returns>New created record.</returns>
         public int CreateRecord(ParametresOfRecord parametresOfRecord)
         {
-            throw new NotImplementedException();
+            if (parametresOfRecord is null)
+            {
+                throw new ArgumentNullException(nameof(parametresOfRecord));
+            }
+
+            long startPosition;
+
+            using (FileStream fileStream = new FileStream(this.storageFilePath, FileMode.OpenOrCreate))
+            {
+                startPosition = fileStream.Length;
+
+                // short reserved 2
+                short reserved = default;
+                fileStream.Seek(startPosition, SeekOrigin.Begin);
+                fileStream.Write(BitConverter.GetBytes(reserved));
+
+                // int Id 4
+                fileStream.Seek(startPosition + 2, SeekOrigin.Begin);
+                fileStream.Write(BitConverter.GetBytes((startPosition / 278) + 1));
+
+                // char[] FirstName 120
+                fileStream.Seek(startPosition + 6, SeekOrigin.Begin);
+                var bytesFirstName = Encoding.ASCII.GetBytes(parametresOfRecord.FirstName.Length <= 60 ? parametresOfRecord.FirstName : parametresOfRecord.FirstName[..60]);
+                fileStream.Write(bytesFirstName);
+
+                // char[] LastName 120
+                fileStream.Seek(startPosition + 126, SeekOrigin.Begin);
+                var bytesLastName = Encoding.ASCII.GetBytes(parametresOfRecord.LastName.Length <= 60 ? parametresOfRecord.LastName : parametresOfRecord.LastName[..60]);
+                fileStream.Write(bytesLastName);
+
+                // int Year 4
+                fileStream.Seek(startPosition + 246, SeekOrigin.Begin);
+                fileStream.Write(BitConverter.GetBytes(parametresOfRecord.DateOfBirth.Year));
+
+                // int Month 4
+                fileStream.Seek(startPosition + 250, SeekOrigin.Begin);
+                fileStream.Write(BitConverter.GetBytes(parametresOfRecord.DateOfBirth.Month));
+
+                // int Day 4
+                fileStream.Seek(startPosition + 254, SeekOrigin.Begin);
+                fileStream.Write(BitConverter.GetBytes(parametresOfRecord.DateOfBirth.Day));
+
+                // char Sex 2
+                fileStream.Seek(startPosition + 258, SeekOrigin.Begin);
+                fileStream.Write(BitConverter.GetBytes(parametresOfRecord.Sex));
+
+                // decimal Salary 16
+                int[] intArray = new int[4];
+                decimal.GetBits(parametresOfRecord.Salary).CopyTo(intArray, 0);
+
+                fileStream.Seek(startPosition + 260, SeekOrigin.Begin);
+                fileStream.Write(BitConverter.GetBytes(intArray[0]));
+                fileStream.Seek(startPosition + 264, SeekOrigin.Begin);
+                fileStream.Write(BitConverter.GetBytes(intArray[1]));
+                fileStream.Seek(startPosition + 268, SeekOrigin.Begin);
+                fileStream.Write(BitConverter.GetBytes(intArray[2]));
+                fileStream.Seek(startPosition + 272, SeekOrigin.Begin);
+                fileStream.Write(BitConverter.GetBytes(intArray[3]));
+
+                // short YearsOfService 2
+                fileStream.Seek(startPosition + 276, SeekOrigin.Begin);
+                fileStream.Write(BitConverter.GetBytes(parametresOfRecord.YearsOfService));
+
+                return (int)(startPosition / 278) + 1;
+            }
         }
 
         /// <summary>
@@ -82,15 +150,6 @@ namespace FileCabinetApp
         /// </summary>
         /// <returns>Records count.</returns>
         public int GetStat()
-        {
-            throw new NotImplementedException();
-        }
-
-        /// <summary>
-        /// Gets FileCabinetService state on current moment.
-        /// </summary>
-        /// <returns>State on the moment of fixation.</returns>
-        public IMemento<ReadOnlyCollection<FileCabinetRecord>> MakeSnapshot()
         {
             throw new NotImplementedException();
         }

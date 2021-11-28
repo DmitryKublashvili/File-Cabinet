@@ -357,7 +357,7 @@ namespace FileCabinetApp
 
             using (StreamWriter sw = new StreamWriter(parameters[1]))
             {
-                IMemento<ReadOnlyCollection<FileCabinetRecord>> snapShot = fileCabinetService.MakeSnapshot();
+                var snapShot = (fileCabinetService as FileCabinetMemoryService).MakeSnapshot();
 
                 if (parameters[0].ToUpperInvariant() == "CSV")
                 {

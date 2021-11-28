@@ -181,12 +181,6 @@
             </summary>
             <returns>Records count.</returns>
         </member>
-        <member name="M:FileCabinetApp.FileCabinetFilesystemService.MakeSnapshot">
-            <summary>
-            Gets FileCabinetService state on current moment.
-            </summary>
-            <returns>State on the moment of fixation.</returns>
-        </member>
         <member name="T:FileCabinetApp.FileCabinetMemoryService">
             <summary>
             Implements functions of file cabinet.
@@ -285,7 +279,7 @@
         </member>
         <member name="P:FileCabinetApp.FileCabinetRecord.DateOfBirthString">
             <summary>
-            Gets or sets value for (de)serialisation property DateOfBirth in short date format
+            Gets or sets value for (de)serialisation property DateOfBirth in short date format.
             </summary>
             <value>
             Value for (de)serialisation property DateOfBirth in short date format.
@@ -331,7 +325,7 @@
             Textwriter for writing text in file.
             </value>
         </member>
-        <member name="M:FileCabinetApp.FileCabinetRecordCsvWriter.Write(FileCabinetApp.IMemento{System.Collections.ObjectModel.ReadOnlyCollection{FileCabinetApp.FileCabinetRecord}})">
+        <member name="M:FileCabinetApp.FileCabinetRecordCsvWriter.Write(FileCabinetApp.FileCabinetServiceSnapshot)">
             <summary>
             Writes state to file in CSV format.
             </summary>
@@ -356,7 +350,7 @@
             Textwriter for writing text in file.
             </value>
         </member>
-        <member name="M:FileCabinetApp.FileCabinetRecordXmlWriter.Write(FileCabinetApp.IMemento{System.Collections.ObjectModel.ReadOnlyCollection{FileCabinetApp.FileCabinetRecord}})">
+        <member name="M:FileCabinetApp.FileCabinetRecordXmlWriter.Write(FileCabinetApp.FileCabinetServiceSnapshot)">
             <summary>
             Writes state to file in XML format.
             </summary>
@@ -421,12 +415,6 @@
             </summary>
             <param name="parametresOfRecord">Parametres of record.</param>
         </member>
-        <member name="M:FileCabinetApp.IFileCabinetService.MakeSnapshot">
-            <summary>
-            Gets FileCabinetService state on current moment.
-            </summary>
-            <returns>State on the moment of fixation.</returns>
-        </member>
         <member name="M:FileCabinetApp.IFileCabinetService.FindByDateOfBirth(System.DateTime)">
             <summary>
             Gets an ReadOnlyCollection of records that have that date of birth.
@@ -459,42 +447,6 @@
             Gets records count.
             </summary>
             <returns>Records count.</returns>
-        </member>
-        <member name="T:FileCabinetApp.IMemento`1">
-            <summary>
-            Defines the model of FileCabinetService state.
-            </summary>
-            <typeparam name="T">Type, which stores current state.</typeparam>
-        </member>
-        <member name="M:FileCabinetApp.IMemento`1.GetDate">
-            <summary>
-            Gets date and time of state fixation.
-            </summary>
-            <returns>Date and time of state fixation.</returns>
-        </member>
-        <member name="M:FileCabinetApp.IMemento`1.GetName">
-            <summary>
-            Gets name of state fixation.
-            </summary>
-            <returns>Name of state fixation.</returns>
-        </member>
-        <member name="M:FileCabinetApp.IMemento`1.GetState">
-            <summary>
-            Gets state on the moment of fixation.
-            </summary>
-            <returns>State on the moment of fixation.</returns>
-        </member>
-        <member name="M:FileCabinetApp.IMemento`1.SaveToCSV(System.IO.TextWriter)">
-            <summary>
-            Saves state to CSV file.
-            </summary>
-            <param name="textWriter">Text writer.</param>
-        </member>
-        <member name="M:FileCabinetApp.IMemento`1.SaveToXML(System.IO.TextWriter)">
-            <summary>
-            Saves state to XML file.
-            </summary>
-            <param name="textWriter">Text writer.</param>
         </member>
         <member name="T:FileCabinetApp.IRecordValidator">
             <summary>

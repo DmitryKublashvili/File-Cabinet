@@ -29,7 +29,7 @@ namespace FileCabinetApp
         /// Gets FileCabinetService state on current moment.
         /// </summary>
         /// <returns>State on the moment of fixation.</returns>
-        public IMemento<ReadOnlyCollection<FileCabinetRecord>> MakeSnapshot()
+        public FileCabinetServiceSnapshot MakeSnapshot()
         {
             FileCabinetRecord[] separateListOfRecords = new FileCabinetRecord[this.list.Count];
 
