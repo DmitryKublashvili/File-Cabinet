@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Globalization;
 using System.IO;
+using System.Linq;
 using System.Text;
 
 namespace FileCabinetApp
@@ -14,15 +15,17 @@ namespace FileCabinetApp
     {
         private static CultureInfo cultureInfo = new ("en");
         private readonly IRecordValidator recordValidator;
-        private readonly string storageFilePath = "cabinet-records.db";
+        private readonly FileStream fileStream;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="FileCabinetFilesystemService"/> class.
         /// </summary>
         /// <param name="recordValidator">Instance of IRecordValidator.</param>
-        public FileCabinetFilesystemService(IRecordValidator recordValidator)
+        /// <param name="fileStream">Instance of fileStream.</param>
+        public FileCabinetFilesystemService(IRecordValidator recordValidator, FileStream fileStream)
         {
             this.recordValidator = recordValidator;
+            this.fileStream = fileStream;
         }
 
         /// <summary>
@@ -43,13 +46,10 @@ namespace FileCabinetApp
 
             int id;
 
-            using (FileStream fileStream = new FileStream(this.storageFilePath, FileMode.OpenOrCreate))
-            {
-                startPosition = fileStream.Length;
+            startPosition = this.fileStream.Length;
 
-                // get Id
-                id = ((int)startPosition / 278) + 1;
-            }
+            // get Id
+            id = ((int)startPosition / 278) + 1;
 
             this.WriteRecordInFile(parametresOfRecord, startPosition);
 
@@ -71,96 +71,30 @@ namespace FileCabinetApp
 
             long startPosition = -1;
 
-            using (FileStream fileStream = new FileStream(this.storageFilePath, FileMode.OpenOrCreate))
+            int recordsCount = (int)this.fileStream.Length / 278;
+
+            byte[] bytesFromId = new byte[4];
+
+            // find and set position
+            for (int i = 0; i < recordsCount; i++)
             {
-                int recordsCount = (int)fileStream.Length / 278;
+                this.fileStream.Seek((i * 278) + 2, SeekOrigin.Begin);
+                this.fileStream.Read(bytesFromId);
 
-                byte[] bytesFromId = new byte[4];
-
-                // find and set position
-                for (int i = 0; i < recordsCount; i++)
+                if (parametresOfRecord.Id == BitConverter.ToInt32(bytesFromId, 0))
                 {
-                    fileStream.Seek((i * 278) + 2, SeekOrigin.Begin);
-                    fileStream.Read(bytesFromId);
+                    startPosition = i * 278;
+                    break;
+                }
 
-                    if (parametresOfRecord.Id == BitConverter.ToInt32(bytesFromId, 0))
-                    {
-                        startPosition = i * 278;
-                        break;
-                    }
-
-                    if (i == recordsCount - 1)
-                    {
-                        Console.WriteLine($"Record {parametresOfRecord.Id} not found.");
-                        return;
-                    }
+                if (i == recordsCount - 1)
+                {
+                    Console.WriteLine($"Record {parametresOfRecord.Id} not found.");
+                    return;
                 }
             }
 
             this.WriteRecordInFile(parametresOfRecord, startPosition);
-        }
-
-        private void WriteRecordInFile(ParametresOfRecord parametresOfRecord, long startPosition)
-        {
-            if (startPosition < 0)
-            {
-                throw new ArgumentNullException(nameof(startPosition));
-            }
-
-            using (FileStream fileStream = new FileStream(this.storageFilePath, FileMode.OpenOrCreate))
-            {
-                // short reserved 2
-                short reserved = default;
-                fileStream.Seek(startPosition, SeekOrigin.Begin);
-                fileStream.Write(BitConverter.GetBytes(reserved));
-
-                // int Id 4
-                fileStream.Seek(startPosition + 2, SeekOrigin.Begin);
-                fileStream.Write(BitConverter.GetBytes((startPosition / 278) + 1));
-
-                // char[] FirstName 120
-                fileStream.Seek(startPosition + 6, SeekOrigin.Begin);
-                var bytesFirstName = Encoding.ASCII.GetBytes(parametresOfRecord.FirstName.Length <= 60 ? parametresOfRecord.FirstName : parametresOfRecord.FirstName[..60]);
-                fileStream.Write(bytesFirstName);
-
-                // char[] LastName 120
-                fileStream.Seek(startPosition + 126, SeekOrigin.Begin);
-                var bytesLastName = Encoding.ASCII.GetBytes(parametresOfRecord.LastName.Length <= 60 ? parametresOfRecord.LastName : parametresOfRecord.LastName[..60]);
-                fileStream.Write(bytesLastName);
-
-                // int Year 4
-                fileStream.Seek(startPosition + 246, SeekOrigin.Begin);
-                fileStream.Write(BitConverter.GetBytes(parametresOfRecord.DateOfBirth.Year));
-
-                // int Month 4
-                fileStream.Seek(startPosition + 250, SeekOrigin.Begin);
-                fileStream.Write(BitConverter.GetBytes(parametresOfRecord.DateOfBirth.Month));
-
-                // int Day 4
-                fileStream.Seek(startPosition + 254, SeekOrigin.Begin);
-                fileStream.Write(BitConverter.GetBytes(parametresOfRecord.DateOfBirth.Day));
-
-                // char Sex 2
-                fileStream.Seek(startPosition + 258, SeekOrigin.Begin);
-                fileStream.Write(BitConverter.GetBytes(parametresOfRecord.Sex));
-
-                // decimal Salary 16
-                int[] intArray = new int[4];
-                decimal.GetBits(parametresOfRecord.Salary).CopyTo(intArray, 0);
-
-                fileStream.Seek(startPosition + 260, SeekOrigin.Begin);
-                fileStream.Write(BitConverter.GetBytes(intArray[0]));
-                fileStream.Seek(startPosition + 264, SeekOrigin.Begin);
-                fileStream.Write(BitConverter.GetBytes(intArray[1]));
-                fileStream.Seek(startPosition + 268, SeekOrigin.Begin);
-                fileStream.Write(BitConverter.GetBytes(intArray[2]));
-                fileStream.Seek(startPosition + 272, SeekOrigin.Begin);
-                fileStream.Write(BitConverter.GetBytes(intArray[3]));
-
-                // short YearsOfService 2
-                fileStream.Seek(startPosition + 276, SeekOrigin.Begin);
-                fileStream.Write(BitConverter.GetBytes(parametresOfRecord.YearsOfService));
-            }
         }
 
         /// <summary>
@@ -180,7 +114,30 @@ namespace FileCabinetApp
         /// <returns>ReadOnlyCollection of records that have that first name.</returns>
         public ReadOnlyCollection<FileCabinetRecord> FindByFirstName(string firstName)
         {
-            throw new NotImplementedException();
+            if (string.IsNullOrEmpty(firstName))
+            {
+                throw new ArgumentException("Wanted name was null or empty", nameof(firstName));
+            }
+
+            List<FileCabinetRecord> records = new List<FileCabinetRecord>();
+
+            long numOfRecords = this.fileStream.Length / 278;
+
+            for (int i = 0; i < numOfRecords; i++)
+            {
+                byte[] bytesFirstName = new byte[120];
+                this.fileStream.Seek((278 * i) + 6, SeekOrigin.Begin);
+                this.fileStream.Read(bytesFirstName);
+                byte[] adaptedBytes = bytesFirstName.Where(s => s != '/' && s != 0).ToArray();
+                string firstNameInRecordToCheck = Encoding.ASCII.GetString(adaptedBytes);
+
+                if (firstNameInRecordToCheck.ToUpperInvariant() == firstName.ToUpperInvariant())
+                {
+                    records.Add(this.GetRecordFromFile(278 * i));
+                }
+            }
+
+            return new ReadOnlyCollection<FileCabinetRecord>(records);
         }
 
         /// <summary>
@@ -201,51 +158,11 @@ namespace FileCabinetApp
         {
             List<FileCabinetRecord> records = new List<FileCabinetRecord>();
 
-            using (FileStream fileStream = new FileStream(this.storageFilePath, FileMode.OpenOrCreate))
+            long numOfRecords = this.fileStream.Length / 278;
+
+            for (int i = 0; i < numOfRecords; i++)
             {
-                long numOfRecords = fileStream.Length / 278;
-
-                for (int i = 0; i < numOfRecords; i++)
-                {
-                    FileCabinetRecord record = new FileCabinetRecord();
-
-                    byte[] bytes = new byte[278];
-                    fileStream.Seek(278 * i, SeekOrigin.Begin);
-                    fileStream.Read(bytes);
-
-                    // get Id
-                    record.Id = BitConverter.ToInt32(bytes[2..6], 0);
-
-                    // get FirstName
-                    record.FirstName = Encoding.ASCII.GetString(bytes[6 .. 126]).TrimEnd(' ');
-
-                    // get LastName
-                    record.LastName = Encoding.ASCII.GetString(bytes[126 .. 246]).TrimEnd(' ');
-
-                    // get DateOfBirth
-                    int year = BitConverter.ToInt32(bytes[246 .. 250], 0);
-                    int month = BitConverter.ToInt32(bytes[250 .. 254], 0);
-                    int day = BitConverter.ToInt32(bytes[254 .. 258], 0);
-                    record.DateOfBirth = DateTime.Parse($"{month}/{day}/{year}", cultureInfo, DateTimeStyles.AdjustToUniversal);
-
-                    // get Sex
-                    record.Sex = BitConverter.ToChar(bytes[258 .. 260], 0);
-
-                    // get Salary
-                    int int0 = BitConverter.ToInt32(bytes[260 .. 264], 0);
-                    int int1 = BitConverter.ToInt32(bytes[264 .. 268], 0);
-                    int int2 = BitConverter.ToInt32(bytes[268 .. 272], 0);
-                    int int3 = BitConverter.ToInt32(bytes[272 .. 276], 0);
-                    bool sign = (int3 & 0x80000000) != 0;
-                    byte scale = (byte)((int3 >> 16) & 0x7F);
-
-                    record.Salary = new decimal(int0, int1, int2, sign, scale);
-
-                    // get YearsOfService
-                    record.YearsOfService = BitConverter.ToInt16(bytes[276 .. 278], 0);
-
-                    records.Add(record);
-                }
+                records.Add(this.GetRecordFromFile(i * 278));
             }
 
             return new ReadOnlyCollection<FileCabinetRecord>(records);
@@ -255,16 +172,108 @@ namespace FileCabinetApp
         /// Gets records count.
         /// </summary>
         /// <returns>Records count.</returns>
-        public int GetStat()
-        {
-            int count = 0;
+        public int GetStat() => (int)this.fileStream.Length / 278;
 
-            using (FileStream fileStream = new FileStream(this.storageFilePath, FileMode.OpenOrCreate))
+        private void WriteRecordInFile(ParametresOfRecord parametresOfRecord, long startPosition)
+        {
+            if (startPosition < 0)
             {
-                count = (int)fileStream.Length / 278;
+                throw new ArgumentNullException(nameof(startPosition));
             }
 
-            return count;
+            // short reserved 2
+            short reserved = default;
+            this.fileStream.Seek(startPosition, SeekOrigin.Begin);
+            this.fileStream.Write(BitConverter.GetBytes(reserved));
+
+            // int Id 4
+            this.fileStream.Seek(startPosition + 2, SeekOrigin.Begin);
+            this.fileStream.Write(BitConverter.GetBytes((startPosition / 278) + 1));
+
+            // char[] FirstName 120
+            this.fileStream.Seek(startPosition + 6, SeekOrigin.Begin);
+            var bytesFirstName = Encoding.ASCII.GetBytes(parametresOfRecord.FirstName.Length <= 60 ? parametresOfRecord.FirstName : parametresOfRecord.FirstName[..60]);
+            this.fileStream.Write(bytesFirstName);
+
+            // char[] LastName 120
+            this.fileStream.Seek(startPosition + 126, SeekOrigin.Begin);
+            var bytesLastName = Encoding.ASCII.GetBytes(parametresOfRecord.LastName.Length <= 60 ? parametresOfRecord.LastName : parametresOfRecord.LastName[..60]);
+            this.fileStream.Write(bytesLastName);
+
+            // int Year 4
+            this.fileStream.Seek(startPosition + 246, SeekOrigin.Begin);
+            this.fileStream.Write(BitConverter.GetBytes(parametresOfRecord.DateOfBirth.Year));
+
+            // int Month 4
+            this.fileStream.Seek(startPosition + 250, SeekOrigin.Begin);
+            this.fileStream.Write(BitConverter.GetBytes(parametresOfRecord.DateOfBirth.Month));
+
+            // int Day 4
+            this.fileStream.Seek(startPosition + 254, SeekOrigin.Begin);
+            this.fileStream.Write(BitConverter.GetBytes(parametresOfRecord.DateOfBirth.Day));
+
+            // char Sex 2
+            this.fileStream.Seek(startPosition + 258, SeekOrigin.Begin);
+            this.fileStream.Write(BitConverter.GetBytes(parametresOfRecord.Sex));
+
+            // decimal Salary 16
+            int[] intArray = new int[4];
+            decimal.GetBits(parametresOfRecord.Salary).CopyTo(intArray, 0);
+
+            this.fileStream.Seek(startPosition + 260, SeekOrigin.Begin);
+            this.fileStream.Write(BitConverter.GetBytes(intArray[0]));
+            this.fileStream.Seek(startPosition + 264, SeekOrigin.Begin);
+            this.fileStream.Write(BitConverter.GetBytes(intArray[1]));
+            this.fileStream.Seek(startPosition + 268, SeekOrigin.Begin);
+            this.fileStream.Write(BitConverter.GetBytes(intArray[2]));
+            this.fileStream.Seek(startPosition + 272, SeekOrigin.Begin);
+            this.fileStream.Write(BitConverter.GetBytes(intArray[3]));
+
+            // short YearsOfService 2
+            this.fileStream.Seek(startPosition + 276, SeekOrigin.Begin);
+            this.fileStream.Write(BitConverter.GetBytes(parametresOfRecord.YearsOfService));
+        }
+
+        private FileCabinetRecord GetRecordFromFile(int position)
+        {
+            FileCabinetRecord record = new FileCabinetRecord();
+
+            byte[] bytes = new byte[278];
+            this.fileStream.Seek(position, SeekOrigin.Begin);
+            this.fileStream.Read(bytes);
+
+            // get Id
+            record.Id = BitConverter.ToInt32(bytes[2..6], 0);
+
+            // get FirstName
+            record.FirstName = Encoding.ASCII.GetString(bytes[6..126]).TrimEnd(' ');
+
+            // get LastName
+            record.LastName = Encoding.ASCII.GetString(bytes[126..246]).TrimEnd(' ');
+
+            // get DateOfBirth
+            int year = BitConverter.ToInt32(bytes[246..250], 0);
+            int month = BitConverter.ToInt32(bytes[250..254], 0);
+            int day = BitConverter.ToInt32(bytes[254..258], 0);
+            record.DateOfBirth = DateTime.Parse($"{month}/{day}/{year}", cultureInfo, DateTimeStyles.AdjustToUniversal);
+
+            // get Sex
+            record.Sex = BitConverter.ToChar(bytes[258..260], 0);
+
+            // get Salary
+            int int0 = BitConverter.ToInt32(bytes[260..264], 0);
+            int int1 = BitConverter.ToInt32(bytes[264..268], 0);
+            int int2 = BitConverter.ToInt32(bytes[268..272], 0);
+            int int3 = BitConverter.ToInt32(bytes[272..276], 0);
+            bool sign = (int3 & 0x80000000) != 0;
+            byte scale = (byte)((int3 >> 16) & 0x7F);
+
+            record.Salary = new decimal(int0, int1, int2, sign, scale);
+
+            // get YearsOfService
+            record.YearsOfService = BitConverter.ToInt16(bytes[276..278], 0);
+
+            return record;
         }
     }
 }

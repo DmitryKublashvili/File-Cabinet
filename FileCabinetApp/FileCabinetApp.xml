@@ -129,11 +129,12 @@
             Implements functions of file cabinet.
             </summary>
         </member>
-        <member name="M:FileCabinetApp.FileCabinetFilesystemService.#ctor(FileCabinetApp.IRecordValidator)">
+        <member name="M:FileCabinetApp.FileCabinetFilesystemService.#ctor(FileCabinetApp.IRecordValidator,System.IO.FileStream)">
             <summary>
             Initializes a new instance of the <see cref="T:FileCabinetApp.FileCabinetFilesystemService"/> class.
             </summary>
             <param name="recordValidator">Instance of IRecordValidator.</param>
+            <param name="fileStream">Instance of fileStream.</param>
         </member>
         <member name="M:FileCabinetApp.FileCabinetFilesystemService.CreateRecord(FileCabinetApp.ParametresOfRecord)">
             <summary>

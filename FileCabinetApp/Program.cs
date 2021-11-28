@@ -23,15 +23,17 @@ namespace FileCabinetApp
         private const string NotParsedSalaryMessage = "Incorrect summ, please enter again";
         private const string IncorrectSexMessage = "Incorrect. Please, enter one letter of M or F";
         private const string IncorrectDateOfBirthFormatMessage = "Incorrect format of date, enter the date in format mm/dd/yyyy please.";
+        private const string StorageFilePath = "cabinet-records.db";
 
         private const int CommandHelpIndex = 0;
         private const int DescriptionHelpIndex = 1;
         private const int ExplanationHelpIndex = 2;
 
         private static CultureInfo cultureInfo = new ("en");
+        private static FileStream fileStream;
         private static bool isRunning = true;
         private static bool isDefaultValidatoinRules = true;
-        private static bool isFileSystemStorageUsed = false;
+        private static bool isFileSystemStorageUsed;
         private static IRecordValidator validator = new DefaultValidator();
         private static IFileCabinetService fileCabinetService = new FileCabinetMemoryService(validator);
 
@@ -114,7 +116,8 @@ namespace FileCabinetApp
 
                 if (parameterOfValidation.Contains("--STORAGE=FILE") || parameterOfValidation.Contains("-S FILE"))
                 {
-                    fileCabinetService = new FileCabinetFilesystemService(validator);
+                    fileStream = new FileStream(StorageFilePath, FileMode.OpenOrCreate);
+                    fileCabinetService = new FileCabinetFilesystemService(validator, fileStream);
                     isFileSystemStorageUsed = true;
                     Console.WriteLine("Used storage in file.");
                 }
@@ -127,7 +130,8 @@ namespace FileCabinetApp
             {
                 if (parameterOfValidation.Contains("--STORAGE=FILE") || parameterOfValidation.Contains("-S FILE"))
                 {
-                    fileCabinetService = new FileCabinetFilesystemService(validator);
+                    fileStream = new FileStream(StorageFilePath, FileMode.OpenOrCreate);
+                    fileCabinetService = new FileCabinetFilesystemService(validator, fileStream);
                     isFileSystemStorageUsed = true;
                     Console.WriteLine("Used storage in file.");
                 }
@@ -169,6 +173,12 @@ namespace FileCabinetApp
 
         private static void Exit(string parameters)
         {
+            if (isFileSystemStorageUsed)
+            {
+                fileStream.Dispose();
+                fileStream.Close();
+            }
+
             Console.WriteLine(ExitMessage);
             isRunning = false;
         }
