@@ -31,6 +31,7 @@ namespace FileCabinetApp
         private static CultureInfo cultureInfo = new ("en");
         private static bool isRunning = true;
         private static bool isDefaultValidatoinRules = true;
+        private static bool isFileSystemStorageUsed = false;
         private static IRecordValidator validator = new DefaultValidator();
         private static IFileCabinetService fileCabinetService = new FileCabinetMemoryService(validator);
 
@@ -113,8 +114,9 @@ namespace FileCabinetApp
 
                 if (parameterOfValidation.Contains("--STORAGE=FILE") || parameterOfValidation.Contains("-S FILE"))
                 {
-                    Console.WriteLine("STORAGE=FILE");
                     fileCabinetService = new FileCabinetFilesystemService(validator);
+                    isFileSystemStorageUsed = true;
+                    Console.WriteLine("Used storage in file.");
                 }
                 else
                 {
@@ -125,8 +127,9 @@ namespace FileCabinetApp
             {
                 if (parameterOfValidation.Contains("--STORAGE=FILE") || parameterOfValidation.Contains("-S FILE"))
                 {
-                    Console.WriteLine("STORAGE=FILE");
                     fileCabinetService = new FileCabinetFilesystemService(validator);
+                    isFileSystemStorageUsed = true;
+                    Console.WriteLine("Used storage in file.");
                 }
             }
         }
@@ -203,9 +206,19 @@ namespace FileCabinetApp
 
         private static void Edit(string userEnter)
         {
-            int indexOfRecord = GetIndexOfRecord(userEnter);
+            if (!int.TryParse(userEnter, out int id))
+            {
+                Console.WriteLine("Incorrect input.");
+                return;
+            }
 
-            if (indexOfRecord == -1)
+            if (!isFileSystemStorageUsed && !CheckIndexOfRecordInMemory(id))
+            {
+                Console.WriteLine($"#{userEnter} record is not found.");
+                return;
+            }
+
+            if (isFileSystemStorageUsed && id > fileCabinetService.GetStat())
             {
                 Console.WriteLine($"#{userEnter} record is not found.");
                 return;
@@ -228,8 +241,6 @@ namespace FileCabinetApp
 
             Console.Write("Years Of Service: ");
             short yearsOfService = ReadInput<short>(YearsOfServiceConverter, YearsOfServiceValidator);
-
-            var id = fileCabinetService.GetRecords()[indexOfRecord].Id;
 
             fileCabinetService.EditRecord(new ParametresOfRecord(id, firstName, lastName, dateOfBirth, sex, salary, yearsOfService));
 
@@ -372,24 +383,19 @@ namespace FileCabinetApp
             Console.WriteLine("All records are exported to file {0}.", parameters[1]);
         }
 
-        private static int GetIndexOfRecord(string parameter)
+        private static bool CheckIndexOfRecordInMemory(int id)
         {
-            if (int.TryParse(parameter, out int id))
+            ReadOnlyCollection<FileCabinetRecord> listOfRecords = fileCabinetService.GetRecords();
+
+            for (int i = 0; i < listOfRecords.Count; i++)
             {
-                ReadOnlyCollection<FileCabinetRecord> listOfRecords = fileCabinetService.GetRecords();
-
-                for (int i = 0; i < listOfRecords.Count; i++)
+                if (id == listOfRecords[i].Id)
                 {
-                    if (id == listOfRecords[i].Id)
-                    {
-                        return i;
-                    }
+                    return true;
                 }
-
-                return -1;
             }
 
-            return -1;
+            return false;
         }
 
         private static T ReadInput<T>(Func<string, Tuple<bool, string, T>> converter, Func<T, Tuple<bool, string>> validator)

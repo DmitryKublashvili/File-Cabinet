@@ -41,10 +41,74 @@ namespace FileCabinetApp
 
             long startPosition;
 
+            int id;
+
             using (FileStream fileStream = new FileStream(this.storageFilePath, FileMode.OpenOrCreate))
             {
                 startPosition = fileStream.Length;
 
+                // get Id
+                id = ((int)startPosition / 278) + 1;
+            }
+
+            this.WriteRecordInFile(parametresOfRecord, startPosition);
+
+            return id;
+        }
+
+        /// <summary>
+        /// Edits selected (by ID) record.
+        /// </summary>
+        /// <param name="parametresOfRecord">Parametres of record.</param>
+        public void EditRecord(ParametresOfRecord parametresOfRecord)
+        {
+            if (parametresOfRecord is null)
+            {
+                throw new ArgumentNullException(nameof(parametresOfRecord));
+            }
+
+            this.recordValidator.ValidateParameters(parametresOfRecord);
+
+            long startPosition = -1;
+
+            using (FileStream fileStream = new FileStream(this.storageFilePath, FileMode.OpenOrCreate))
+            {
+                int recordsCount = (int)fileStream.Length / 278;
+
+                byte[] bytesFromId = new byte[4];
+
+                // find and set position
+                for (int i = 0; i < recordsCount; i++)
+                {
+                    fileStream.Seek((i * 278) + 2, SeekOrigin.Begin);
+                    fileStream.Read(bytesFromId);
+
+                    if (parametresOfRecord.Id == BitConverter.ToInt32(bytesFromId, 0))
+                    {
+                        startPosition = i * 278;
+                        break;
+                    }
+
+                    if (i == recordsCount - 1)
+                    {
+                        Console.WriteLine($"Record {parametresOfRecord.Id} not found.");
+                        return;
+                    }
+                }
+            }
+
+            this.WriteRecordInFile(parametresOfRecord, startPosition);
+        }
+
+        private void WriteRecordInFile(ParametresOfRecord parametresOfRecord, long startPosition)
+        {
+            if (startPosition < 0)
+            {
+                throw new ArgumentNullException(nameof(startPosition));
+            }
+
+            using (FileStream fileStream = new FileStream(this.storageFilePath, FileMode.OpenOrCreate))
+            {
                 // short reserved 2
                 short reserved = default;
                 fileStream.Seek(startPosition, SeekOrigin.Begin);
@@ -96,18 +160,7 @@ namespace FileCabinetApp
                 // short YearsOfService 2
                 fileStream.Seek(startPosition + 276, SeekOrigin.Begin);
                 fileStream.Write(BitConverter.GetBytes(parametresOfRecord.YearsOfService));
-
-                return (int)(startPosition / 278) + 1;
             }
-        }
-
-        /// <summary>
-        /// Edits selected (by ID) record.
-        /// </summary>
-        /// <param name="parametresOfRecord">Parametres of record.</param>
-        public void EditRecord(ParametresOfRecord parametresOfRecord)
-        {
-            throw new NotImplementedException();
         }
 
         /// <summary>
