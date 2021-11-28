@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Globalization;
 using System.IO;
 using System.Text;
 
@@ -10,8 +12,8 @@ namespace FileCabinetApp
     /// </summary>
     public class FileCabinetFilesystemService : IFileCabinetService
     {
+        private static CultureInfo cultureInfo = new ("en");
         private readonly IRecordValidator recordValidator;
-
         private readonly string storageFilePath = "cabinet-records.db";
 
         /// <summary>
@@ -34,6 +36,8 @@ namespace FileCabinetApp
             {
                 throw new ArgumentNullException(nameof(parametresOfRecord));
             }
+
+            this.recordValidator.ValidateParameters(parametresOfRecord);
 
             long startPosition;
 
@@ -142,7 +146,56 @@ namespace FileCabinetApp
         /// <returns>ReadOnlyCollection of all records.</returns>
         public ReadOnlyCollection<FileCabinetRecord> GetRecords()
         {
-            throw new NotImplementedException();
+            List<FileCabinetRecord> records = new List<FileCabinetRecord>();
+
+            using (FileStream fileStream = new FileStream(this.storageFilePath, FileMode.OpenOrCreate))
+            {
+                long numOfRecords = fileStream.Length / 278;
+
+                for (int i = 0; i < numOfRecords; i++)
+                {
+                    FileCabinetRecord record = new FileCabinetRecord();
+
+                    byte[] bytes = new byte[278];
+                    fileStream.Seek(278 * i, SeekOrigin.Begin);
+                    fileStream.Read(bytes);
+
+                    // get Id
+                    record.Id = BitConverter.ToInt32(bytes[2..6], 0);
+
+                    // get FirstName
+                    record.FirstName = Encoding.ASCII.GetString(bytes[6 .. 126]).TrimEnd(' ');
+
+                    // get LastName
+                    record.LastName = Encoding.ASCII.GetString(bytes[126 .. 246]).TrimEnd(' ');
+
+                    // get DateOfBirth
+                    int year = BitConverter.ToInt32(bytes[246 .. 250], 0);
+                    int month = BitConverter.ToInt32(bytes[250 .. 254], 0);
+                    int day = BitConverter.ToInt32(bytes[254 .. 258], 0);
+                    record.DateOfBirth = DateTime.Parse($"{month}/{day}/{year}", cultureInfo, DateTimeStyles.AdjustToUniversal);
+
+                    // get Sex
+                    record.Sex = BitConverter.ToChar(bytes[258 .. 260], 0);
+
+                    // get Salary
+                    int int0 = BitConverter.ToInt32(bytes[260 .. 264], 0);
+                    int int1 = BitConverter.ToInt32(bytes[264 .. 268], 0);
+                    int int2 = BitConverter.ToInt32(bytes[268 .. 272], 0);
+                    int int3 = BitConverter.ToInt32(bytes[272 .. 276], 0);
+                    bool sign = (int3 & 0x80000000) != 0;
+                    byte scale = (byte)((int3 >> 16) & 0x7F);
+
+                    record.Salary = new decimal(int0, int1, int2, sign, scale);
+
+                    // get YearsOfService
+                    record.YearsOfService = BitConverter.ToInt16(bytes[276 .. 278], 0);
+
+                    records.Add(record);
+                }
+            }
+
+            return new ReadOnlyCollection<FileCabinetRecord>(records);
         }
 
         /// <summary>
