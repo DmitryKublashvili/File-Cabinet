@@ -204,7 +204,14 @@ namespace FileCabinetApp
         /// <returns>Records count.</returns>
         public int GetStat()
         {
-            throw new NotImplementedException();
+            int count = 0;
+
+            using (FileStream fileStream = new FileStream(this.storageFilePath, FileMode.OpenOrCreate))
+            {
+                count = (int)fileStream.Length / 278;
+            }
+
+            return count;
         }
     }
 }
