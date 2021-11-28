@@ -23,16 +23,19 @@ namespace FileCabinetApp
         private const string NotParsedSalaryMessage = "Incorrect summ, please enter again";
         private const string IncorrectSexMessage = "Incorrect. Please, enter one letter of M or F";
         private const string IncorrectDateOfBirthFormatMessage = "Incorrect format of date, enter the date in format mm/dd/yyyy please.";
+        private const string StorageFilePath = "cabinet-records.db";
 
         private const int CommandHelpIndex = 0;
         private const int DescriptionHelpIndex = 1;
         private const int ExplanationHelpIndex = 2;
 
         private static CultureInfo cultureInfo = new ("en");
+        private static FileStream fileStream;
         private static bool isRunning = true;
         private static bool isDefaultValidatoinRules = true;
+        private static bool isFileSystemStorageUsed;
         private static IRecordValidator validator = new DefaultValidator();
-        private static IFileCabinetService fileCabinetService = new FileCabinetService(validator);
+        private static IFileCabinetService fileCabinetService = new FileCabinetMemoryService(validator);
 
         private static Tuple<string, Action<string>>[] commands = new Tuple<string, Action<string>>[]
         {
@@ -66,14 +69,7 @@ namespace FileCabinetApp
         {
             if (!(args is null) && args.Length > 0)
             {
-                string parameterOfValidation = string.Join(" ", args).ToUpperInvariant();
-
-                if (parameterOfValidation.Contains("CUSTOM"))
-                {
-                    isDefaultValidatoinRules = false;
-                    validator = new CustomValidator();
-                    fileCabinetService = new FileCabinetService(validator);
-                }
+                CommandLineArgumentsApplying(args);
             }
 
             Console.WriteLine($"File Cabinet Application, developed by {Program.DeveloperName}");
@@ -107,6 +103,39 @@ namespace FileCabinetApp
                 }
             }
             while (isRunning);
+        }
+
+        private static void CommandLineArgumentsApplying(string[] args)
+        {
+            string parameterOfValidation = string.Join(" ", args).ToUpperInvariant();
+
+            if (parameterOfValidation.Contains("--VALIDATION-RULES=CUSTOM") || parameterOfValidation.Contains("-V CUSTOM"))
+            {
+                isDefaultValidatoinRules = false;
+                validator = new CustomValidator();
+
+                if (parameterOfValidation.Contains("--STORAGE=FILE") || parameterOfValidation.Contains("-S FILE"))
+                {
+                    fileStream = new FileStream(StorageFilePath, FileMode.OpenOrCreate);
+                    fileCabinetService = new FileCabinetFilesystemService(validator, fileStream);
+                    isFileSystemStorageUsed = true;
+                    Console.WriteLine("Used storage in file.");
+                }
+                else
+                {
+                    fileCabinetService = new FileCabinetMemoryService(validator);
+                }
+            }
+            else
+            {
+                if (parameterOfValidation.Contains("--STORAGE=FILE") || parameterOfValidation.Contains("-S FILE"))
+                {
+                    fileStream = new FileStream(StorageFilePath, FileMode.OpenOrCreate);
+                    fileCabinetService = new FileCabinetFilesystemService(validator, fileStream);
+                    isFileSystemStorageUsed = true;
+                    Console.WriteLine("Used storage in file.");
+                }
+            }
         }
 
         private static void PrintMissedCommandInfo(string command)
@@ -144,6 +173,12 @@ namespace FileCabinetApp
 
         private static void Exit(string parameters)
         {
+            if (isFileSystemStorageUsed)
+            {
+                fileStream.Dispose();
+                fileStream.Close();
+            }
+
             Console.WriteLine(ExitMessage);
             isRunning = false;
         }
@@ -181,9 +216,19 @@ namespace FileCabinetApp
 
         private static void Edit(string userEnter)
         {
-            int indexOfRecord = GetIndexOfRecord(userEnter);
+            if (!int.TryParse(userEnter, out int id))
+            {
+                Console.WriteLine("Incorrect input.");
+                return;
+            }
 
-            if (indexOfRecord == -1)
+            if (!isFileSystemStorageUsed && !CheckIndexOfRecordInMemory(id))
+            {
+                Console.WriteLine($"#{userEnter} record is not found.");
+                return;
+            }
+
+            if (isFileSystemStorageUsed && id > fileCabinetService.GetStat())
             {
                 Console.WriteLine($"#{userEnter} record is not found.");
                 return;
@@ -206,8 +251,6 @@ namespace FileCabinetApp
 
             Console.Write("Years Of Service: ");
             short yearsOfService = ReadInput<short>(YearsOfServiceConverter, YearsOfServiceValidator);
-
-            var id = fileCabinetService.GetRecords()[indexOfRecord].Id;
 
             fileCabinetService.EditRecord(new ParametresOfRecord(id, firstName, lastName, dateOfBirth, sex, salary, yearsOfService));
 
@@ -335,7 +378,7 @@ namespace FileCabinetApp
 
             using (StreamWriter sw = new StreamWriter(parameters[1]))
             {
-                IMemento<ReadOnlyCollection<FileCabinetRecord>> snapShot = fileCabinetService.MakeSnapshot();
+                var snapShot = (fileCabinetService as FileCabinetMemoryService).MakeSnapshot();
 
                 if (parameters[0].ToUpperInvariant() == "CSV")
                 {
@@ -350,24 +393,19 @@ namespace FileCabinetApp
             Console.WriteLine("All records are exported to file {0}.", parameters[1]);
         }
 
-        private static int GetIndexOfRecord(string parameter)
+        private static bool CheckIndexOfRecordInMemory(int id)
         {
-            if (int.TryParse(parameter, out int id))
+            ReadOnlyCollection<FileCabinetRecord> listOfRecords = fileCabinetService.GetRecords();
+
+            for (int i = 0; i < listOfRecords.Count; i++)
             {
-                ReadOnlyCollection<FileCabinetRecord> listOfRecords = fileCabinetService.GetRecords();
-
-                for (int i = 0; i < listOfRecords.Count; i++)
+                if (id == listOfRecords[i].Id)
                 {
-                    if (id == listOfRecords[i].Id)
-                    {
-                        return i;
-                    }
+                    return true;
                 }
-
-                return -1;
             }
 
-            return -1;
+            return false;
         }
 
         private static T ReadInput<T>(Func<string, Tuple<bool, string, T>> converter, Func<T, Tuple<bool, string>> validator)

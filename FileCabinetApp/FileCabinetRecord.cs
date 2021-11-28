@@ -39,7 +39,7 @@ namespace FileCabinetApp
         public DateTime DateOfBirth { get; set; }
 
         /// <summary>
-        /// Gets or sets value for (de)serialisation property DateOfBirth in short date format
+        /// Gets or sets value for (de)serialisation property DateOfBirth in short date format.
         /// </summary>
         /// <value>
         /// Value for (de)serialisation property DateOfBirth in short date format.

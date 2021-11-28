@@ -7,7 +7,7 @@ namespace FileCabinetApp
     /// <summary>
     /// Creates FileCabinetService state on current moment.
     /// </summary>
-    public class FileCabinetServiceSnapshot : IMemento<ReadOnlyCollection<FileCabinetRecord>>
+    public class FileCabinetServiceSnapshot
     {
         private readonly DateTime date;
         private readonly string name;

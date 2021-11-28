@@ -22,12 +22,6 @@ namespace FileCabinetApp
         void EditRecord(ParametresOfRecord parametresOfRecord);
 
         /// <summary>
-        /// Gets FileCabinetService state on current moment.
-        /// </summary>
-        /// <returns>State on the moment of fixation.</returns>
-        public IMemento<ReadOnlyCollection<FileCabinetRecord>> MakeSnapshot();
-
-        /// <summary>
         /// Gets an ReadOnlyCollection of records that have that date of birth.
         /// </summary>
         /// <param name="searchingDate">Search birth date.</param>

@@ -7,7 +7,7 @@ namespace FileCabinetApp
     /// <summary>
     /// Implements functions of file cabinet.
     /// </summary>
-    public class FileCabinetService : IFileCabinetService
+    public class FileCabinetMemoryService : IFileCabinetService
     {
         private readonly List<FileCabinetRecord> list = new List<FileCabinetRecord>();
         private readonly Dictionary<string, List<FileCabinetRecord>> firstNameDictionary = new Dictionary<string, List<FileCabinetRecord>>();
@@ -17,33 +17,19 @@ namespace FileCabinetApp
         private readonly IRecordValidator recordValidator;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="FileCabinetService"/> class.
+        /// Initializes a new instance of the <see cref="FileCabinetMemoryService"/> class.
         /// </summary>
         /// <param name="recordValidator">Instance of IRecordValidator.</param>
-        public FileCabinetService(IRecordValidator recordValidator)
+        public FileCabinetMemoryService(IRecordValidator recordValidator)
         {
             this.recordValidator = recordValidator;
         }
-
-        ///// <summary>
-        ///// Export current state in CSV format and save it in file.
-        ///// </summary>
-        ///// <param name="filePath">Path to file.</param>
-        //public void ExportToCSVFile(string filePath)
-        //{
-        //    if (string.IsNullOrWhiteSpace(filePath))
-        //    {
-        //        throw new ArgumentNullException(nameof(filePath));
-        //    }
-
-        //    FileCabinetRecordCsvWriter.Write(filePath, this.MakeSnapshot());
-        //}
 
         /// <summary>
         /// Gets FileCabinetService state on current moment.
         /// </summary>
         /// <returns>State on the moment of fixation.</returns>
-        public IMemento<ReadOnlyCollection<FileCabinetRecord>> MakeSnapshot()
+        public FileCabinetServiceSnapshot MakeSnapshot()
         {
             FileCabinetRecord[] separateListOfRecords = new FileCabinetRecord[this.list.Count];
 

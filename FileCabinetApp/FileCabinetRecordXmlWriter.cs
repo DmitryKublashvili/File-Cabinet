@@ -32,7 +32,7 @@ namespace FileCabinetApp
         /// Writes state to file in XML format.
         /// </summary>
         /// <param name="state">State for recording.</param>
-        public void Write(IMemento<ReadOnlyCollection<FileCabinetRecord>> state)
+        public void Write(FileCabinetServiceSnapshot state)
         {
             if (state is null)
             {
