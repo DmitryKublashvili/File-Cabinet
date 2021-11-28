@@ -104,7 +104,27 @@ namespace FileCabinetApp
         /// <returns>ReadOnlyCollection of records that have that birth date.</returns>
         public ReadOnlyCollection<FileCabinetRecord> FindByDateOfBirth(DateTime searchingDate)
         {
-            throw new NotImplementedException();
+            List<FileCabinetRecord> records = new List<FileCabinetRecord>();
+
+            long numOfRecords = this.fileStream.Length / 278;
+
+            (int, int, int) searchingDateParams = (searchingDate.Year, searchingDate.Month, searchingDate.Day);
+
+            for (int i = 0; i < numOfRecords; i++)
+            {
+                byte[] bytesDate = new byte[12];
+                this.fileStream.Seek((278 * i) + 246, SeekOrigin.Begin);
+                this.fileStream.Read(bytesDate);
+
+                (int, int, int) dateForCheck = (BitConverter.ToInt32(bytesDate.AsSpan()[.. 4]), BitConverter.ToInt32(bytesDate.AsSpan()[4 .. 8]), BitConverter.ToInt32(bytesDate.AsSpan()[8 ..]));
+
+                if (searchingDateParams == dateForCheck)
+                {
+                    records.Add(this.GetRecordFromFile(278 * i));
+                }
+            }
+
+            return new ReadOnlyCollection<FileCabinetRecord>(records);
         }
 
         /// <summary>
