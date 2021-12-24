@@ -4,10 +4,11 @@ using System.Collections.Generic;
 
 namespace FileCabinetGenerator
 {
+    /// <summary>
+    /// Generaite random records according default validation rules.
+    /// </summary>
     class RecordsGenerator
     {
-        private readonly string fileType;
-        private readonly string fileName;
         private readonly int recordsAmount;
         private readonly Random random = new Random();
         private int startId;
@@ -23,12 +24,13 @@ namespace FileCabinetGenerator
         /// <param name="startId"></param>
         public RecordsGenerator(string fileType, string fileName, int recordsAmount, int startId)
         {
-            this.fileType = fileType;
-            this.fileName = fileName;
             this.recordsAmount = recordsAmount > 0 ? recordsAmount : 0;
             this.startId = startId > 0 ? startId : 0;
         }
 
+        /// <summary>
+        /// Creates random records.
+        /// </summary>
         public void CreateRecords()
         {
             for (int i = 0; i < recordsAmount; i++)
@@ -37,6 +39,10 @@ namespace FileCabinetGenerator
             }
         }
 
+        /// <summary>
+        /// Gets created records.
+        /// </summary>
+        /// <returns></returns>
         public IEnumerable<FileCabinetRecord> GetRecords()
         {
             foreach (var item in records)

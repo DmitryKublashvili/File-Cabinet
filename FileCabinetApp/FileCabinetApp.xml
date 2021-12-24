@@ -293,6 +293,14 @@
             <value> Char (one letter of M or F) representation of person gender.
             </value>
         </member>
+        <member name="P:FileCabinetApp.FileCabinetRecord.SexString">
+            <summary>
+            Gets or sets value for (de)serialisation property Sex in string format.
+            </summary>
+            <value>
+            Value for (de)serialisation property Sex in string format.
+            </value>
+        </member>
         <member name="P:FileCabinetApp.FileCabinetRecord.Salary">
             <summary>
             Gets or sets salary.

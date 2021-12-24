@@ -3,6 +3,9 @@ using System.IO;
 
 namespace FileCabinetGenerator
 {
+    /// <summary>
+    /// User menu.
+    /// </summary>
     static class Menu
     {
         public const string DefaultFileType = "csv";
@@ -41,9 +44,9 @@ namespace FileCabinetGenerator
                     + Environment.NewLine + "To create file with current conditions press 'D' and press Enter"
                     );
 
-                string input = Console.ReadLine().ToUpperInvariant();
+                string userInput = Console.ReadLine().ToUpperInvariant();
 
-                switch (input)
+                switch (userInput)
                 {
                     case "T":
                         SetFileType(); break;
@@ -62,16 +65,20 @@ namespace FileCabinetGenerator
 
             CreateRecords();
 
-            Console.WriteLine("Do you want to show records on console? y/n \n");
+            Console.WriteLine("If you want to show records on console press 'Y' and press Enter. Otherwise press Enter.");
 
-            if (Console.ReadKey().Key == ConsoleKey.Y)
+            string input = Console.ReadLine().ToUpperInvariant();
+
+            if (input == "Y")
             {
                 ShowRecords();
             }
 
-            Console.WriteLine($"\nDo you want to save records in {fileType} file? y/n \n");
+            Console.WriteLine($"If you want to save records in {fileType} press 'Y' and press Enter. Otherwise press Enter.\n");
 
-            if (Console.ReadKey().Key == ConsoleKey.Y)
+            input = Console.ReadLine().ToUpperInvariant();
+
+            if (input == "Y")
             {
                 if (fileType == "CSV")
                 {
@@ -86,7 +93,14 @@ namespace FileCabinetGenerator
                 }
                 else
                 {
-                    Console.WriteLine("Creating XML faile...");
+                    if (XmlExporter.ExportInXmlFile(fileName, generator.GetRecords(), out string exceptionMessage))
+                    {
+                        Console.WriteLine($"\nFile {fileName} created.");
+                    }
+                    else
+                    {
+                        Console.WriteLine(exceptionMessage);
+                    }
                 }
             }
         }
@@ -120,6 +134,8 @@ namespace FileCabinetGenerator
                 Console.WriteLine("Incorrect input. Press any key.");
                 Console.ReadKey();
             }
+
+            FileNameValidation(ref fileName);
         }
 
         private static void SetFileName()
@@ -130,7 +146,7 @@ namespace FileCabinetGenerator
 
             var input = Console.ReadLine();
 
-            if (FileNameValidation(input))
+            if (FileNameValidation(ref input))
             {
                 fileName = input;
                 Console.WriteLine($"New file name is {fileName}. Press any key");
@@ -195,13 +211,17 @@ namespace FileCabinetGenerator
         {
             var records = generator.GetRecords();
 
+            Console.WriteLine();
+
             foreach (var item in records)
             {
                 Console.WriteLine(item);
             }
+
+            Console.WriteLine();
         }
 
-        private static bool FileNameValidation(string fileName)
+        private static bool FileNameValidation(ref string fileName)
         {
             try
             {
@@ -218,6 +238,20 @@ namespace FileCabinetGenerator
             }
 
             File.Delete(fileName + ".txt");
+
+            // file extension checking
+            string[] fileNameComponents = fileName.Split('.');
+
+            if (fileNameComponents[^1].ToUpperInvariant() != fileType.ToUpperInvariant())
+            {
+                fileNameComponents[^1] = fileType;
+
+                Console.WriteLine($"\nThe file extension was set according to the file type {fileType}. Press any key.");
+                Console.ReadKey();
+            }
+
+            fileName = string.Join('.', fileNameComponents);
+
             return true;
         }
 
@@ -244,7 +278,7 @@ namespace FileCabinetGenerator
                 // file name definition
                 var indexOfFileNameCommand = Array.IndexOf(args, "--OUTPUT") != -1 ? Array.IndexOf(args, "--OUTPUT") : Array.IndexOf(args, "-O");
 
-                if (indexOfFileNameCommand != -1 && indexOfFileNameCommand < args.Length - 1 && FileNameValidation(args[indexOfFileNameCommand + 1]))
+                if (indexOfFileNameCommand != -1 && indexOfFileNameCommand < args.Length - 1 && FileNameValidation(ref args[indexOfFileNameCommand + 1]))
                 {
                     fileName = args[indexOfFileNameCommand + 1];
                 }

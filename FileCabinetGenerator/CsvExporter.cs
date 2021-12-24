@@ -7,8 +7,18 @@ using System.Linq;
 
 namespace FileCabinetGenerator
 {
+    /// <summary>
+    /// Creates CSV file with records.
+    /// </summary>
     static class CsvExporter
     {
+        /// <summary>
+        /// Creates CSV file with records.
+        /// </summary>
+        /// <param name="fileName">File Name.</param>
+        /// <param name="records">Records.</param>
+        /// <param name="exceptionMessage">Exception message.</param>
+        /// <returns></returns>
         public static bool ExportInCsvFile(string fileName, IEnumerable<FileCabinetRecord> records, out string exceptionMessage)
         {
             try
@@ -17,7 +27,7 @@ namespace FileCabinetGenerator
                 {
                     foreach (var item in records.First().GetType().GetProperties())
                     {
-                        if (item.Name == "DateOfBirthString")
+                        if (item.Name == "DateOfBirthString" || item.Name == "SexString")
                         {
                             continue;
                         }
