@@ -15,11 +15,19 @@ namespace FileCabinetGenerator
         private static int recordsAmount = DefaultRecordsAmount;
         private static int startId = DefaultStartId;
 
+        private static RecordsGenerator generator = null;
+
+        /// <summary>
+        /// Starts menu.
+        /// </summary>
+        /// <param name="args">Command line args.</param>
         public static void Start(string[] args)
         {
             CommandLineParametersHandling(args);
 
-            while (true)
+            bool isSettingsFinishd = false;
+
+            while (!isSettingsFinishd)
             {
                 Console.Clear();
 
@@ -46,14 +54,23 @@ namespace FileCabinetGenerator
                     case "I":
                         SetStartId(); break;
                     case "D":
-                        CreateFile(); return;
+                        isSettingsFinishd = true; break;
                     default:
                         break;
                 }
             }
+
+            CreateRecords();
+
+            Console.WriteLine("Do you want to show records on console? y/n \n");
+
+            if (Console.ReadKey().Key == ConsoleKey.Y)
+            {
+                ShowRecords();
+            }
         }
 
-        public static void PrintStartConditions()
+        private static void PrintStartConditions()
         {
             Console.WriteLine("Start conditions:" +
                 Environment.NewLine + "\t" + "file type: " + fileType +
@@ -63,7 +80,7 @@ namespace FileCabinetGenerator
                 Environment.NewLine);
         }
 
-        public static void SetFileType()
+        private static void SetFileType()
         {
             Console.WriteLine($"Current type is {fileType}."
                 + Environment.NewLine + "If you want to change it print \"csv\" or \"xml\" word and press Enter."
@@ -84,7 +101,7 @@ namespace FileCabinetGenerator
             }
         }
 
-        public static void SetFileName()
+        private static void SetFileName()
         {
             Console.WriteLine($"Current file name is {fileName}."
                 + Environment.NewLine + "If you want to change it print new file name and press Enter."
@@ -100,7 +117,7 @@ namespace FileCabinetGenerator
             }
         }
 
-        public static void SetRecordsAmount()
+        private static void SetRecordsAmount()
         {
             Console.WriteLine($"Current records amount is {recordsAmount}."
                 + Environment.NewLine + "If you want to change it print new amount and press Enter."
@@ -121,7 +138,7 @@ namespace FileCabinetGenerator
             }
         }
 
-        public static void SetStartId()
+        private static void SetStartId()
         {
             Console.WriteLine($"Current start ID is {startId}."
                 + Environment.NewLine + "If you want to change it print new ID and press Enter."
@@ -141,9 +158,27 @@ namespace FileCabinetGenerator
             }
         }
 
-        private static void CreateFile()
+        private static void CreateRecords()
         {
-            Console.WriteLine("File creation started...");
+            Console.WriteLine("Records creation started...");
+
+            generator = new RecordsGenerator(
+                fileType: fileType, fileName: fileName, recordsAmount: recordsAmount, startId: startId);
+
+
+            generator.CreateRecords();
+
+            Console.WriteLine("Records creation finished.");
+        }
+
+        private static void ShowRecords()
+        {
+            var records = generator.GetRecords();
+
+            foreach (var item in records)
+            {
+                Console.WriteLine(item);
+            }
         }
 
         private static bool FileNameValidation(string fileName)

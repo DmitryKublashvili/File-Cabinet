@@ -71,5 +71,15 @@ namespace FileCabinetApp
         /// <value> Short (integer) count years of service.
         /// </value>
         public short YearsOfService { get; set; }
+
+        /// <summary>
+        /// Gets string record representation.
+        /// </summary>
+        /// <returns>string record representation.</returns>
+        public override string ToString()
+        {
+            return " Id: " + this.Id + " " + this.FirstName + " " + this.LastName + " " + this.DateOfBirth.ToShortDateString() +
+                " Sex: " + this.Sex + " Salary: " + this.Salary + " Years in service: " + this.YearsOfService;
+        }
     }
 }

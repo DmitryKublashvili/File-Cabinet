@@ -307,6 +307,12 @@
             <value> Short (integer) count years of service.
             </value>
         </member>
+        <member name="M:FileCabinetApp.FileCabinetRecord.ToString">
+            <summary>
+            Gets string record representation.
+            </summary>
+            <returns>string record representation.</returns>
+        </member>
         <member name="T:FileCabinetApp.FileCabinetRecordCsvWriter">
             <summary>
             Records state in CSV file.
