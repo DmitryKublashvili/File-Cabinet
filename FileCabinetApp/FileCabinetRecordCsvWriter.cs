@@ -45,6 +45,11 @@ namespace FileCabinetApp
 
             foreach (var item in records[0].GetType().GetProperties())
             {
+                if (item.Name == "DateOfBirthString")
+                {
+                    continue;
+                }
+
                 this.Writer.Write(item.Name + ";");
             }
 

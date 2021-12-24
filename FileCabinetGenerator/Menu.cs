@@ -68,6 +68,27 @@ namespace FileCabinetGenerator
             {
                 ShowRecords();
             }
+
+            Console.WriteLine($"\nDo you want to save records in {fileType} file? y/n \n");
+
+            if (Console.ReadKey().Key == ConsoleKey.Y)
+            {
+                if (fileType == "CSV")
+                {
+                    if (CsvExporter.ExportInCsvFile(fileName, generator.GetRecords(), out string exceptionMessage))
+                    {
+                        Console.WriteLine($"\nFile {fileName} created.");
+                    }
+                    else
+                    {
+                        Console.WriteLine(exceptionMessage);
+                    }
+                }
+                else
+                {
+                    Console.WriteLine("Creating XML faile...");
+                }
+            }
         }
 
         private static void PrintStartConditions()
@@ -164,7 +185,6 @@ namespace FileCabinetGenerator
 
             generator = new RecordsGenerator(
                 fileType: fileType, fileName: fileName, recordsAmount: recordsAmount, startId: startId);
-
 
             generator.CreateRecords();
 
