@@ -44,7 +44,8 @@ namespace FileCabinetApp
         /// </summary>
         /// <value> Count of years.
         /// </value>
-        public int MinYearsOfService { get; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Performance", "CA1805:Do not initialize unnecessarily", Justification = "Explicit initialization for clarity")]
+        public int MinYearsOfService { get; } = 0;
 
         /// <summary>
         /// Gets max valid years of service.

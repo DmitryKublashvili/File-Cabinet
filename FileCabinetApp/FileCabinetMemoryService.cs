@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Linq;
 
 namespace FileCabinetApp
 {
@@ -267,6 +268,52 @@ namespace FileCabinetApp
             {
                 return new ReadOnlyCollection<FileCabinetRecord>(Array.Empty<FileCabinetRecord>());
             }
+        }
+
+        /// <summary>
+        /// Restores state according current state and addition state from snapshot.
+        /// </summary>
+        /// <param name="snapShot">Snapshot with some addition or new state.</param>
+        /// <returns>Amount of imported(refreshed) records.</returns>
+        public int Restore(FileCabinetServiceSnapshot snapShot)
+        {
+            if (snapShot is null)
+            {
+                throw new ArgumentException("Snapshot was null", nameof(snapShot));
+            }
+
+            ReadOnlyCollection<FileCabinetRecord> newRecords = snapShot.GetState();
+
+            List<int> existingRecordsIds = this.list.Select(r => r.Id).ToList();
+
+            int countOfAddedOrRefreshedRecords = 0;
+
+            for (int i = 0; i < newRecords.Count; i++)
+            {
+                try
+                {
+                    this.recordValidator.ValidateParameters(new ParametresOfRecord(newRecords[i]));
+                }
+                catch (ArgumentException)
+                {
+                    continue;
+                }
+
+                int indexOfRecordWithSameId = existingRecordsIds.IndexOf(newRecords[i].Id);
+
+                if (indexOfRecordWithSameId >= 0)
+                {
+                    this.list[indexOfRecordWithSameId] = newRecords[i];
+                }
+                else
+                {
+                    this.list.Add(newRecords[i]);
+                }
+
+                countOfAddedOrRefreshedRecords++;
+            }
+
+            return countOfAddedOrRefreshedRecords;
         }
     }
 }

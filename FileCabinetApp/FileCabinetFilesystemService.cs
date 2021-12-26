@@ -217,6 +217,25 @@ namespace FileCabinetApp
         /// <returns>Records count.</returns>
         public int GetStat() => (int)this.fileStream.Length / 278;
 
+        /// <summary>
+        /// Gets FileCabinetService state on current moment.
+        /// </summary>
+        /// <returns>State on the moment of fixation.</returns>
+        public FileCabinetServiceSnapshot MakeSnapshot()
+        {
+            throw new NotImplementedException();
+        }
+
+        /// <summary>
+        /// Restores state according current state and addition state from snapshot.
+        /// </summary>
+        /// <param name="snapShot">Snapshot with some addition or new state.</param>
+        /// <returns>Amount of imported(refreshed) records.</returns>
+        public int Restore(FileCabinetServiceSnapshot snapShot)
+        {
+            throw new NotImplementedException();
+        }
+
         private void WriteRecordInFile(ParametresOfRecord parametresOfRecord, long startPosition)
         {
             if (startPosition < 0)
