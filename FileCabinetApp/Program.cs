@@ -603,9 +603,17 @@ namespace FileCabinetApp
 
             snapShot.LoadFromCSV(new StreamReader(filePath));
 
-            int amountImportedRecords = fileCabinetService.Restore(snapShot);
+            var validationViolations = fileCabinetService.Restore(snapShot);
 
-            Console.WriteLine(amountImportedRecords + " records were imported from " + filePath);
+            int countOfViolations = 0;
+
+            foreach (var item in validationViolations)
+            {
+                Console.WriteLine($"Violation validations rules. Id: {item.id}, Message: {item.exceptionMessage}. This record will be skiped.");
+                countOfViolations++;
+            }
+
+            Console.WriteLine(snapShot.GetState().Count - countOfViolations + " records were imported from " + filePath);
         }
     }
 }

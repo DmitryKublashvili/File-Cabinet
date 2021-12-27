@@ -71,6 +71,7 @@ namespace FileCabinetApp
                 throw new ArgumentNullException(nameof(parametresOfRecord));
             }
 
+            var id = parametresOfRecord.Id;
             var firstName = parametresOfRecord.FirstName;
             var lastName = parametresOfRecord.LastName;
             var dateOfBirth = parametresOfRecord.DateOfBirth;
@@ -78,69 +79,73 @@ namespace FileCabinetApp
             var salary = parametresOfRecord.Salary;
             var yearsOfService = parametresOfRecord.YearsOfService;
 
-            this.NamesValidation(firstName, nameof(firstName));
-            this.NamesValidation(lastName, nameof(lastName));
-            this.DateOfBirthValidation(dateOfBirth, nameof(dateOfBirth));
-            SexValidation(sex, nameof(sex));
-            this.SalaryValidation(salary, nameof(salary));
-            this.YearsOfServiceValidation(yearsOfService, nameof(yearsOfService));
+            this.NamesValidation(id, firstName, nameof(firstName));
+            this.NamesValidation(id, lastName, nameof(lastName));
+            this.DateOfBirthValidation(id, dateOfBirth, nameof(dateOfBirth));
+            SexValidation(id, sex, nameof(sex));
+            this.SalaryValidation(id, salary, nameof(salary));
+            this.YearsOfServiceValidation(id, yearsOfService, nameof(yearsOfService));
         }
 
-        private static void SexValidation(char sex, string nameOfParameter)
+        private static void SexValidation(int id, char sex, string nameOfParameter)
         {
             if (char.ToUpperInvariant(sex) != 'M' && char.ToUpperInvariant(sex) != 'F')
             {
-                throw new ArgumentException(IncorrectSexMessage, nameOfParameter);
+                throw new ValidationException(id, IncorrectSexMessage, nameOfParameter);
             }
         }
 
-        private void NamesValidation(string name, string nameOfParameter)
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Usage", "CA2208:Instantiate argument exceptions correctly", Justification = "This method checks severak parameters.")]
+        private void NamesValidation(int id, string name, string nameOfParameter)
         {
             if (string.IsNullOrWhiteSpace(name))
             {
-                throw new ArgumentNullException(nameOfParameter, NotValidEmptyNameMessage);
+                throw new ValidationException(id, nameOfParameter, NotValidEmptyNameMessage);
             }
 
             if (name.Length < this.MinLettersCountInName || name.Length > this.MaxLettersCountInName)
             {
-                throw new ArgumentException($"The name must be {this.MinLettersCountInName}-{this.MaxLettersCountInName} characters long", nameOfParameter);
+                throw new ValidationException(id, $"The name must be {this.MinLettersCountInName}-{this.MaxLettersCountInName} characters long", nameOfParameter);
             }
 
             for (int i = 0; i < name.Length; i++)
             {
                 if (!char.IsLetter(name[i]))
                 {
-                    throw new ArgumentException(NotValidSimbolsInNameMessage, nameOfParameter);
+                    throw new ValidationException(id, NotValidSimbolsInNameMessage, nameOfParameter);
                 }
             }
         }
 
-        private void DateOfBirthValidation(DateTime dateOfBirth, string nameOfParameter)
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.ReadabilityRules", "SA1118:Parameter should not span multiple lines", Justification = "It done to comfort code visualisation.")]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.ReadabilityRules", "SA1117:Parameters should be on same line or separate lines", Justification = "It done to comfort code visualisation.")]
+        private void DateOfBirthValidation(int id, DateTime dateOfBirth, string nameOfParameter)
         {
             if (dateOfBirth < this.MinDateOfBirth || dateOfBirth > DateTime.Now)
             {
-                throw new ArgumentException(
-                    $"Date of birth must be no earlier than {this.MinDateOfBirth} " +
+                throw new ValidationException(id, $"Date of birth must be no earlier than {this.MinDateOfBirth} " +
                     "and no later than the current date", nameOfParameter);
             }
         }
 
-        private void SalaryValidation(decimal salary, string nameOfParameter)
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.ReadabilityRules", "SA1118:Parameter should not span multiple lines", Justification = "It done to comfort code visualisation.")]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.ReadabilityRules", "SA1117:Parameters should be on same line or separate lines", Justification = "It done to comfort code visualisation.")]
+        private void SalaryValidation(int id, decimal salary, string nameOfParameter)
         {
             if (salary < this.MinSalary || salary > this.MaxSalary)
             {
-                throw new ArgumentException(
-                    $"The salary must be greater than or equal to {this.MinSalary} " +
+                throw new ValidationException(id, $"The salary must be greater than or equal to {this.MinSalary} " +
                     $"and less than or equal to {this.MaxSalary}", nameOfParameter);
             }
         }
 
-        private void YearsOfServiceValidation(short yearsOfService, string nameOfParameter)
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.ReadabilityRules", "SA1118:Parameter should not span multiple lines", Justification = "It done to comfort code visualisation.")]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.ReadabilityRules", "SA1117:Parameters should be on same line or separate lines", Justification = "It done to comfort code visualisation.")]
+        private void YearsOfServiceValidation(int id, short yearsOfService, string nameOfParameter)
         {
             if (yearsOfService < this.MinYearsOfService || yearsOfService > this.MaxYearsOfService)
             {
-                throw new ArgumentException(
-                    $"The years of service parameter must be greater than or equal to {this.MinYearsOfService} " +
+                throw new ValidationException(id, $"The years of service parameter must be greater than or equal to {this.MinYearsOfService} " +
                     $"and less than or equal to {this.MaxYearsOfService}", nameOfParameter);
             }
         }

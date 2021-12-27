@@ -230,8 +230,8 @@ namespace FileCabinetApp
         /// Restores state according current state and addition state from snapshot.
         /// </summary>
         /// <param name="snapShot">Snapshot with some addition or new state.</param>
-        /// <returns>Amount of imported(refreshed) records.</returns>
-        public int Restore(FileCabinetServiceSnapshot snapShot)
+        /// <returns>Information (id, message) about not valid records.</returns>
+        public IEnumerable<(int id, string exceptionMessage)> Restore(FileCabinetServiceSnapshot snapShot)
         {
             throw new NotImplementedException();
         }

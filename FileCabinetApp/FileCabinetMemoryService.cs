@@ -274,8 +274,8 @@ namespace FileCabinetApp
         /// Restores state according current state and addition state from snapshot.
         /// </summary>
         /// <param name="snapShot">Snapshot with some addition or new state.</param>
-        /// <returns>Amount of imported(refreshed) records.</returns>
-        public int Restore(FileCabinetServiceSnapshot snapShot)
+        /// <returns>Information (id, message) about not valid records.</returns>
+        public IEnumerable<(int id, string exceptionMessage)> Restore(FileCabinetServiceSnapshot snapShot)
         {
             if (snapShot is null)
             {
@@ -286,7 +286,7 @@ namespace FileCabinetApp
 
             List<int> existingRecordsIds = this.list.Select(r => r.Id).ToList();
 
-            int countOfAddedOrRefreshedRecords = 0;
+            List<(int id, string exceptionMessage)> validationViolations = new List<(int id, string exceptionMessage)>();
 
             for (int i = 0; i < newRecords.Count; i++)
             {
@@ -294,8 +294,9 @@ namespace FileCabinetApp
                 {
                     this.recordValidator.ValidateParameters(new ParametresOfRecord(newRecords[i]));
                 }
-                catch (ArgumentException)
+                catch (ValidationException e)
                 {
+                    validationViolations.Add((e.NotValidRecordId, e.Message));
                     continue;
                 }
 
@@ -309,11 +310,9 @@ namespace FileCabinetApp
                 {
                     this.list.Add(newRecords[i]);
                 }
-
-                countOfAddedOrRefreshedRecords++;
             }
 
-            return countOfAddedOrRefreshedRecords;
+            return validationViolations;
         }
     }
 }

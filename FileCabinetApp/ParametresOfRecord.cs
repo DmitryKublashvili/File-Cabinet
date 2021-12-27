@@ -17,6 +17,11 @@ namespace FileCabinetApp
         /// <param name="record">FileCabinetRecord.</param>
         public ParametresOfRecord(FileCabinetRecord record)
         {
+            if (record is null)
+            {
+                throw new ArgumentNullException(nameof(record));
+            }
+
             this.Id = record.Id;
             this.FirstName = record.FirstName;
             this.LastName = record.LastName;

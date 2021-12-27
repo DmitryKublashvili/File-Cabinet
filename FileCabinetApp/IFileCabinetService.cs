@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 
 namespace FileCabinetApp
@@ -64,7 +65,7 @@ namespace FileCabinetApp
         /// Restores state according current state and addition state from snapshot.
         /// </summary>
         /// <param name="snapShot">Snapshot with some addition or new state.</param>
-        /// <returns>Amount of imported(refreshed) records.</returns>
-        int Restore(FileCabinetServiceSnapshot snapShot);
+        /// <returns>Information (id, message) about not valid records.</returns>
+        IEnumerable<(int id, string exceptionMessage)> Restore(FileCabinetServiceSnapshot snapShot);
     }
 }
