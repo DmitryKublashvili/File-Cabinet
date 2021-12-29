@@ -50,6 +50,7 @@ namespace FileCabinetApp
             new Tuple<string, Action<string>>("export", Export),
             new Tuple<string, Action<string>>("import", Import),
             new Tuple<string, Action<string>>("remove", Remove),
+            new Tuple<string, Action<string>>("purge", Purge),
         };
 
         private static string[][] helpMessages = new string[][]
@@ -64,6 +65,7 @@ namespace FileCabinetApp
             new string[] { "export", "exports current state in file", "The 'export' command exports current state in file according to the specified parameters." },
             new string[] { "import", "imports records from file", "The 'import' command imports records from CSV or XML format file." },
             new string[] { "remove", "removes records by ID from storage", "The 'remove' command removes records by ID from storage." },
+            new string[] { "purge", "performs defragmentation of the storage-file (available only for FileCabinetFilesystemService)", "The 'purge' command performs defragmentation of the storage-file." },
         };
 
         /// <summary>
@@ -629,6 +631,18 @@ namespace FileCabinetApp
 
             fileCabinetService.RemoveRecordById(id);
             Console.WriteLine($"Record #{id} is removed.");
+        }
+
+        private static void Purge(string obj)
+        {
+            if (isFileSystemStorageUsed)
+            {
+                fileCabinetService.Defragment();
+            }
+            else
+            {
+                Console.WriteLine("'Purge command available only for FileCabinetFilesystemService.");
+            }
         }
     }
 }

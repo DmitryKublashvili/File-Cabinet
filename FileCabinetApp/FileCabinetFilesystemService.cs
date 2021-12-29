@@ -42,14 +42,9 @@ namespace FileCabinetApp
 
             this.recordValidator.ValidateParameters(parametresOfRecord);
 
-            long startPosition;
+            long startPosition = this.fileStream.Length;
 
-            int id;
-
-            startPosition = this.fileStream.Length;
-
-            // get Id
-            id = ((int)startPosition / 278) + 1;
+            int id = parametresOfRecord.Id;
 
             this.WriteRecordInFile(parametresOfRecord, startPosition);
 
@@ -76,7 +71,7 @@ namespace FileCabinetApp
 
             long startPosition = -1;
 
-            int recordsCount = (int)this.fileStream.Length / 278;
+            long recordsCount = this.fileStream.Length / 278;
 
             byte[] bytesFromId = new byte[4];
 
@@ -113,7 +108,7 @@ namespace FileCabinetApp
 
             (int, int, int) searchingDateParams = (searchingDate.Year, searchingDate.Month, searchingDate.Day);
 
-            for (int i = 0; i < this.fileStream.Length; i += 278)
+            for (long i = 0; i < this.fileStream.Length; i += 278)
             {
                 if (!this.IsDeleted(i))
                 {
@@ -149,7 +144,7 @@ namespace FileCabinetApp
 
             List<FileCabinetRecord> records = new List<FileCabinetRecord>();
 
-            for (int i = 0; i < this.fileStream.Length; i += 278)
+            for (long i = 0; i < this.fileStream.Length; i += 278)
             {
                 if (!this.IsDeleted(i))
                 {
@@ -185,7 +180,7 @@ namespace FileCabinetApp
 
             List<FileCabinetRecord> records = new List<FileCabinetRecord>();
 
-            for (int i = 0; i < this.fileStream.Length; i += 278)
+            for (long i = 0; i < this.fileStream.Length; i += 278)
             {
                 if (!this.IsDeleted(i))
                 {
@@ -215,7 +210,7 @@ namespace FileCabinetApp
         {
             List<FileCabinetRecord> records = new List<FileCabinetRecord>();
 
-            for (int i = 0; i < this.fileStream.Length; i += 278)
+            for (long i = 0; i < this.fileStream.Length; i += 278)
             {
                 if (!this.IsDeleted(i))
                 {
@@ -235,7 +230,7 @@ namespace FileCabinetApp
             int existingRecordsCount = 0;
             int removerdRecordsCount = 0;
 
-            for (int i = 0; i < this.fileStream.Length; i += 278)
+            for (long i = 0; i < this.fileStream.Length; i += 278)
             {
                 if (!this.IsDeleted(i))
                 {
@@ -306,11 +301,10 @@ namespace FileCabinetApp
         /// <param name="id">ID of record.</param>
         public void RemoveRecordById(int id)
         {
-            byte[] bytes = new byte[1] { 5 };
+            long startPosition = this.GetPositionOfTheRecordById(id);
 
-            long startPosition = (id - 1) * 278;
             this.fileStream.Seek(startPosition, SeekOrigin.Begin);
-            this.fileStream.Write(bytes);
+            this.fileStream.WriteByte(5);
         }
 
         /// <summary>
@@ -325,7 +319,22 @@ namespace FileCabinetApp
                 throw new ArgumentException("id must be more then 0", nameof(id));
             }
 
-            return !this.IsDeleted(id - 1);
+            return !this.IsDeleted(this.GetPositionOfTheRecordById(id));
+        }
+
+        /// <summary>
+        /// Defragments storage file by removing marked as deleted records.
+        /// </summary>
+        public void Defragment()
+        {
+            var records = this.GetRecords();
+
+            this.fileStream.SetLength(0);
+
+            foreach (var item in records)
+            {
+                this.CreateRecord(new ParametresOfRecord(item));
+            }
         }
 
         private void WriteRecordInFile(ParametresOfRecord parametresOfRecord, long startPosition)
@@ -342,7 +351,7 @@ namespace FileCabinetApp
 
             // int Id 4
             this.fileStream.Seek(startPosition + 2, SeekOrigin.Begin);
-            this.fileStream.Write(BitConverter.GetBytes((startPosition / 278) + 1));
+            this.fileStream.Write(BitConverter.GetBytes(parametresOfRecord.Id));
 
             // char[] FirstName 120
             this.fileStream.Seek(startPosition + 6, SeekOrigin.Begin);
@@ -388,7 +397,7 @@ namespace FileCabinetApp
             this.fileStream.Write(BitConverter.GetBytes(parametresOfRecord.YearsOfService));
         }
 
-        private FileCabinetRecord GetRecordFromFile(int position)
+        private FileCabinetRecord GetRecordFromFile(long position)
         {
             FileCabinetRecord record = new FileCabinetRecord();
 
@@ -400,10 +409,10 @@ namespace FileCabinetApp
             record.Id = BitConverter.ToInt32(bytes[2..6], 0);
 
             // get FirstName
-            record.FirstName = Encoding.ASCII.GetString(bytes[6..126]).TrimEnd(' ');
+            record.FirstName = Encoding.ASCII.GetString(bytes[6..126].TakeWhile(x => x != 0).ToArray()).TrimEnd(' ');
 
             // get LastName
-            record.LastName = Encoding.ASCII.GetString(bytes[126..246]).TrimEnd(' ');
+            record.LastName = Encoding.ASCII.GetString(bytes[126..246].TakeWhile(x => x != 0).ToArray()).TrimEnd(' ');
 
             // get DateOfBirth
             int year = BitConverter.ToInt32(bytes[246..250], 0);
@@ -430,7 +439,7 @@ namespace FileCabinetApp
             return record;
         }
 
-        private bool IsDeleted(int recordPosition)
+        private bool IsDeleted(long recordPosition)
         {
             byte[] bytes = new byte[1];
             this.fileStream.Seek(recordPosition, SeekOrigin.Begin);
@@ -442,6 +451,24 @@ namespace FileCabinetApp
             }
 
             return false;
+        }
+
+        private long GetPositionOfTheRecordById(int id)
+        {
+            byte[] bytes = new byte[4];
+
+            for (long position = 0; position < this.fileStream.Length; position += 278)
+            {
+                this.fileStream.Seek(position + 2, SeekOrigin.Begin);
+                this.fileStream.Read(bytes);
+
+                if (BitConverter.ToUInt32(bytes) == id)
+                {
+                    return position;
+                }
+            }
+
+            return -1;
         }
     }
 }

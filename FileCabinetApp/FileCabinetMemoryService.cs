@@ -279,6 +279,14 @@ namespace FileCabinetApp
         /// <returns>Result bool value.</returns>
         public bool IsRecordExist(int id) => this.list.Exists(x => x.Id == id);
 
+        /// <summary>
+        /// Defragments storage file by removing marked as deleted records.
+        /// </summary>
+        public void Defragment()
+        {
+            throw new NotImplementedException();
+        }
+
         private void RemoveRecordFromDictionaries(FileCabinetRecord record)
         {
             if (this.firstNameDictionary.ContainsKey(record.FirstName.ToUpperInvariant()))

@@ -80,5 +80,10 @@ namespace FileCabinetApp
         /// <param name="id">ID of the record.</param>
         /// <returns>Result bool value.</returns>
         bool IsRecordExist(int id);
+
+        /// <summary>
+        /// Defragments storage file by removing marked as deleted records.
+        /// </summary>
+        void Defragment();
     }
 }
