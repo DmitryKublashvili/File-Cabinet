@@ -49,6 +49,8 @@ namespace FileCabinetApp
             new Tuple<string, Action<string>>("find", Find),
             new Tuple<string, Action<string>>("export", Export),
             new Tuple<string, Action<string>>("import", Import),
+            new Tuple<string, Action<string>>("remove", Remove),
+            new Tuple<string, Action<string>>("purge", Purge),
         };
 
         private static string[][] helpMessages = new string[][]
@@ -60,8 +62,10 @@ namespace FileCabinetApp
             new string[] { "edit", "edits selected (by id) record", "The 'edit' command allows to edit selected by Id record." },
             new string[] { "list", "shows records information", "The 'list' command shows records information." },
             new string[] { "find", "finds records by the specified parameter", "The 'find' command shows a list of records in which the specified parameter was found." },
-            new string[] { "export", "exports current state in file", "The 'export' exports current state in file according to the specified parameters." },
-            new string[] { "import", "imports records from file", "The 'import' imports records from CSV or XML format file." },
+            new string[] { "export", "exports current state in file", "The 'export' command exports current state in file according to the specified parameters." },
+            new string[] { "import", "imports records from file", "The 'import' command imports records from CSV or XML format file." },
+            new string[] { "remove", "removes records by ID from storage", "The 'remove' command removes records by ID from storage." },
+            new string[] { "purge", "performs defragmentation of the storage-file (available only for FileCabinetFilesystemService)", "The 'purge' command performs defragmentation of the storage-file." },
         };
 
         /// <summary>
@@ -178,7 +182,6 @@ namespace FileCabinetApp
         {
             if (isFileSystemStorageUsed)
             {
-                fileStream.Dispose();
                 fileStream.Close();
             }
 
@@ -188,8 +191,8 @@ namespace FileCabinetApp
 
         private static void Stat(string parameters)
         {
-            var recordsCount = Program.fileCabinetService.GetStat();
-            Console.WriteLine($"{recordsCount} record(s).");
+            (int recordsCount, int deletedRecordsCount) = fileCabinetService.GetStat();
+            Console.WriteLine($"{recordsCount} record(s), deleted records count: {deletedRecordsCount}.");
         }
 
         private static void Create(string parameters)
@@ -225,13 +228,7 @@ namespace FileCabinetApp
                 return;
             }
 
-            if (!isFileSystemStorageUsed && !CheckIndexOfRecordInMemory(id))
-            {
-                Console.WriteLine($"#{userEnter} record is not found.");
-                return;
-            }
-
-            if (isFileSystemStorageUsed && id > fileCabinetService.GetStat())
+            if (!fileCabinetService.IsRecordExist(id))
             {
                 Console.WriteLine($"#{userEnter} record is not found.");
                 return;
@@ -396,20 +393,20 @@ namespace FileCabinetApp
             Console.WriteLine("All records are exported to file {0}.", parameters[1]);
         }
 
-        private static bool CheckIndexOfRecordInMemory(int id)
-        {
-            ReadOnlyCollection<FileCabinetRecord> listOfRecords = fileCabinetService.GetRecords();
+        //private static bool CheckIndexOfRecordInMemory(int id)
+        //{
+        //    ReadOnlyCollection<FileCabinetRecord> listOfRecords = fileCabinetService.GetRecords();
 
-            for (int i = 0; i < listOfRecords.Count; i++)
-            {
-                if (id == listOfRecords[i].Id)
-                {
-                    return true;
-                }
-            }
+        //    for (int i = 0; i < listOfRecords.Count; i++)
+        //    {
+        //        if (id == listOfRecords[i].Id)
+        //        {
+        //            return true;
+        //        }
+        //    }
 
-            return false;
-        }
+        //    return false;
+        //}
 
         private static T ReadInput<T>(Func<string, Tuple<bool, string, T>> converter, Func<T, Tuple<bool, string>> validator)
         {
@@ -616,6 +613,36 @@ namespace FileCabinetApp
             }
 
             Console.WriteLine(snapShot.GetState().Count - countOfViolations + " records were imported from " + filePath);
+        }
+
+        private static void Remove(string userEnter)
+        {
+            if (!int.TryParse(userEnter, out int id))
+            {
+                Console.WriteLine("Incorrect input.");
+                return;
+            }
+
+            if (!fileCabinetService.IsRecordExist(id))
+            {
+                Console.WriteLine($"Record #{userEnter} doesn't exists.");
+                return;
+            }
+
+            fileCabinetService.RemoveRecordById(id);
+            Console.WriteLine($"Record #{id} is removed.");
+        }
+
+        private static void Purge(string obj)
+        {
+            if (isFileSystemStorageUsed)
+            {
+                fileCabinetService.Defragment();
+            }
+            else
+            {
+                Console.WriteLine("'Purge command available only for FileCabinetFilesystemService.");
+            }
         }
     }
 }

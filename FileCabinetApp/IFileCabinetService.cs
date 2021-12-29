@@ -58,8 +58,8 @@ namespace FileCabinetApp
         /// <summary>
         /// Gets records count.
         /// </summary>
-        /// <returns>Records count.</returns>
-        int GetStat();
+        /// <returns>Exosting records count and deleted records count.</returns>
+        (int recordsCount, int deletedRecordsCount) GetStat();
 
         /// <summary>
         /// Restores state according current state and addition state from snapshot.
@@ -67,5 +67,23 @@ namespace FileCabinetApp
         /// <param name="snapShot">Snapshot with some addition or new state.</param>
         /// <returns>Information (id, message) about not valid records.</returns>
         IEnumerable<(int id, string exceptionMessage)> Restore(FileCabinetServiceSnapshot snapShot);
+
+        /// <summary>
+        /// Removes record by it's ID.
+        /// </summary>
+        /// <param name="id">ID of record.</param>
+        void RemoveRecordById(int id);
+
+        /// <summary>
+        /// Define is the record exists by it's ID.
+        /// </summary>
+        /// <param name="id">ID of the record.</param>
+        /// <returns>Result bool value.</returns>
+        bool IsRecordExist(int id);
+
+        /// <summary>
+        /// Defragments storage file by removing marked as deleted records.
+        /// </summary>
+        void Defragment();
     }
 }

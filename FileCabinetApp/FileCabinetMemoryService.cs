@@ -92,10 +92,10 @@ namespace FileCabinetApp
         /// <summary>
         /// Gets records count.
         /// </summary>
-        /// <returns>Records count.</returns>
-        public int GetStat()
+        /// <returns>Records count and formal parameter for interface implementation.</returns>
+        public (int recordsCount, int deletedRecordsCount) GetStat()
         {
-            return this.list.Count;
+            return (this.list.Count, 0);
         }
 
         /// <summary>
@@ -258,6 +258,51 @@ namespace FileCabinetApp
             }
 
             return validationViolations;
+        }
+
+        /// <summary>
+        /// Removes record by it's ID.
+        /// </summary>
+        /// <param name="id">ID of record.</param>
+        public void RemoveRecordById(int id)
+        {
+            int indexORemovingRecord = this.list.FindIndex(x => x.Id == id);
+            var removingRecord = this.list[indexORemovingRecord];
+            this.list.RemoveAt(indexORemovingRecord);
+            this.RemoveRecordFromDictionaries(removingRecord);
+        }
+
+        /// <summary>
+        /// Define is the record exists by it's ID.
+        /// </summary>
+        /// <param name="id">ID of the record.</param>
+        /// <returns>Result bool value.</returns>
+        public bool IsRecordExist(int id) => this.list.Exists(x => x.Id == id);
+
+        /// <summary>
+        /// Defragments storage file by removing marked as deleted records.
+        /// </summary>
+        public void Defragment()
+        {
+            throw new NotImplementedException();
+        }
+
+        private void RemoveRecordFromDictionaries(FileCabinetRecord record)
+        {
+            if (this.firstNameDictionary.ContainsKey(record.FirstName.ToUpperInvariant()))
+            {
+                this.firstNameDictionary[record.FirstName.ToUpperInvariant()].Remove(record);
+            }
+
+            if (this.lastNameDictionary.ContainsKey(record.LastName.ToUpperInvariant()))
+            {
+                this.lastNameDictionary[record.LastName.ToUpperInvariant()].Remove(record);
+            }
+
+            if (this.dateOfBirthDictionary.ContainsKey(record.DateOfBirth))
+            {
+                this.dateOfBirthDictionary[record.DateOfBirth].Remove(record);
+            }
         }
 
         private void AddRecordToDictionaries(FileCabinetRecord record)

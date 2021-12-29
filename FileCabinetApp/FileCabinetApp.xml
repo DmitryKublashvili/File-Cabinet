@@ -195,6 +195,24 @@
             <param name="snapShot">Snapshot with some addition or new state.</param>
             <returns>Information (id, message) about not valid records.</returns>
         </member>
+        <member name="M:FileCabinetApp.FileCabinetFilesystemService.RemoveRecordById(System.Int32)">
+            <summary>
+            Removes record by it's ID.
+            </summary>
+            <param name="id">ID of record.</param>
+        </member>
+        <member name="M:FileCabinetApp.FileCabinetFilesystemService.IsRecordExist(System.Int32)">
+            <summary>
+            Define is the record exists by it's ID.
+            </summary>
+            <param name="id">ID of the record.</param>
+            <returns>Result bool value.</returns>
+        </member>
+        <member name="M:FileCabinetApp.FileCabinetFilesystemService.Defragment">
+            <summary>
+            Defragments storage file by removing marked as deleted records.
+            </summary>
+        </member>
         <member name="T:FileCabinetApp.FileCabinetMemoryService">
             <summary>
             Implements functions of file cabinet.
@@ -229,7 +247,7 @@
             <summary>
             Gets records count.
             </summary>
-            <returns>Records count.</returns>
+            <returns>Records count and formal parameter for interface implementation.</returns>
         </member>
         <member name="M:FileCabinetApp.FileCabinetMemoryService.EditRecord(FileCabinetApp.ParametresOfRecord)">
             <summary>
@@ -264,6 +282,24 @@
             </summary>
             <param name="snapShot">Snapshot with some addition or new state.</param>
             <returns>Information (id, message) about not valid records.</returns>
+        </member>
+        <member name="M:FileCabinetApp.FileCabinetMemoryService.RemoveRecordById(System.Int32)">
+            <summary>
+            Removes record by it's ID.
+            </summary>
+            <param name="id">ID of record.</param>
+        </member>
+        <member name="M:FileCabinetApp.FileCabinetMemoryService.IsRecordExist(System.Int32)">
+            <summary>
+            Define is the record exists by it's ID.
+            </summary>
+            <param name="id">ID of the record.</param>
+            <returns>Result bool value.</returns>
+        </member>
+        <member name="M:FileCabinetApp.FileCabinetMemoryService.Defragment">
+            <summary>
+            Defragments storage file by removing marked as deleted records.
+            </summary>
         </member>
         <member name="T:FileCabinetApp.FileCabinetRecord">
             <summary>
@@ -554,7 +590,7 @@
             <summary>
             Gets records count.
             </summary>
-            <returns>Records count.</returns>
+            <returns>Exosting records count and deleted records count.</returns>
         </member>
         <member name="M:FileCabinetApp.IFileCabinetService.Restore(FileCabinetApp.FileCabinetServiceSnapshot)">
             <summary>
@@ -562,6 +598,24 @@
             </summary>
             <param name="snapShot">Snapshot with some addition or new state.</param>
             <returns>Information (id, message) about not valid records.</returns>
+        </member>
+        <member name="M:FileCabinetApp.IFileCabinetService.RemoveRecordById(System.Int32)">
+            <summary>
+            Removes record by it's ID.
+            </summary>
+            <param name="id">ID of record.</param>
+        </member>
+        <member name="M:FileCabinetApp.IFileCabinetService.IsRecordExist(System.Int32)">
+            <summary>
+            Define is the record exists by it's ID.
+            </summary>
+            <param name="id">ID of the record.</param>
+            <returns>Result bool value.</returns>
+        </member>
+        <member name="M:FileCabinetApp.IFileCabinetService.Defragment">
+            <summary>
+            Defragments storage file by removing marked as deleted records.
+            </summary>
         </member>
         <member name="T:FileCabinetApp.IRecordValidator">
             <summary>
