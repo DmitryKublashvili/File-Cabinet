@@ -67,6 +67,11 @@ namespace FileCabinetApp
                 throw new ArgumentNullException(nameof(parametresOfRecord));
             }
 
+            if (!this.IsRecordExist(parametresOfRecord.Id))
+            {
+                return;
+            }
+
             this.recordValidator.ValidateParameters(parametresOfRecord);
 
             long startPosition = -1;
@@ -106,21 +111,24 @@ namespace FileCabinetApp
         {
             List<FileCabinetRecord> records = new List<FileCabinetRecord>();
 
-            long numOfRecords = this.fileStream.Length / 278;
-
             (int, int, int) searchingDateParams = (searchingDate.Year, searchingDate.Month, searchingDate.Day);
 
-            for (int i = 0; i < numOfRecords; i++)
+            for (int i = 0; i < this.fileStream.Length; i += 278)
             {
+                if (!this.IsDeleted(i))
+                {
+                    continue;
+                }
+
                 byte[] bytesDate = new byte[12];
-                this.fileStream.Seek((278 * i) + 246, SeekOrigin.Begin);
+                this.fileStream.Seek(i + 246, SeekOrigin.Begin);
                 this.fileStream.Read(bytesDate);
 
                 (int, int, int) dateForCheck = (BitConverter.ToInt32(bytesDate.AsSpan()[.. 4]), BitConverter.ToInt32(bytesDate.AsSpan()[4 .. 8]), BitConverter.ToInt32(bytesDate.AsSpan()[8 ..]));
 
                 if (searchingDateParams == dateForCheck)
                 {
-                    records.Add(this.GetRecordFromFile(278 * i));
+                    records.Add(this.GetRecordFromFile(i));
                 }
             }
 
@@ -141,19 +149,22 @@ namespace FileCabinetApp
 
             List<FileCabinetRecord> records = new List<FileCabinetRecord>();
 
-            long numOfRecords = this.fileStream.Length / 278;
-
-            for (int i = 0; i < numOfRecords; i++)
+            for (int i = 0; i < this.fileStream.Length; i += 278)
             {
+                if (!this.IsDeleted(i))
+                {
+                    continue;
+                }
+
                 byte[] bytesFirstName = new byte[120];
-                this.fileStream.Seek((278 * i) + 6, SeekOrigin.Begin);
+                this.fileStream.Seek(i + 6, SeekOrigin.Begin);
                 this.fileStream.Read(bytesFirstName);
                 byte[] adaptedBytes = bytesFirstName.Where(s => s != '/' && s != 0).ToArray();
                 string firstNameInRecordToCheck = Encoding.ASCII.GetString(adaptedBytes);
 
                 if (firstNameInRecordToCheck.ToUpperInvariant() == firstName.ToUpperInvariant())
                 {
-                    records.Add(this.GetRecordFromFile(278 * i));
+                    records.Add(this.GetRecordFromFile(i));
                 }
             }
 
@@ -174,19 +185,22 @@ namespace FileCabinetApp
 
             List<FileCabinetRecord> records = new List<FileCabinetRecord>();
 
-            long numOfRecords = this.fileStream.Length / 278;
-
-            for (int i = 0; i < numOfRecords; i++)
+            for (int i = 0; i < this.fileStream.Length; i += 278)
             {
+                if (!this.IsDeleted(i))
+                {
+                    continue;
+                }
+
                 byte[] bytesLastName = new byte[120];
-                this.fileStream.Seek((278 * i) + 126, SeekOrigin.Begin);
+                this.fileStream.Seek(i + 126, SeekOrigin.Begin);
                 this.fileStream.Read(bytesLastName);
                 byte[] adaptedBytes = bytesLastName.Where(s => s != '/' && s != 0).ToArray();
                 string lastNameInRecordToCheck = Encoding.ASCII.GetString(adaptedBytes);
 
                 if (lastNameInRecordToCheck.ToUpperInvariant() == lastName.ToUpperInvariant())
                 {
-                    records.Add(this.GetRecordFromFile(278 * i));
+                    records.Add(this.GetRecordFromFile(i));
                 }
             }
 
@@ -201,11 +215,12 @@ namespace FileCabinetApp
         {
             List<FileCabinetRecord> records = new List<FileCabinetRecord>();
 
-            long numOfRecords = this.fileStream.Length / 278;
-
-            for (int i = 0; i < numOfRecords; i++)
+            for (int i = 0; i < this.fileStream.Length; i += 278)
             {
-                records.Add(this.GetRecordFromFile(i * 278));
+                if (!this.IsDeleted(i))
+                {
+                    records.Add(this.GetRecordFromFile(i));
+                }
             }
 
             return new ReadOnlyCollection<FileCabinetRecord>(records);
@@ -215,7 +230,25 @@ namespace FileCabinetApp
         /// Gets records count.
         /// </summary>
         /// <returns>Records count.</returns>
-        public int GetStat() => (int)this.fileStream.Length / 278;
+        public int GetStat()
+        {
+            int existingRecordsCount = 0;
+            int removerdRecordsCount = 0;
+
+            for (int i = 0; i < this.fileStream.Length; i += 278)
+            {
+                if (!this.IsDeleted(i))
+                {
+                    existingRecordsCount++;
+                }
+                else
+                {
+                    removerdRecordsCount++;
+                }
+            }
+
+            return existingRecordsCount;
+        }
 
         /// <summary>
         /// Gets FileCabinetService state on current moment.
@@ -273,7 +306,26 @@ namespace FileCabinetApp
         /// <param name="id">ID of record.</param>
         public void RemoveRecordById(int id)
         {
-            throw new NotImplementedException();
+            byte[] bytes = new byte[1] { 5 };
+
+            long startPosition = (id - 1) * 278;
+            this.fileStream.Seek(startPosition, SeekOrigin.Begin);
+            this.fileStream.Write(bytes);
+        }
+
+        /// <summary>
+        /// Define is the record exists by it's ID.
+        /// </summary>
+        /// <param name="id">ID of the record.</param>
+        /// <returns>Result bool value.</returns>
+        public bool IsRecordExist(int id)
+        {
+            if (id <= 0)
+            {
+                throw new ArgumentException("id must be more then 0", nameof(id));
+            }
+
+            return !this.IsDeleted(id - 1);
         }
 
         private void WriteRecordInFile(ParametresOfRecord parametresOfRecord, long startPosition)
@@ -376,6 +428,20 @@ namespace FileCabinetApp
             record.YearsOfService = BitConverter.ToInt16(bytes[276..278], 0);
 
             return record;
+        }
+
+        private bool IsDeleted(int recordPosition)
+        {
+            byte[] bytes = new byte[1];
+            this.fileStream.Seek(recordPosition, SeekOrigin.Begin);
+            this.fileStream.Read(bytes);
+
+            if (bytes[0] == 5)
+            {
+                return true;
+            }
+
+            return false;
         }
     }
 }

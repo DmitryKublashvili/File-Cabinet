@@ -73,5 +73,12 @@ namespace FileCabinetApp
         /// </summary>
         /// <param name="id">ID of record.</param>
         void RemoveRecordById(int id);
+
+        /// <summary>
+        /// Define is the record exists by it's ID.
+        /// </summary>
+        /// <param name="id">ID of the record.</param>
+        /// <returns>Result bool value.</returns>
+        bool IsRecordExist(int id);
     }
 }

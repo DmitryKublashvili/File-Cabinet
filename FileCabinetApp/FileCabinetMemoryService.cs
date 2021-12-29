@@ -272,6 +272,13 @@ namespace FileCabinetApp
             this.RemoveRecordFromDictionaries(removingRecord);
         }
 
+        /// <summary>
+        /// Define is the record exists by it's ID.
+        /// </summary>
+        /// <param name="id">ID of the record.</param>
+        /// <returns>Result bool value.</returns>
+        public bool IsRecordExist(int id) => this.list.Exists(x => x.Id == id);
+
         private void RemoveRecordFromDictionaries(FileCabinetRecord record)
         {
             if (this.firstNameDictionary.ContainsKey(record.FirstName.ToUpperInvariant()))

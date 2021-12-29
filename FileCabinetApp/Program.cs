@@ -226,13 +226,7 @@ namespace FileCabinetApp
                 return;
             }
 
-            if (!isFileSystemStorageUsed && !CheckIndexOfRecordInMemory(id))
-            {
-                Console.WriteLine($"#{userEnter} record is not found.");
-                return;
-            }
-
-            if (isFileSystemStorageUsed && id > fileCabinetService.GetStat())
+            if (!fileCabinetService.IsRecordExist(id))
             {
                 Console.WriteLine($"#{userEnter} record is not found.");
                 return;
@@ -397,20 +391,20 @@ namespace FileCabinetApp
             Console.WriteLine("All records are exported to file {0}.", parameters[1]);
         }
 
-        private static bool CheckIndexOfRecordInMemory(int id)
-        {
-            ReadOnlyCollection<FileCabinetRecord> listOfRecords = fileCabinetService.GetRecords();
+        //private static bool CheckIndexOfRecordInMemory(int id)
+        //{
+        //    ReadOnlyCollection<FileCabinetRecord> listOfRecords = fileCabinetService.GetRecords();
 
-            for (int i = 0; i < listOfRecords.Count; i++)
-            {
-                if (id == listOfRecords[i].Id)
-                {
-                    return true;
-                }
-            }
+        //    for (int i = 0; i < listOfRecords.Count; i++)
+        //    {
+        //        if (id == listOfRecords[i].Id)
+        //        {
+        //            return true;
+        //        }
+        //    }
 
-            return false;
-        }
+        //    return false;
+        //}
 
         private static T ReadInput<T>(Func<string, Tuple<bool, string, T>> converter, Func<T, Tuple<bool, string>> validator)
         {
@@ -627,13 +621,7 @@ namespace FileCabinetApp
                 return;
             }
 
-            if (!isFileSystemStorageUsed && !CheckIndexOfRecordInMemory(id))
-            {
-                Console.WriteLine($"Record #{userEnter} doesn't exists.");
-                return;
-            }
-
-            if (isFileSystemStorageUsed && id > fileCabinetService.GetStat())
+            if (!fileCabinetService.IsRecordExist(id))
             {
                 Console.WriteLine($"Record #{userEnter} doesn't exists.");
                 return;
