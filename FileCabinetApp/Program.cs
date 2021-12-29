@@ -640,7 +640,7 @@ namespace FileCabinetApp
             }
 
             fileCabinetService.RemoveRecordById(id);
-            Console.WriteLine($"Record #{id} is updated.");
+            Console.WriteLine($"Record #{id} is removed.");
         }
     }
 }

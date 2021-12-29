@@ -266,7 +266,28 @@ namespace FileCabinetApp
         /// <param name="id">ID of record.</param>
         public void RemoveRecordById(int id)
         {
-            throw new NotImplementedException();
+            int indexORemovingRecord = this.list.FindIndex(x => x.Id == id);
+            var removingRecord = this.list[indexORemovingRecord];
+            this.list.RemoveAt(indexORemovingRecord);
+            this.RemoveRecordFromDictionaries(removingRecord);
+        }
+
+        private void RemoveRecordFromDictionaries(FileCabinetRecord record)
+        {
+            if (this.firstNameDictionary.ContainsKey(record.FirstName.ToUpperInvariant()))
+            {
+                this.firstNameDictionary[record.FirstName.ToUpperInvariant()].Remove(record);
+            }
+
+            if (this.lastNameDictionary.ContainsKey(record.LastName.ToUpperInvariant()))
+            {
+                this.lastNameDictionary[record.LastName.ToUpperInvariant()].Remove(record);
+            }
+
+            if (this.dateOfBirthDictionary.ContainsKey(record.DateOfBirth))
+            {
+                this.dateOfBirthDictionary[record.DateOfBirth].Remove(record);
+            }
         }
 
         private void AddRecordToDictionaries(FileCabinetRecord record)
