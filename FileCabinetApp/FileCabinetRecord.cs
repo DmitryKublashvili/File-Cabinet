@@ -51,7 +51,11 @@ namespace FileCabinetApp
         public string DateOfBirthString
         {
             get => this.DateOfBirth.ToString("dd/MM/yyyy", CultureInfo.InvariantCulture);
-            set => this.DateOfBirth = DateTime.Parse(value, CultureInfo.InvariantCulture);
+            set
+            {
+                var dateComponents = value?.Split('/', StringSplitOptions.RemoveEmptyEntries) ?? throw new ArgumentException("Value was null", nameof(value));
+                this.DateOfBirth = DateTime.Parse(dateComponents[1] + "/" + dateComponents[0] + "/" + dateComponents[2], CultureInfo.InvariantCulture);
+            }
         }
 
         /// <summary>

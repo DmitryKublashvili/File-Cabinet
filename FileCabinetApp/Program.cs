@@ -583,16 +583,14 @@ namespace FileCabinetApp
             }
         }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Reliability", "CA2000:Dispose objects before losing scope", Justification = "Temp supression.")]
         private static void ImportXML(string filePath)
         {
             Console.WriteLine($"Import XML started from {filePath}");
 
             var snapShot = new FileCabinetServiceSnapshot();
-
             snapShot.LoadFromXML(new StreamReader(filePath));
 
-            fileCabinetService.Restore(snapShot);
+            CommonImportCompletion(snapShot, filePath);
         }
 
         private static void ImportCSV(string filePath)
@@ -600,9 +598,13 @@ namespace FileCabinetApp
             Console.WriteLine($"Import CSV started from {filePath}");
 
             var snapShot = new FileCabinetServiceSnapshot();
-
             snapShot.LoadFromCSV(new StreamReader(filePath));
 
+            CommonImportCompletion(snapShot, filePath);
+        }
+
+        private static void CommonImportCompletion(FileCabinetServiceSnapshot snapShot, string filePath)
+        {
             var validationViolations = fileCabinetService.Restore(snapShot);
 
             int countOfViolations = 0;

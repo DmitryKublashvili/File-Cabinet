@@ -83,7 +83,7 @@ namespace FileCabinetApp
         /// <param name="textReader">Text writer.</param>
         public void LoadFromCSV(TextReader textReader)
         {
-            FileCabinetRecordCsvReader reader = new FileCabinetRecordCsvReader(textReader);
+            var reader = new FileCabinetRecordCsvReader(textReader);
 
             this.state = new ReadOnlyCollection<FileCabinetRecord>(reader.ReadAll());
 
@@ -96,8 +96,11 @@ namespace FileCabinetApp
         /// <param name="textReader">Text writer.</param>
         public void LoadFromXML(TextReader textReader)
         {
-            textReader.Close();
-            throw new NotImplementedException();
+            var reader = new FileCabinetRecordXmlReader(textReader);
+
+            this.state = new ReadOnlyCollection<FileCabinetRecord>(reader.ReadAll());
+
+            this.DateAndNameInitialisation();
         }
 
         /// <summary>

@@ -391,6 +391,31 @@
             </summary>
             <param name="state">State for recording.</param>
         </member>
+        <member name="T:FileCabinetApp.FileCabinetRecordXmlReader">
+            <summary>
+            Reads state from XML file.
+            </summary>
+        </member>
+        <member name="M:FileCabinetApp.FileCabinetRecordXmlReader.#ctor(System.IO.TextReader)">
+            <summary>
+            Initializes a new instance of the <see cref="T:FileCabinetApp.FileCabinetRecordXmlReader"/> class.
+            </summary>
+            <param name="reader">Some text reader.</param>
+        </member>
+        <member name="P:FileCabinetApp.FileCabinetRecordXmlReader.Reader">
+            <summary>
+            Gets or sets and sets text reader.
+            </summary>
+            <value>
+            Textreader for reading text from file.
+            </value>
+        </member>
+        <member name="M:FileCabinetApp.FileCabinetRecordXmlReader.ReadAll">
+            <summary>
+            Reads records from file in XML format.
+            </summary>
+            <returns>List of loaded records.</returns>
+        </member>
         <member name="T:FileCabinetApp.FileCabinetRecordXmlWriter">
             <summary>
             Records state in XML file.
@@ -691,6 +716,24 @@
             Starts the program and implements the menu functions.
             </summary>
             <param name="args">Params.</param>
+        </member>
+        <member name="T:FileCabinetApp.RecordsList">
+            <summary>
+            Special class for XmlRoot attribut implementation.
+            </summary>
+        </member>
+        <member name="M:FileCabinetApp.RecordsList.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:FileCabinetApp.RecordsList"/> class.
+            </summary>
+        </member>
+        <member name="P:FileCabinetApp.RecordsList.Records">
+            <summary>
+            Gets or sets records list.
+            </summary>
+            <value>
+            List of records.
+            </value>
         </member>
         <member name="T:FileCabinetApp.ValidationException">
             <summary>
