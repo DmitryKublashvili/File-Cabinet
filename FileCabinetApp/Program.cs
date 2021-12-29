@@ -49,6 +49,7 @@ namespace FileCabinetApp
             new Tuple<string, Action<string>>("find", Find),
             new Tuple<string, Action<string>>("export", Export),
             new Tuple<string, Action<string>>("import", Import),
+            new Tuple<string, Action<string>>("remove", Remove),
         };
 
         private static string[][] helpMessages = new string[][]
@@ -60,8 +61,9 @@ namespace FileCabinetApp
             new string[] { "edit", "edits selected (by id) record", "The 'edit' command allows to edit selected by Id record." },
             new string[] { "list", "shows records information", "The 'list' command shows records information." },
             new string[] { "find", "finds records by the specified parameter", "The 'find' command shows a list of records in which the specified parameter was found." },
-            new string[] { "export", "exports current state in file", "The 'export' exports current state in file according to the specified parameters." },
-            new string[] { "import", "imports records from file", "The 'import' imports records from CSV or XML format file." },
+            new string[] { "export", "exports current state in file", "The 'export' command exports current state in file according to the specified parameters." },
+            new string[] { "import", "imports records from file", "The 'import' command imports records from CSV or XML format file." },
+            new string[] { "remove", "removes records by ID from storage", "The 'remove' command removes records by ID from storage." },
         };
 
         /// <summary>
@@ -178,7 +180,6 @@ namespace FileCabinetApp
         {
             if (isFileSystemStorageUsed)
             {
-                fileStream.Dispose();
                 fileStream.Close();
             }
 
@@ -616,6 +617,30 @@ namespace FileCabinetApp
             }
 
             Console.WriteLine(snapShot.GetState().Count - countOfViolations + " records were imported from " + filePath);
+        }
+
+        private static void Remove(string userEnter)
+        {
+            if (!int.TryParse(userEnter, out int id))
+            {
+                Console.WriteLine("Incorrect input.");
+                return;
+            }
+
+            if (!isFileSystemStorageUsed && !CheckIndexOfRecordInMemory(id))
+            {
+                Console.WriteLine($"Record #{userEnter} doesn't exists.");
+                return;
+            }
+
+            if (isFileSystemStorageUsed && id > fileCabinetService.GetStat())
+            {
+                Console.WriteLine($"Record #{userEnter} doesn't exists.");
+                return;
+            }
+
+            fileCabinetService.RemoveRecordById(id);
+            Console.WriteLine($"Record #{id} is updated.");
         }
     }
 }

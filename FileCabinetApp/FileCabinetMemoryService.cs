@@ -260,6 +260,15 @@ namespace FileCabinetApp
             return validationViolations;
         }
 
+        /// <summary>
+        /// Removes record by it's ID.
+        /// </summary>
+        /// <param name="id">ID of record.</param>
+        public void RemoveRecordById(int id)
+        {
+            throw new NotImplementedException();
+        }
+
         private void AddRecordToDictionaries(FileCabinetRecord record)
         {
             // adding in firstNameDictionary

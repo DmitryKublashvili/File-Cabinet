@@ -67,5 +67,11 @@ namespace FileCabinetApp
         /// <param name="snapShot">Snapshot with some addition or new state.</param>
         /// <returns>Information (id, message) about not valid records.</returns>
         IEnumerable<(int id, string exceptionMessage)> Restore(FileCabinetServiceSnapshot snapShot);
+
+        /// <summary>
+        /// Removes record by it's ID.
+        /// </summary>
+        /// <param name="id">ID of record.</param>
+        void RemoveRecordById(int id);
     }
 }

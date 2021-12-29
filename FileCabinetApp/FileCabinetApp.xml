@@ -195,6 +195,12 @@
             <param name="snapShot">Snapshot with some addition or new state.</param>
             <returns>Information (id, message) about not valid records.</returns>
         </member>
+        <member name="M:FileCabinetApp.FileCabinetFilesystemService.RemoveRecordById(System.Int32)">
+            <summary>
+            Removes record by it's ID.
+            </summary>
+            <param name="id">ID of record.</param>
+        </member>
         <member name="T:FileCabinetApp.FileCabinetMemoryService">
             <summary>
             Implements functions of file cabinet.
@@ -264,6 +270,12 @@
             </summary>
             <param name="snapShot">Snapshot with some addition or new state.</param>
             <returns>Information (id, message) about not valid records.</returns>
+        </member>
+        <member name="M:FileCabinetApp.FileCabinetMemoryService.RemoveRecordById(System.Int32)">
+            <summary>
+            Removes record by it's ID.
+            </summary>
+            <param name="id">ID of record.</param>
         </member>
         <member name="T:FileCabinetApp.FileCabinetRecord">
             <summary>
@@ -562,6 +574,12 @@
             </summary>
             <param name="snapShot">Snapshot with some addition or new state.</param>
             <returns>Information (id, message) about not valid records.</returns>
+        </member>
+        <member name="M:FileCabinetApp.IFileCabinetService.RemoveRecordById(System.Int32)">
+            <summary>
+            Removes record by it's ID.
+            </summary>
+            <param name="id">ID of record.</param>
         </member>
         <member name="T:FileCabinetApp.IRecordValidator">
             <summary>
