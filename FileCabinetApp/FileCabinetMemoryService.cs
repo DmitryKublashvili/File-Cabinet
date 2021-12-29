@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Linq;
 
 namespace FileCabinetApp
 {
@@ -74,35 +75,7 @@ namespace FileCabinetApp
 
             this.list.Add(record);
 
-            // adding in firstNameDictionary
-            if (this.firstNameDictionary.ContainsKey(firstName.ToUpperInvariant()))
-            {
-                this.firstNameDictionary[firstName.ToUpperInvariant()].Add(record);
-            }
-            else
-            {
-                this.firstNameDictionary.Add(key: firstName.ToUpperInvariant(), new List<FileCabinetRecord>() { record });
-            }
-
-            // adding in lastNameDictionary
-            if (this.lastNameDictionary.ContainsKey(lastName.ToUpperInvariant()))
-            {
-                this.lastNameDictionary[lastName.ToUpperInvariant()].Add(record);
-            }
-            else
-            {
-                this.lastNameDictionary.Add(key: lastName.ToUpperInvariant(), new List<FileCabinetRecord>() { record });
-            }
-
-            // adding in DateOfBirthDictionary
-            if (this.dateOfBirthDictionary.ContainsKey(dateOfBirth))
-            {
-                this.dateOfBirthDictionary[dateOfBirth].Add(record);
-            }
-            else
-            {
-                this.dateOfBirthDictionary.Add(key: dateOfBirth, new List<FileCabinetRecord>() { record });
-            }
+            this.AddRecordToDictionaries(record);
 
             return record.Id;
         }
@@ -161,41 +134,7 @@ namespace FileCabinetApp
                     this.list[i].Salary = salary;
                     this.list[i].YearsOfService = yearsOfService;
 
-                    // adding changes in firstNameDictionary
-                    this.firstNameDictionary[previousFirstname].Remove(this.list[i]);
-
-                    if (this.firstNameDictionary.ContainsKey(firstName.ToUpperInvariant()))
-                    {
-                        this.firstNameDictionary[firstName.ToUpperInvariant()].Add(this.list[i]);
-                    }
-                    else
-                    {
-                        this.firstNameDictionary.Add(key: firstName.ToUpperInvariant(), new List<FileCabinetRecord>() { this.list[i] });
-                    }
-
-                    // adding changes in lastNameDictionary
-                    this.lastNameDictionary[previousLastname].Remove(this.list[i]);
-
-                    if (this.lastNameDictionary.ContainsKey(lastName.ToUpperInvariant()))
-                    {
-                        this.lastNameDictionary[lastName.ToUpperInvariant()].Add(this.list[i]);
-                    }
-                    else
-                    {
-                        this.lastNameDictionary.Add(key: lastName.ToUpperInvariant(), new List<FileCabinetRecord>() { this.list[i] });
-                    }
-
-                    // adding changes in lastNameDictionary
-                    this.dateOfBirthDictionary[previousDateOfBirth].Remove(this.list[i]);
-
-                    if (this.dateOfBirthDictionary.ContainsKey(dateOfBirth))
-                    {
-                        this.dateOfBirthDictionary[dateOfBirth].Add(this.list[i]);
-                    }
-                    else
-                    {
-                        this.dateOfBirthDictionary.Add(key: dateOfBirth, new List<FileCabinetRecord>() { this.list[i] });
-                    }
+                    this.ReplaceRecordInDictionaries(previousFirstname, previousLastname, previousDateOfBirth, this.list[i]);
 
                     return;
                 }
@@ -266,6 +205,130 @@ namespace FileCabinetApp
             else
             {
                 return new ReadOnlyCollection<FileCabinetRecord>(Array.Empty<FileCabinetRecord>());
+            }
+        }
+
+        /// <summary>
+        /// Restores state according current state and addition state from snapshot.
+        /// </summary>
+        /// <param name="snapShot">Snapshot with some addition or new state.</param>
+        /// <returns>Information (id, message) about not valid records.</returns>
+        public IEnumerable<(int id, string exceptionMessage)> Restore(FileCabinetServiceSnapshot snapShot)
+        {
+            if (snapShot is null)
+            {
+                throw new ArgumentException("Snapshot was null", nameof(snapShot));
+            }
+
+            ReadOnlyCollection<FileCabinetRecord> newRecords = snapShot.GetState();
+
+            List<int> existingRecordsIds = this.list.Select(r => r.Id).ToList();
+
+            List<(int id, string exceptionMessage)> validationViolations = new List<(int id, string exceptionMessage)>();
+
+            for (int i = 0; i < newRecords.Count; i++)
+            {
+                try
+                {
+                    this.recordValidator.ValidateParameters(new ParametresOfRecord(newRecords[i]));
+                }
+                catch (ValidationException e)
+                {
+                    validationViolations.Add((e.NotValidRecordId, e.Message));
+                    continue;
+                }
+
+                int indexOfRecordWithSameId = existingRecordsIds.IndexOf(newRecords[i].Id);
+
+                if (indexOfRecordWithSameId >= 0)
+                {
+                    string previousFirstname = this.list[indexOfRecordWithSameId].FirstName.ToUpperInvariant();
+                    string previousLastname = this.list[indexOfRecordWithSameId].LastName.ToUpperInvariant();
+                    DateTime previousDateOfBirth = this.list[indexOfRecordWithSameId].DateOfBirth;
+
+                    this.list[indexOfRecordWithSameId] = newRecords[i];
+
+                    this.ReplaceRecordInDictionaries(previousFirstname, previousLastname, previousDateOfBirth, this.list[indexOfRecordWithSameId]);
+                }
+                else
+                {
+                    this.list.Add(newRecords[i]);
+                    this.AddRecordToDictionaries(newRecords[i]);
+                }
+            }
+
+            return validationViolations;
+        }
+
+        private void AddRecordToDictionaries(FileCabinetRecord record)
+        {
+            // adding in firstNameDictionary
+            if (this.firstNameDictionary.ContainsKey(record.FirstName.ToUpperInvariant()))
+            {
+                this.firstNameDictionary[record.FirstName.ToUpperInvariant()].Add(record);
+            }
+            else
+            {
+                this.firstNameDictionary.Add(key: record.FirstName.ToUpperInvariant(), new List<FileCabinetRecord>() { record });
+            }
+
+            // adding in lastNameDictionary
+            if (this.lastNameDictionary.ContainsKey(record.LastName.ToUpperInvariant()))
+            {
+                this.lastNameDictionary[record.LastName.ToUpperInvariant()].Add(record);
+            }
+            else
+            {
+                this.lastNameDictionary.Add(key: record.LastName.ToUpperInvariant(), new List<FileCabinetRecord>() { record });
+            }
+
+            // adding in DateOfBirthDictionary
+            if (this.dateOfBirthDictionary.ContainsKey(record.DateOfBirth))
+            {
+                this.dateOfBirthDictionary[record.DateOfBirth].Add(record);
+            }
+            else
+            {
+                this.dateOfBirthDictionary.Add(key: record.DateOfBirth, new List<FileCabinetRecord>() { record });
+            }
+        }
+
+        private void ReplaceRecordInDictionaries(string previousFirstname, string previousLastname, DateTime previousDateOfBirth, FileCabinetRecord editedRecord)
+        {
+            // adding changes in firstNameDictionary
+            this.firstNameDictionary[previousFirstname].Remove(editedRecord);
+
+            if (this.firstNameDictionary.ContainsKey(editedRecord.FirstName.ToUpperInvariant()))
+            {
+                this.firstNameDictionary[editedRecord.FirstName.ToUpperInvariant()].Add(editedRecord);
+            }
+            else
+            {
+                this.firstNameDictionary.Add(key: editedRecord.FirstName.ToUpperInvariant(), new List<FileCabinetRecord>() { editedRecord });
+            }
+
+            // adding changes in lastNameDictionary
+            this.lastNameDictionary[previousLastname].Remove(editedRecord);
+
+            if (this.lastNameDictionary.ContainsKey(editedRecord.LastName.ToUpperInvariant()))
+            {
+                this.lastNameDictionary[editedRecord.LastName.ToUpperInvariant()].Add(editedRecord);
+            }
+            else
+            {
+                this.lastNameDictionary.Add(key: editedRecord.LastName.ToUpperInvariant(), new List<FileCabinetRecord>() { editedRecord });
+            }
+
+            // adding changes in lastNameDictionary
+            this.dateOfBirthDictionary[previousDateOfBirth].Remove(editedRecord);
+
+            if (this.dateOfBirthDictionary.ContainsKey(editedRecord.DateOfBirth))
+            {
+                this.dateOfBirthDictionary[editedRecord.DateOfBirth].Add(editedRecord);
+            }
+            else
+            {
+                this.dateOfBirthDictionary.Add(key: editedRecord.DateOfBirth, new List<FileCabinetRecord>() { editedRecord });
             }
         }
     }

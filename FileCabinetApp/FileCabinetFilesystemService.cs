@@ -217,6 +217,56 @@ namespace FileCabinetApp
         /// <returns>Records count.</returns>
         public int GetStat() => (int)this.fileStream.Length / 278;
 
+        /// <summary>
+        /// Gets FileCabinetService state on current moment.
+        /// </summary>
+        /// <returns>State on the moment of fixation.</returns>
+        public FileCabinetServiceSnapshot MakeSnapshot()
+        {
+            throw new NotImplementedException();
+        }
+
+        /// <summary>
+        /// Restores state according current state and addition state from snapshot.
+        /// </summary>
+        /// <param name="snapShot">Snapshot with some addition or new state.</param>
+        /// <returns>Information (id, message) about not valid records.</returns>
+        public IEnumerable<(int id, string exceptionMessage)> Restore(FileCabinetServiceSnapshot snapShot)
+        {
+            if (snapShot is null)
+            {
+                throw new ArgumentException("Snapshot was null", nameof(snapShot));
+            }
+
+            ReadOnlyCollection<FileCabinetRecord> newRecords = snapShot.GetState();
+
+            List<(int id, string exceptionMessage)> validationViolations = new List<(int id, string exceptionMessage)>();
+
+            for (int i = 0; i < newRecords.Count; i++)
+            {
+                try
+                {
+                    this.recordValidator.ValidateParameters(new ParametresOfRecord(newRecords[i]));
+                }
+                catch (ValidationException e)
+                {
+                    validationViolations.Add((e.NotValidRecordId, e.Message));
+                    continue;
+                }
+
+                if (newRecords[i].Id > this.GetStat())
+                {
+                    this.CreateRecord(new ParametresOfRecord(newRecords[i]));
+                }
+                else
+                {
+                    this.EditRecord(new ParametresOfRecord(newRecords[i]));
+                }
+            }
+
+            return validationViolations;
+        }
+
         private void WriteRecordInFile(ParametresOfRecord parametresOfRecord, long startPosition)
         {
             if (startPosition < 0)

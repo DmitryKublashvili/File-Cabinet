@@ -7,6 +7,7 @@ namespace FileCabinetApp
     /// <summary>
     /// Implements model of file cabinet record.
     /// </summary>
+    [XmlRoot(ElementName ="Record")]
     public class FileCabinetRecord
     {
         /// <summary>
@@ -21,6 +22,7 @@ namespace FileCabinetApp
         /// </summary>
         /// <value> String value of first name.
         /// </value>
+        [XmlAttribute]
         public string FirstName { get; set; }
 
         /// <summary>
@@ -28,6 +30,7 @@ namespace FileCabinetApp
         /// </summary>
         /// <value> String value of last name.
         /// </value>
+        [XmlAttribute]
         public string LastName { get; set; }
 
         /// <summary>
@@ -47,8 +50,12 @@ namespace FileCabinetApp
         [XmlElement("DateOfBirth")]
         public string DateOfBirthString
         {
-            get { return this.DateOfBirth.ToString("dd/MM/yyyy", CultureInfo.InvariantCulture); }
-            set => this.DateOfBirth = DateTime.Parse(value, CultureInfo.InvariantCulture);
+            get => this.DateOfBirth.ToString("dd/MM/yyyy", CultureInfo.InvariantCulture);
+            set
+            {
+                var dateComponents = value?.Split('/', StringSplitOptions.RemoveEmptyEntries) ?? throw new ArgumentException("Value was null", nameof(value));
+                this.DateOfBirth = DateTime.Parse(dateComponents[1] + "/" + dateComponents[0] + "/" + dateComponents[2], CultureInfo.InvariantCulture);
+            }
         }
 
         /// <summary>
@@ -56,7 +63,21 @@ namespace FileCabinetApp
         /// </summary>
         /// <value> Char (one letter of M or F) representation of person gender.
         /// </value>
+        [XmlIgnore]
         public char Sex { get; set; }
+
+        /// <summary>
+        /// Gets or sets value for (de)serialisation property Sex in string format.
+        /// </summary>
+        /// <value>
+        /// Value for (de)serialisation property Sex in string format.
+        /// </value>
+        [XmlElement("Sex")]
+        public string SexString
+        {
+            get => this.Sex.ToString();
+            set => this.Sex = value is null ? throw new ArgumentNullException(nameof(value), "Sex can't be null.") : value[0];
+        }
 
         /// <summary>
         /// Gets or sets salary.
@@ -71,5 +92,15 @@ namespace FileCabinetApp
         /// <value> Short (integer) count years of service.
         /// </value>
         public short YearsOfService { get; set; }
+
+        /// <summary>
+        /// Gets string record representation.
+        /// </summary>
+        /// <returns>string record representation.</returns>
+        public override string ToString()
+        {
+            return " Id: " + this.Id + " " + this.FirstName + " " + this.LastName + " " + this.DateOfBirth.ToShortDateString() +
+                " Sex: " + this.Sex + " Salary: " + this.Salary + " Years in service: " + this.YearsOfService;
+        }
     }
 }

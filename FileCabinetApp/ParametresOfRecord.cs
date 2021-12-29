@@ -14,6 +14,26 @@ namespace FileCabinetApp
         /// <summary>
         /// Initializes a new instance of the <see cref="ParametresOfRecord"/> class.
         /// </summary>
+        /// <param name="record">FileCabinetRecord.</param>
+        public ParametresOfRecord(FileCabinetRecord record)
+        {
+            if (record is null)
+            {
+                throw new ArgumentNullException(nameof(record));
+            }
+
+            this.Id = record.Id;
+            this.FirstName = record.FirstName;
+            this.LastName = record.LastName;
+            this.DateOfBirth = record.DateOfBirth;
+            this.Sex = record.Sex;
+            this.Salary = record.Salary;
+            this.YearsOfService = record.YearsOfService;
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ParametresOfRecord"/> class.
+        /// </summary>
         /// <param name="id">Integer num of record.</param>
         /// <param name="firstName">String value of first name.</param>
         /// <param name="lastName">String value of last name.</param>

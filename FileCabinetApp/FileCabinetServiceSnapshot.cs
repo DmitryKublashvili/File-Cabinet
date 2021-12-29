@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.ObjectModel;
+using System.Globalization;
 using System.IO;
 
 namespace FileCabinetApp
@@ -9,9 +10,18 @@ namespace FileCabinetApp
     /// </summary>
     public class FileCabinetServiceSnapshot
     {
-        private readonly DateTime date;
-        private readonly string name;
-        private readonly ReadOnlyCollection<FileCabinetRecord> state;
+        private DateTime date;
+        private string name;
+        private ReadOnlyCollection<FileCabinetRecord> state;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="FileCabinetServiceSnapshot"/> class.
+        /// </summary>
+        public FileCabinetServiceSnapshot()
+        {
+            this.date = DateTime.Now;
+            this.name = "Empty snapshot";
+        }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="FileCabinetServiceSnapshot"/> class.
@@ -24,11 +34,9 @@ namespace FileCabinetApp
                 throw new ArgumentNullException(nameof(state));
             }
 
-            this.date = DateTime.Now;
-
-            this.name = this.date + " last records Id is: " + state[^1]?.Id ?? "No records.";
-
             this.state = state;
+
+            this.DateAndNameInitialisation();
         }
 
         /// <summary>
@@ -70,6 +78,32 @@ namespace FileCabinetApp
         }
 
         /// <summary>
+        /// Loads state from CSV file.
+        /// </summary>
+        /// <param name="textReader">Text writer.</param>
+        public void LoadFromCSV(TextReader textReader)
+        {
+            var reader = new FileCabinetRecordCsvReader(textReader);
+
+            this.state = new ReadOnlyCollection<FileCabinetRecord>(reader.ReadAll());
+
+            this.DateAndNameInitialisation();
+        }
+
+        /// <summary>
+        /// Loads state from XML file.
+        /// </summary>
+        /// <param name="textReader">Text writer.</param>
+        public void LoadFromXML(TextReader textReader)
+        {
+            var reader = new FileCabinetRecordXmlReader(textReader);
+
+            this.state = new ReadOnlyCollection<FileCabinetRecord>(reader.ReadAll());
+
+            this.DateAndNameInitialisation();
+        }
+
+        /// <summary>
         /// Saves state to XML file.
         /// </summary>
         /// <param name="textWriter">Text writer.</param>
@@ -78,6 +112,15 @@ namespace FileCabinetApp
             FileCabinetRecordXmlWriter xmlWriter = new FileCabinetRecordXmlWriter(textWriter);
 
             xmlWriter.Write(this);
+        }
+
+        private void DateAndNameInitialisation()
+        {
+            this.date = DateTime.Now;
+
+            string additionToSnapshotName = this.state.Count > 0 ? this.state[^1].Id.ToString(CultureInfo.InvariantCulture) : "No records.";
+
+            this.name = this.date + " last records Id is: " + additionToSnapshotName;
         }
     }
 }

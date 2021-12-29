@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 
 namespace FileCabinetApp
@@ -20,6 +21,12 @@ namespace FileCabinetApp
         /// </summary>
         /// <param name="parametresOfRecord">Parametres of record.</param>
         void EditRecord(ParametresOfRecord parametresOfRecord);
+
+        /// <summary>
+        /// Gets FileCabinetService state on current moment.
+        /// </summary>
+        /// <returns>State on the moment of fixation.</returns>
+        public FileCabinetServiceSnapshot MakeSnapshot();
 
         /// <summary>
         /// Gets an ReadOnlyCollection of records that have that date of birth.
@@ -53,5 +60,12 @@ namespace FileCabinetApp
         /// </summary>
         /// <returns>Records count.</returns>
         int GetStat();
+
+        /// <summary>
+        /// Restores state according current state and addition state from snapshot.
+        /// </summary>
+        /// <param name="snapShot">Snapshot with some addition or new state.</param>
+        /// <returns>Information (id, message) about not valid records.</returns>
+        IEnumerable<(int id, string exceptionMessage)> Restore(FileCabinetServiceSnapshot snapShot);
     }
 }

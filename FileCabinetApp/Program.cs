@@ -23,6 +23,7 @@ namespace FileCabinetApp
         private const string NotParsedSalaryMessage = "Incorrect summ, please enter again";
         private const string IncorrectSexMessage = "Incorrect. Please, enter one letter of M or F";
         private const string IncorrectDateOfBirthFormatMessage = "Incorrect format of date, enter the date in format mm/dd/yyyy please.";
+        private const string IncorrectCommandFormatMessage = "Comand has incorrect format.";
         private const string StorageFilePath = "cabinet-records.db";
 
         private const int CommandHelpIndex = 0;
@@ -47,6 +48,7 @@ namespace FileCabinetApp
             new Tuple<string, Action<string>>("edit", Edit),
             new Tuple<string, Action<string>>("find", Find),
             new Tuple<string, Action<string>>("export", Export),
+            new Tuple<string, Action<string>>("import", Import),
         };
 
         private static string[][] helpMessages = new string[][]
@@ -59,6 +61,7 @@ namespace FileCabinetApp
             new string[] { "list", "shows records information", "The 'list' command shows records information." },
             new string[] { "find", "finds records by the specified parameter", "The 'find' command shows a list of records in which the specified parameter was found." },
             new string[] { "export", "exports current state in file", "The 'export' exports current state in file according to the specified parameters." },
+            new string[] { "import", "imports records from file", "The 'import' imports records from CSV or XML format file." },
         };
 
         /// <summary>
@@ -342,13 +345,13 @@ namespace FileCabinetApp
 
             if (parameters.Length != 2)
             {
-                Console.WriteLine("Comand has incorrect format.");
+                Console.WriteLine(IncorrectCommandFormatMessage);
                 return;
             }
 
             if (parameters[0].ToUpperInvariant() != "CSV" && parameters[0].ToUpperInvariant() != "XML")
             {
-                Console.WriteLine("Comand has incorrect format.");
+                Console.WriteLine(IncorrectCommandFormatMessage);
                 return;
             }
 
@@ -451,7 +454,7 @@ namespace FileCabinetApp
         {
             bool isConverted = short.TryParse(arg, out short checkedYearsOfService);
 
-            string message = "Incorrect value, only integers in 0-50 interval are available. Please enter again";
+            string message = $"Incorrect value, only integers in {validator.MinYearsOfService}-{validator.MaxYearsOfService} interval are available. Please enter again";
 
             return new Tuple<bool, string, short>(isConverted, message, checkedYearsOfService);
         }
@@ -532,6 +535,87 @@ namespace FileCabinetApp
                       "and no later than the current date";
 
             return new Tuple<bool, string>(isValid, message);
+        }
+
+        private static void Import(string value)
+        {
+            if (value is null)
+            {
+                Console.WriteLine(IncorrectCommandFormatMessage);
+                return;
+            }
+
+            var parameters = value.Split(" ");
+
+            if (parameters.Length < 2)
+            {
+                Console.WriteLine(IncorrectCommandFormatMessage);
+                return;
+            }
+
+            if (parameters[0].ToUpperInvariant() != "CSV" && parameters[0].ToUpperInvariant() != "XML")
+            {
+                Console.WriteLine(IncorrectCommandFormatMessage);
+                return;
+            }
+
+            if (parameters[0].ToUpperInvariant() != parameters[^1].Split(".")[^1].ToUpperInvariant())
+            {
+                Console.WriteLine("The export command and file extension must have the same format");
+                return;
+            }
+
+            string filePath = string.Concat(parameters[1..]);
+
+            if (!File.Exists(filePath))
+            {
+                Console.WriteLine($"Import error: file {value} does not exist");
+                return;
+            }
+
+            if (parameters[0].ToUpperInvariant() == "CSV")
+            {
+                ImportCSV(filePath);
+            }
+            else
+            {
+                ImportXML(filePath);
+            }
+        }
+
+        private static void ImportXML(string filePath)
+        {
+            Console.WriteLine($"Import XML started from {filePath}");
+
+            var snapShot = new FileCabinetServiceSnapshot();
+            snapShot.LoadFromXML(new StreamReader(filePath));
+
+            CommonImportCompletion(snapShot, filePath);
+        }
+
+        private static void ImportCSV(string filePath)
+        {
+            Console.WriteLine($"Import CSV started from {filePath}");
+
+            var snapShot = new FileCabinetServiceSnapshot();
+            snapShot.LoadFromCSV(new StreamReader(filePath));
+
+            CommonImportCompletion(snapShot, filePath);
+        }
+
+        private static void CommonImportCompletion(FileCabinetServiceSnapshot snapShot, string filePath)
+        {
+            var validationViolations = fileCabinetService.Restore(snapShot);
+
+            int countOfViolations = 0;
+
+            foreach (var item in validationViolations)
+            {
+                Console.WriteLine($"Violation validations rules. Id: {item.id}, Message: {item.exceptionMessage}. This record will be skiped.");
+                countOfViolations++;
+            }
+
+            Console.WriteLine(snapShot.GetState().Count - countOfViolations + " records were imported from " + filePath);
         }
     }
 }
