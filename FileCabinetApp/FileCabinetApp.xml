@@ -247,7 +247,7 @@
             <summary>
             Gets records count.
             </summary>
-            <returns>Records count.</returns>
+            <returns>Records count and formal parameter for interface implementation.</returns>
         </member>
         <member name="M:FileCabinetApp.FileCabinetMemoryService.EditRecord(FileCabinetApp.ParametresOfRecord)">
             <summary>
@@ -590,7 +590,7 @@
             <summary>
             Gets records count.
             </summary>
-            <returns>Records count.</returns>
+            <returns>Exosting records count and deleted records count.</returns>
         </member>
         <member name="M:FileCabinetApp.IFileCabinetService.Restore(FileCabinetApp.FileCabinetServiceSnapshot)">
             <summary>

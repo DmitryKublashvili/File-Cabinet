@@ -69,32 +69,34 @@ namespace FileCabinetApp
 
             this.recordValidator.ValidateParameters(parametresOfRecord);
 
-            long startPosition = -1;
+            this.GetPositionOfTheRecordById(parametresOfRecord.Id);
 
-            long recordsCount = this.fileStream.Length / 278;
+            //long startPosition = -1;
 
-            byte[] bytesFromId = new byte[4];
+            //long recordsCount = this.fileStream.Length / 278;
 
-            // find and set position
-            for (int i = 0; i < recordsCount; i++)
-            {
-                this.fileStream.Seek((i * 278) + 2, SeekOrigin.Begin);
-                this.fileStream.Read(bytesFromId);
+            //byte[] bytesFromId = new byte[4];
 
-                if (parametresOfRecord.Id == BitConverter.ToInt32(bytesFromId, 0))
-                {
-                    startPosition = i * 278;
-                    break;
-                }
+            //// find and set position
+            //for (int i = 0; i < recordsCount; i++)
+            //{
+            //    this.fileStream.Seek((i * 278) + 2, SeekOrigin.Begin);
+            //    this.fileStream.Read(bytesFromId);
 
-                if (i == recordsCount - 1)
-                {
-                    Console.WriteLine($"Record {parametresOfRecord.Id} not found.");
-                    return;
-                }
-            }
+            //    if (parametresOfRecord.Id == BitConverter.ToInt32(bytesFromId, 0))
+            //    {
+            //        startPosition = i * 278;
+            //        break;
+            //    }
 
-            this.WriteRecordInFile(parametresOfRecord, startPosition);
+            //    if (i == recordsCount - 1)
+            //    {
+            //        Console.WriteLine($"Record {parametresOfRecord.Id} not found.");
+            //        return;
+            //    }
+            //}
+
+            this.WriteRecordInFile(parametresOfRecord, this.GetPositionOfTheRecordById(parametresOfRecord.Id));
         }
 
         /// <summary>
@@ -225,7 +227,7 @@ namespace FileCabinetApp
         /// Gets records count.
         /// </summary>
         /// <returns>Records count.</returns>
-        public int GetStat()
+        public (int recordsCount, int deletedRecordsCount) GetStat()
         {
             int existingRecordsCount = 0;
             int removerdRecordsCount = 0;
@@ -242,7 +244,7 @@ namespace FileCabinetApp
                 }
             }
 
-            return existingRecordsCount;
+            return (existingRecordsCount, removerdRecordsCount);
         }
 
         /// <summary>
@@ -282,7 +284,7 @@ namespace FileCabinetApp
                     continue;
                 }
 
-                if (newRecords[i].Id > this.GetStat())
+                if (!this.IsRecordExist(newRecords[i].Id))
                 {
                     this.CreateRecord(new ParametresOfRecord(newRecords[i]));
                 }
@@ -319,7 +321,9 @@ namespace FileCabinetApp
                 throw new ArgumentException("id must be more then 0", nameof(id));
             }
 
-            return !this.IsDeleted(this.GetPositionOfTheRecordById(id));
+            long position = this.GetPositionOfTheRecordById(id);
+
+            return position >= 0; // && !this.IsDeleted(position);
         }
 
         /// <summary>
@@ -462,7 +466,7 @@ namespace FileCabinetApp
                 this.fileStream.Seek(position + 2, SeekOrigin.Begin);
                 this.fileStream.Read(bytes);
 
-                if (BitConverter.ToUInt32(bytes) == id)
+                if (BitConverter.ToUInt32(bytes) == id && !this.IsDeleted(position))
                 {
                     return position;
                 }

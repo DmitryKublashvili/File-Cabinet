@@ -58,8 +58,8 @@ namespace FileCabinetApp
         /// <summary>
         /// Gets records count.
         /// </summary>
-        /// <returns>Records count.</returns>
-        int GetStat();
+        /// <returns>Exosting records count and deleted records count.</returns>
+        (int recordsCount, int deletedRecordsCount) GetStat();
 
         /// <summary>
         /// Restores state according current state and addition state from snapshot.

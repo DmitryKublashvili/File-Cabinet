@@ -92,10 +92,10 @@ namespace FileCabinetApp
         /// <summary>
         /// Gets records count.
         /// </summary>
-        /// <returns>Records count.</returns>
-        public int GetStat()
+        /// <returns>Records count and formal parameter for interface implementation.</returns>
+        public (int recordsCount, int deletedRecordsCount) GetStat()
         {
-            return this.list.Count;
+            return (this.list.Count, 0);
         }
 
         /// <summary>
