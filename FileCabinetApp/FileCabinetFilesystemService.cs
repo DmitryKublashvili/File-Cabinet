@@ -44,11 +44,18 @@ namespace FileCabinetApp
 
             long startPosition = this.fileStream.Length;
 
-            int id = parametresOfRecord.Id;
+            for (int i = 1; ; i++)
+            {
+                if (!this.IsRecordExist(i))
+                {
+                    parametresOfRecord.Id = i;
+                    break;
+                }
+            }
 
             this.WriteRecordInFile(parametresOfRecord, startPosition);
 
-            return id;
+            return parametresOfRecord.Id;
         }
 
         /// <summary>
@@ -70,31 +77,6 @@ namespace FileCabinetApp
             this.recordValidator.ValidateParameters(parametresOfRecord);
 
             this.GetPositionOfTheRecordById(parametresOfRecord.Id);
-
-            //long startPosition = -1;
-
-            //long recordsCount = this.fileStream.Length / 278;
-
-            //byte[] bytesFromId = new byte[4];
-
-            //// find and set position
-            //for (int i = 0; i < recordsCount; i++)
-            //{
-            //    this.fileStream.Seek((i * 278) + 2, SeekOrigin.Begin);
-            //    this.fileStream.Read(bytesFromId);
-
-            //    if (parametresOfRecord.Id == BitConverter.ToInt32(bytesFromId, 0))
-            //    {
-            //        startPosition = i * 278;
-            //        break;
-            //    }
-
-            //    if (i == recordsCount - 1)
-            //    {
-            //        Console.WriteLine($"Record {parametresOfRecord.Id} not found.");
-            //        return;
-            //    }
-            //}
 
             this.WriteRecordInFile(parametresOfRecord, this.GetPositionOfTheRecordById(parametresOfRecord.Id));
         }
@@ -323,7 +305,7 @@ namespace FileCabinetApp
 
             long position = this.GetPositionOfTheRecordById(id);
 
-            return position >= 0; // && !this.IsDeleted(position);
+            return position >= 0;
         }
 
         /// <summary>
@@ -457,6 +439,11 @@ namespace FileCabinetApp
             return false;
         }
 
+        /// <summary>
+        /// Gets position of the record by Id.
+        /// </summary>
+        /// <param name="id">Id of the record.</param>
+        /// <returns>Position of first byte of record in file or -1 if record with it's id doe's not exist.</returns>
         private long GetPositionOfTheRecordById(int id)
         {
             byte[] bytes = new byte[4];

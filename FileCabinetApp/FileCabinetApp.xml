@@ -4,6 +4,245 @@
         <name>FileCabinetApp</name>
     </assembly>
     <members>
+        <member name="T:FileCabinetApp.CommandHandlers.AppCommandRequest">
+            <summary>
+            Command request.
+            </summary>
+        </member>
+        <member name="M:FileCabinetApp.CommandHandlers.AppCommandRequest.#ctor(System.String,System.String)">
+            <summary>
+            Initializes a new instance of the <see cref="T:FileCabinetApp.CommandHandlers.AppCommandRequest"/> class.
+            </summary>
+            <param name="command">Command.</param>
+            <param name="parameters">Parameters.</param>
+        </member>
+        <member name="P:FileCabinetApp.CommandHandlers.AppCommandRequest.Command">
+            <summary>
+            Gets command name.
+            </summary>
+            <value>
+            Command name.
+            </value>
+        </member>
+        <member name="P:FileCabinetApp.CommandHandlers.AppCommandRequest.Parameters">
+            <summary>
+            Gets command parameters.
+            </summary>
+            <value>
+            Command parameters.
+            </value>
+        </member>
+        <member name="T:FileCabinetApp.CommandHandlers.CommandHandlerBase">
+            <summary>
+            Base command handler.
+            </summary>
+        </member>
+        <member name="F:FileCabinetApp.CommandHandlers.CommandHandlerBase.nextHandler">
+            <summary>
+            Next hendler.
+            </summary>
+        </member>
+        <member name="M:FileCabinetApp.CommandHandlers.CommandHandlerBase.Handle(FileCabinetApp.CommandHandlers.AppCommandRequest)">
+            <summary>
+            Handles command request.
+            </summary>
+            <param name="request">request.</param>
+        </member>
+        <member name="M:FileCabinetApp.CommandHandlers.CommandHandlerBase.SetNext(FileCabinetApp.CommandHandlers.ICommandHandler)">
+            <summary>
+            Sets next hendler.
+            </summary>
+            <param name="commandHandler">Next hendler.</param>
+        </member>
+        <member name="T:FileCabinetApp.CommandHandlers.CreateCommandHandler">
+            <summary>
+            Create command handler.
+            </summary>
+        </member>
+        <member name="M:FileCabinetApp.CommandHandlers.CreateCommandHandler.Handle(FileCabinetApp.CommandHandlers.AppCommandRequest)">
+            <inheritdoc/>
+        </member>
+        <member name="T:FileCabinetApp.CommandHandlers.EditCommandHandler">
+            <summary>
+            Edit command handler.
+            </summary>
+        </member>
+        <member name="M:FileCabinetApp.CommandHandlers.EditCommandHandler.Handle(FileCabinetApp.CommandHandlers.AppCommandRequest)">
+            <inheritdoc/>
+        </member>
+        <member name="T:FileCabinetApp.CommandHandlers.ExitCommandHandler">
+            <summary>
+            Exit command handler.
+            </summary>
+        </member>
+        <member name="M:FileCabinetApp.CommandHandlers.ExitCommandHandler.Handle(FileCabinetApp.CommandHandlers.AppCommandRequest)">
+            <inheritdoc/>
+        </member>
+        <member name="T:FileCabinetApp.CommandHandlers.ExportCommandHandler">
+            <summary>
+            Export command handler.
+            </summary>
+        </member>
+        <member name="M:FileCabinetApp.CommandHandlers.ExportCommandHandler.Handle(FileCabinetApp.CommandHandlers.AppCommandRequest)">
+            <inheritdoc/>
+        </member>
+        <member name="T:FileCabinetApp.CommandHandlers.FindCommandHandler">
+            <summary>
+            Find command handler.
+            </summary>
+        </member>
+        <member name="M:FileCabinetApp.CommandHandlers.FindCommandHandler.Handle(FileCabinetApp.CommandHandlers.AppCommandRequest)">
+            <inheritdoc/>
+        </member>
+        <member name="T:FileCabinetApp.CommandHandlers.HelpCommandHandler">
+            <summary>
+            Help command handler.
+            </summary>
+        </member>
+        <member name="M:FileCabinetApp.CommandHandlers.HelpCommandHandler.Handle(FileCabinetApp.CommandHandlers.AppCommandRequest)">
+            <inheritdoc/>
+        </member>
+        <member name="T:FileCabinetApp.CommandHandlers.ICommandHandler">
+            <summary>
+            Command handler interface.
+            </summary>
+        </member>
+        <member name="M:FileCabinetApp.CommandHandlers.ICommandHandler.SetNext(FileCabinetApp.CommandHandlers.ICommandHandler)">
+            <summary>
+            Sets next hendler.
+            </summary>
+            <param name="commandHandler">Next hendler.</param>
+        </member>
+        <member name="M:FileCabinetApp.CommandHandlers.ICommandHandler.Handle(FileCabinetApp.CommandHandlers.AppCommandRequest)">
+            <summary>
+            Handles command request.
+            </summary>
+            <param name="request">request.</param>
+        </member>
+        <member name="T:FileCabinetApp.CommandHandlers.ImportCommandHandler">
+            <summary>
+            Import command handler.
+            </summary>
+        </member>
+        <member name="M:FileCabinetApp.CommandHandlers.ImportCommandHandler.Handle(FileCabinetApp.CommandHandlers.AppCommandRequest)">
+            <inheritdoc/>
+        </member>
+        <member name="T:FileCabinetApp.CommandHandlers.ListCommandHandler">
+            <summary>
+            List command handler.
+            </summary>
+        </member>
+        <member name="M:FileCabinetApp.CommandHandlers.ListCommandHandler.Handle(FileCabinetApp.CommandHandlers.AppCommandRequest)">
+            <inheritdoc/>
+        </member>
+        <member name="T:FileCabinetApp.CommandHandlers.PurgeCommandHandler">
+            <summary>
+            Purge command handler.
+            </summary>
+        </member>
+        <member name="M:FileCabinetApp.CommandHandlers.PurgeCommandHandler.Handle(FileCabinetApp.CommandHandlers.AppCommandRequest)">
+            <inheritdoc/>
+        </member>
+        <member name="T:FileCabinetApp.CommandHandlers.RemoveCommandHandler">
+            <summary>
+            Remove command handler.
+            </summary>
+        </member>
+        <member name="M:FileCabinetApp.CommandHandlers.RemoveCommandHandler.Handle(FileCabinetApp.CommandHandlers.AppCommandRequest)">
+            <inheritdoc/>
+        </member>
+        <member name="T:FileCabinetApp.CommandHandlers.StatCommandHandler">
+            <summary>
+            Stat command handler.
+            </summary>
+        </member>
+        <member name="M:FileCabinetApp.CommandHandlers.StatCommandHandler.Handle(FileCabinetApp.CommandHandlers.AppCommandRequest)">
+            <inheritdoc/>
+        </member>
+        <member name="T:FileCabinetApp.CommandHandlers.ValidationMethods">
+            <summary>
+            Provides methods of validating record parameters.
+            </summary>
+        </member>
+        <member name="M:FileCabinetApp.CommandHandlers.ValidationMethods.ReadInput``1(System.Func{System.String,System.Tuple{System.Boolean,System.String,``0}},System.Func{``0,System.Tuple{System.Boolean,System.String}})">
+            <summary>
+            Reads and validates input parameters of record.
+            </summary>
+            <typeparam name="T">Some type.</typeparam>
+            <param name="converter">converter.</param>
+            <param name="validator">validator.</param>
+            <returns>Value of T.</returns>
+        </member>
+        <member name="M:FileCabinetApp.CommandHandlers.ValidationMethods.YearsOfServiceValidator(System.Int16)">
+            <summary>
+            Years Of Service Validation.
+            </summary>
+            <param name="arg">String type argument.</param>
+            <returns>Tuple of result of validation.</returns>
+        </member>
+        <member name="M:FileCabinetApp.CommandHandlers.ValidationMethods.YearsOfServiceConverter(System.String)">
+            <summary>
+            Years Of Service convertation.
+            </summary>
+            <param name="arg">String type argument to convertation.</param>
+            <returns>Tuple of result of convertation.</returns>
+        </member>
+        <member name="M:FileCabinetApp.CommandHandlers.ValidationMethods.SexConverter(System.String)">
+            <summary>
+            Sex convertation.
+            </summary>
+            <param name="arg">String type argument to convertation.</param>
+            <returns>Tuple of result of convertation.</returns>
+        </member>
+        <member name="M:FileCabinetApp.CommandHandlers.ValidationMethods.SexValidator(System.Char)">
+            <summary>
+            Sex validation.
+            </summary>
+            <param name="arg">String type argument to validation.</param>
+            <returns>Tuple of result of validation.</returns>
+        </member>
+        <member name="M:FileCabinetApp.CommandHandlers.ValidationMethods.NamesConverter(System.String)">
+            <summary>
+            Names convertation.
+            </summary>
+            <param name="arg">String type argument to convertation.</param>
+            <returns>Tuple of result of convertation.</returns>
+        </member>
+        <member name="M:FileCabinetApp.CommandHandlers.ValidationMethods.NamesValidator(System.String)">
+            <summary>
+            Names validation.
+            </summary>
+            <param name="arg">String type argument to validation.</param>
+            <returns>Tuple of result of validation.</returns>
+        </member>
+        <member name="M:FileCabinetApp.CommandHandlers.ValidationMethods.SalaryValidator(System.Decimal)">
+            <summary>
+            Salary validation.
+            </summary>
+            <param name="arg">String type argument to validation.</param>
+            <returns>Tuple of result of validation.</returns>
+        </member>
+        <member name="M:FileCabinetApp.CommandHandlers.ValidationMethods.SalaryConverter(System.String)">
+            <summary>
+            Salary convertation.
+            </summary>
+            <param name="arg">String type argument to convertation.</param>
+            <returns>Tuple of result of convertation.</returns>
+        </member>
+        <member name="M:FileCabinetApp.CommandHandlers.ValidationMethods.DateOfBirthConverter(System.String)">
+            <summary>
+            Date of birth convertation.
+            </summary>
+            <param name="arg">String type argument to convertation.</param>
+            <returns>Tuple of result of convertation.</returns>
+        </member>
+        <member name="M:FileCabinetApp.CommandHandlers.ValidationMethods.DateOfBirthValidator(System.DateTime)">
+            <summary>
+            Date of birth validation.
+            </summary>
+            <param name="arg">String type argument to validation.</param>
+            <returns>Tuple of result of validation.</returns>
+        </member>
         <member name="T:FileCabinetApp.CustomValidator">
             <summary>
             Custom validator.
@@ -212,6 +451,13 @@
             <summary>
             Defragments storage file by removing marked as deleted records.
             </summary>
+        </member>
+        <member name="M:FileCabinetApp.FileCabinetFilesystemService.GetPositionOfTheRecordById(System.Int32)">
+            <summary>
+            Gets position of the record by Id.
+            </summary>
+            <param name="id">Id of the record.</param>
+            <returns>Position of first byte of record in file or -1 if record with it's id doe's not exist.</returns>
         </member>
         <member name="T:FileCabinetApp.FileCabinetMemoryService">
             <summary>
@@ -764,6 +1010,46 @@
             <summary>
             Program class. Starts the program and implements the file cabinet menu functions.
             </summary>
+        </member>
+        <member name="P:FileCabinetApp.Program.CultureInfoSettings">
+            <summary>
+            Gets CultureInfo settings.
+            </summary>
+            <value>
+            CultureInfo settings (CultureInfo instance).
+            </value>
+        </member>
+        <member name="P:FileCabinetApp.Program.IsFileSystemStorageUsed">
+            <summary>
+            Gets a value indicating whether is filesystem storage used.
+            </summary>
+            <value>
+            Is file system storage used info.
+            </value>
+        </member>
+        <member name="P:FileCabinetApp.Program.Validator">
+            <summary>
+            Gets validator.
+            </summary>
+            <value>
+            IRecordValidator implemented instance.
+            </value>
+        </member>
+        <member name="P:FileCabinetApp.Program.FileCabinetService">
+            <summary>
+            Gets fileCabinetService instanse.
+            </summary>
+            <value>
+            FileCabinetService instanse.
+            </value>
+        </member>
+        <member name="P:FileCabinetApp.Program.IsRunning">
+            <summary>
+            Gets or sets a value indicating whether reperesents state of application run.
+            </summary>
+            <value>
+            Boolen value which reperesents state of application run.
+            </value>
         </member>
         <member name="M:FileCabinetApp.Program.Main(System.String[])">
             <summary>
