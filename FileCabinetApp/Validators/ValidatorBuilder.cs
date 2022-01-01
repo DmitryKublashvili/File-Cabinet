@@ -3,7 +3,6 @@ using System.Collections.Generic;
 
 namespace FileCabinetApp
 {
-
     /// <summary>
     /// Validator Builder.
     /// </summary>

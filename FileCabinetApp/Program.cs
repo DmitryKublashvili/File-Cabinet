@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using FileCabinetApp.CommandHandlers;
+using FileCabinetApp.Validators;
 
 namespace FileCabinetApp
 {
@@ -140,14 +141,7 @@ namespace FileCabinetApp
             {
                 ValidationMethods.IsDefaultValidatoinRules = false;
                 isDefaultValidatoinRules = false;
-                Validator = new ValidatorBuilder()
-                    .ValidateFirstName(CustomValidationParams.MinLettersCountInName, CustomValidationParams.MaxLettersCountInName)
-                    .ValidateLastName(CustomValidationParams.MinLettersCountInName, CustomValidationParams.MaxLettersCountInName)
-                    .ValidateDateOfBirth(CustomValidationParams.MinDateOfBirth)
-                    .ValidateSex()
-                    .ValidateSalary(CustomValidationParams.MinSalary, CustomValidationParams.MaxSalary)
-                    .ValidateYearsOfService(CustomValidationParams.MinYearsOfService, CustomValidationParams.MaxYearsOfService)
-                    .Create();
+                Validator = new ValidatorBuilder().CreateCustom();
 
                 if (parameterOfValidation.Contains("--STORAGE=FILE") || parameterOfValidation.Contains("-S FILE"))
                 {
@@ -159,20 +153,15 @@ namespace FileCabinetApp
                 else
                 {
                     fileCabinetService = new FileCabinetMemoryService(Validator);
+                    isFileSystemStorageUsed = false;
+                    Console.WriteLine("Used storage in memory.");
                 }
             }
             else
             {
                 ValidationMethods.IsDefaultValidatoinRules = true;
                 isDefaultValidatoinRules = true;
-                Validator = new ValidatorBuilder()
-                    .ValidateFirstName(DefaultValidationParams.MinLettersCountInName, DefaultValidationParams.MaxLettersCountInName)
-                    .ValidateLastName(DefaultValidationParams.MinLettersCountInName, DefaultValidationParams.MaxLettersCountInName)
-                    .ValidateDateOfBirth(DefaultValidationParams.MinDateOfBirth)
-                    .ValidateSex()
-                    .ValidateSalary(DefaultValidationParams.MinSalary, DefaultValidationParams.MaxSalary)
-                    .ValidateYearsOfService(DefaultValidationParams.MinYearsOfService, DefaultValidationParams.MaxYearsOfService)
-                    .Create();
+                Validator = new ValidatorBuilder().CreateDefault();
 
                 if (parameterOfValidation.Contains("--STORAGE=FILE") || parameterOfValidation.Contains("-S FILE"))
                 {
@@ -180,6 +169,12 @@ namespace FileCabinetApp
                     fileCabinetService = new FileCabinetFilesystemService(Validator, fileStream);
                     isFileSystemStorageUsed = true;
                     Console.WriteLine("Used storage in file.");
+                }
+                else
+                {
+                    fileCabinetService = new FileCabinetMemoryService(Validator);
+                    isFileSystemStorageUsed = false;
+                    Console.WriteLine("Used storage in memory.");
                 }
             }
         }
