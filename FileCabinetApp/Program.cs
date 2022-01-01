@@ -16,23 +16,18 @@ namespace FileCabinetApp
         private const string HintMessage = "Enter your command, or enter 'help' to get help.";
         private const string StorageFilePath = "cabinet-records.db";
         private static bool isDefaultValidatoinRules = true;
+        private static bool isFileSystemStorageUsed;
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Minor Code Smell", "S1450:Private fields only used as local variables in methods should become local variables", Justification = "It used by sending delegate outsiade.")]
+        private static bool isRunning;
         private static IFileCabinetService fileCabinetService;
 
         /// <summary>
-        /// Gets CultureInfo settings.
+        /// Gets current culture settings.
         /// </summary>
         /// <value>
-        /// CultureInfo settings (CultureInfo instance).
+        /// Current culture settings.
         /// </value>
         public static CultureInfo CultureInfoSettings { get; private set; }
-
-        /// <summary>
-        /// Gets a value indicating whether is filesystem storage used.
-        /// </summary>
-        /// <value>
-        /// Is file system storage used info.
-        /// </value>
-        public static bool IsFileSystemStorageUsed { get; private set; }
 
         /// <summary>
         /// Gets validator.
@@ -43,20 +38,12 @@ namespace FileCabinetApp
         public static IRecordValidator Validator { get; private set; }
 
         /// <summary>
-        /// Gets or sets a value indicating whether reperesents state of application run.
-        /// </summary>
-        /// <value>
-        /// Boolen value which reperesents state of application run.
-        /// </value>
-        public static bool IsRunning { get; set; }
-
-        /// <summary>
         /// Starts the program and implements the menu functions.
         /// </summary>
         /// <param name="args">Params.</param>
         public static void Main(string[] args)
         {
-            IsRunning = true;
+            isRunning = true;
             CultureInfoSettings = new ("en");
 
             CommandLineArgumentsApplying(args);
@@ -87,22 +74,22 @@ namespace FileCabinetApp
 
                 commandHandler.Handle(request);
             }
-            while (IsRunning);
+            while (isRunning);
         }
 
         private static ICommandHandler CreateCommandHendlers()
         {
             HelpCommandHandler helpCommandHandler = new HelpCommandHandler();
-            ExitCommandHandler exitCommandHandler = new ExitCommandHandler();
+            ExitCommandHandler exitCommandHandler = new ExitCommandHandler(Exit);
             StatCommandHandler statCommandHandler = new StatCommandHandler(fileCabinetService);
             CreateCommandHandler createCommandHandler = new CreateCommandHandler(fileCabinetService);
-            ListCommandHandler listCommandHandler = new ListCommandHandler(fileCabinetService);
+            ListCommandHandler listCommandHandler = new ListCommandHandler(fileCabinetService, CultureInfoSettings);
             EditCommandHandler editCommandHandler = new EditCommandHandler(fileCabinetService);
-            FindCommandHandler findCommandHandler = new FindCommandHandler(fileCabinetService);
+            FindCommandHandler findCommandHandler = new FindCommandHandler(fileCabinetService, CultureInfoSettings);
             ExportCommandHandler exportCommandHandler = new ExportCommandHandler(fileCabinetService);
             ImportCommandHandler importCommandHandler = new ImportCommandHandler(fileCabinetService);
             RemoveCommandHandler removeCommandHandler = new RemoveCommandHandler(fileCabinetService);
-            PurgeCommandHandler purgeCommandHandler = new PurgeCommandHandler(fileCabinetService);
+            PurgeCommandHandler purgeCommandHandler = new PurgeCommandHandler(fileCabinetService, isFileSystemStorageUsed);
 
             helpCommandHandler.SetNext(exitCommandHandler);
             exitCommandHandler.SetNext(statCommandHandler);
@@ -131,7 +118,7 @@ namespace FileCabinetApp
                 {
                     var fileStream = new FileStream(StorageFilePath, FileMode.OpenOrCreate);
                     fileCabinetService = new FileCabinetFilesystemService(Validator, fileStream);
-                    IsFileSystemStorageUsed = true;
+                    isFileSystemStorageUsed = true;
                     Console.WriteLine("Used storage in file.");
                 }
                 else
@@ -148,10 +135,15 @@ namespace FileCabinetApp
                 {
                     var fileStream = new FileStream(StorageFilePath, FileMode.OpenOrCreate);
                     fileCabinetService = new FileCabinetFilesystemService(Validator, fileStream);
-                    IsFileSystemStorageUsed = true;
+                    isFileSystemStorageUsed = true;
                     Console.WriteLine("Used storage in file.");
                 }
             }
+        }
+
+        private static void Exit()
+        {
+            isRunning = false;
         }
     }
 }

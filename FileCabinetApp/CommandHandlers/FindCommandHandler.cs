@@ -12,13 +12,17 @@ namespace FileCabinetApp.CommandHandlers
     {
         private const string NoMatchesMessage = "No matches were found.";
 
+        private readonly CultureInfo cultureInfo;
+
         /// <summary>
         /// Initializes a new instance of the <see cref="FindCommandHandler"/> class.
         /// </summary>
         /// <param name="service">Some instance implemented IFileCabinetService.</param>
-        public FindCommandHandler(IFileCabinetService service)
+        /// <param name="cultureInfo">CultureInfo settings.</param>
+        public FindCommandHandler(IFileCabinetService service, CultureInfo cultureInfo)
             : base(service)
         {
+            this.cultureInfo = cultureInfo;
         }
 
         /// <inheritdoc/>
@@ -61,7 +65,7 @@ namespace FileCabinetApp.CommandHandlers
                 }
                 else
                 {
-                    if (DateTime.TryParse(secondParameter, Program.CultureInfoSettings, DateTimeStyles.AdjustToUniversal, out DateTime date))
+                    if (DateTime.TryParse(secondParameter, this.cultureInfo, DateTimeStyles.AdjustToUniversal, out DateTime date))
                     {
                         foundRecords = this.service.FindByDateOfBirth(date);
                     }
@@ -82,8 +86,8 @@ namespace FileCabinetApp.CommandHandlers
                 {
                     Console.WriteLine(
                         $"#{foundRecords[i].Id}, {foundRecords[i].FirstName}, {foundRecords[i].LastName}, " +
-                        $"{foundRecords[i].DateOfBirth.ToString("yyyy-MMM-d", Program.CultureInfoSettings)}, " +
-                        $"Sex - {foundRecords[i].Sex}, Salary {foundRecords[i].Salary.ToString(Program.CultureInfoSettings)}, " +
+                        $"{foundRecords[i].DateOfBirth.ToString("yyyy-MMM-d", this.cultureInfo)}, " +
+                        $"Sex - {foundRecords[i].Sex}, Salary {foundRecords[i].Salary.ToString(this.cultureInfo)}, " +
                         $"{foundRecords[i].YearsOfService} years Of Service, ");
                 }
             }

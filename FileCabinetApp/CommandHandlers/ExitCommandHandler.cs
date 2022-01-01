@@ -9,6 +9,17 @@ namespace FileCabinetApp.CommandHandlers
     {
         private const string ExitMessage = "Exiting an application...";
 
+        private readonly Action exitProgramm;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ExitCommandHandler"/> class.
+        /// </summary>
+        /// <param name="exitProgramm">Delegate provides method of closing application from outside.</param>
+        public ExitCommandHandler(Action exitProgramm)
+        {
+            this.exitProgramm = exitProgramm;
+        }
+
         /// <inheritdoc/>
         public override void Handle(AppCommandRequest request)
         {
@@ -20,7 +31,7 @@ namespace FileCabinetApp.CommandHandlers
             if (request.Command == "exit")
             {
                 Console.WriteLine(ExitMessage);
-                Program.IsRunning = false;
+                this.exitProgramm?.Invoke();
             }
             else
             {

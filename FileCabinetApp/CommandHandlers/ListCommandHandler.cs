@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Globalization;
 
 namespace FileCabinetApp.CommandHandlers
 {
@@ -9,13 +10,17 @@ namespace FileCabinetApp.CommandHandlers
     {
         private const string ThereAreNoRecordsMessage = "There are no records yet.";
 
+        private readonly CultureInfo cultureInfo;
+
         /// <summary>
         /// Initializes a new instance of the <see cref="ListCommandHandler"/> class.
         /// </summary>
         /// <param name="service">Some instance implemented IFileCabinetService.</param>
-        public ListCommandHandler(IFileCabinetService service)
+        /// <param name="cultureInfo">CultureInfo settings.</param>
+        public ListCommandHandler(IFileCabinetService service, CultureInfo cultureInfo)
             : base(service)
         {
+            this.cultureInfo = cultureInfo;
         }
 
         /// <inheritdoc/>
@@ -40,8 +45,8 @@ namespace FileCabinetApp.CommandHandlers
                 {
                     Console.WriteLine(
                         $"#{list[i].Id}, {list[i].FirstName}, {list[i].LastName}, " +
-                        $"{list[i].DateOfBirth.ToString("yyyy-MMM-d", Program.CultureInfoSettings)}, " +
-                        $"Sex - {list[i].Sex}, Salary {list[i].Salary.ToString(Program.CultureInfoSettings)}, " +
+                        $"{list[i].DateOfBirth.ToString("yyyy-MMM-d", this.cultureInfo)}, " +
+                        $"Sex - {list[i].Sex}, Salary {list[i].Salary.ToString(this.cultureInfo)}, " +
                         $"{list[i].YearsOfService} years Of Service");
                 }
             }

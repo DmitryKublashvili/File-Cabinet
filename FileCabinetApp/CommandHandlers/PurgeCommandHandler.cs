@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Globalization;
-using System.IO;
 
 namespace FileCabinetApp.CommandHandlers
 {
@@ -11,13 +7,17 @@ namespace FileCabinetApp.CommandHandlers
     /// </summary>
     public class PurgeCommandHandler : ServiceCommandHandlerBase
     {
+        private readonly bool isFileSystemStorageUsed;
+
         /// <summary>
         /// Initializes a new instance of the <see cref="PurgeCommandHandler"/> class.
         /// </summary>
         /// <param name="service">Some instance implemented IFileCabinetService.</param>
-        public PurgeCommandHandler(IFileCabinetService service)
+        /// <param name="isFileSystemStorageUsed">Value that indicates wрether FileSystemStorageUsed.</param>
+        public PurgeCommandHandler(IFileCabinetService service, bool isFileSystemStorageUsed)
             : base(service)
         {
+            this.isFileSystemStorageUsed = isFileSystemStorageUsed;
         }
 
         /// <inheritdoc/>
@@ -30,7 +30,7 @@ namespace FileCabinetApp.CommandHandlers
 
             if (request.Command == "purge")
             {
-                if (Program.IsFileSystemStorageUsed)
+                if (this.isFileSystemStorageUsed)
                 {
                     this.service.Defragment();
                 }

@@ -87,6 +87,12 @@
             Exit command handler.
             </summary>
         </member>
+        <member name="M:FileCabinetApp.CommandHandlers.ExitCommandHandler.#ctor(System.Action)">
+            <summary>
+            Initializes a new instance of the <see cref="T:FileCabinetApp.CommandHandlers.ExitCommandHandler"/> class.
+            </summary>
+            <param name="exitProgramm">Delegate provides method of closing application from outside.</param>
+        </member>
         <member name="M:FileCabinetApp.CommandHandlers.ExitCommandHandler.Handle(FileCabinetApp.CommandHandlers.AppCommandRequest)">
             <inheritdoc/>
         </member>
@@ -109,11 +115,12 @@
             Find command handler.
             </summary>
         </member>
-        <member name="M:FileCabinetApp.CommandHandlers.FindCommandHandler.#ctor(FileCabinetApp.IFileCabinetService)">
+        <member name="M:FileCabinetApp.CommandHandlers.FindCommandHandler.#ctor(FileCabinetApp.IFileCabinetService,System.Globalization.CultureInfo)">
             <summary>
             Initializes a new instance of the <see cref="T:FileCabinetApp.CommandHandlers.FindCommandHandler"/> class.
             </summary>
             <param name="service">Some instance implemented IFileCabinetService.</param>
+            <param name="cultureInfo">CultureInfo settings.</param>
         </member>
         <member name="M:FileCabinetApp.CommandHandlers.FindCommandHandler.Handle(FileCabinetApp.CommandHandlers.AppCommandRequest)">
             <inheritdoc/>
@@ -162,11 +169,12 @@
             List command handler.
             </summary>
         </member>
-        <member name="M:FileCabinetApp.CommandHandlers.ListCommandHandler.#ctor(FileCabinetApp.IFileCabinetService)">
+        <member name="M:FileCabinetApp.CommandHandlers.ListCommandHandler.#ctor(FileCabinetApp.IFileCabinetService,System.Globalization.CultureInfo)">
             <summary>
             Initializes a new instance of the <see cref="T:FileCabinetApp.CommandHandlers.ListCommandHandler"/> class.
             </summary>
             <param name="service">Some instance implemented IFileCabinetService.</param>
+            <param name="cultureInfo">CultureInfo settings.</param>
         </member>
         <member name="M:FileCabinetApp.CommandHandlers.ListCommandHandler.Handle(FileCabinetApp.CommandHandlers.AppCommandRequest)">
             <inheritdoc/>
@@ -176,11 +184,12 @@
             Purge command handler.
             </summary>
         </member>
-        <member name="M:FileCabinetApp.CommandHandlers.PurgeCommandHandler.#ctor(FileCabinetApp.IFileCabinetService)">
+        <member name="M:FileCabinetApp.CommandHandlers.PurgeCommandHandler.#ctor(FileCabinetApp.IFileCabinetService,System.Boolean)">
             <summary>
             Initializes a new instance of the <see cref="T:FileCabinetApp.CommandHandlers.PurgeCommandHandler"/> class.
             </summary>
             <param name="service">Some instance implemented IFileCabinetService.</param>
+            <param name="isFileSystemStorageUsed">Value that indicates wрether FileSystemStorageUsed.</param>
         </member>
         <member name="M:FileCabinetApp.CommandHandlers.PurgeCommandHandler.Handle(FileCabinetApp.CommandHandlers.AppCommandRequest)">
             <inheritdoc/>
@@ -1083,18 +1092,10 @@
         </member>
         <member name="P:FileCabinetApp.Program.CultureInfoSettings">
             <summary>
-            Gets CultureInfo settings.
+            Gets current culture settings.
             </summary>
             <value>
-            CultureInfo settings (CultureInfo instance).
-            </value>
-        </member>
-        <member name="P:FileCabinetApp.Program.IsFileSystemStorageUsed">
-            <summary>
-            Gets a value indicating whether is filesystem storage used.
-            </summary>
-            <value>
-            Is file system storage used info.
+            Current culture settings.
             </value>
         </member>
         <member name="P:FileCabinetApp.Program.Validator">
@@ -1103,14 +1104,6 @@
             </summary>
             <value>
             IRecordValidator implemented instance.
-            </value>
-        </member>
-        <member name="P:FileCabinetApp.Program.IsRunning">
-            <summary>
-            Gets or sets a value indicating whether reperesents state of application run.
-            </summary>
-            <value>
-            Boolen value which reperesents state of application run.
             </value>
         </member>
         <member name="M:FileCabinetApp.Program.Main(System.String[])">
