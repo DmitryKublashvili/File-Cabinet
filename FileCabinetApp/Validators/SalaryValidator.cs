@@ -3,23 +3,23 @@
 namespace FileCabinetApp
 {
     /// <summary>
-    /// Default Salary Validator.
+    /// Custom Salary Validator.
     /// </summary>
-    public class DefaultSalaryValidator : IRecordValidator
+    public class SalaryValidator : IRecordValidator
     {
-        /// <summary>
-        /// Gets min amount of salary.
-        /// </summary>
-        /// <value> Amount of salary.
-        /// </value>
-        public int MinSalary { get; } = 2_000;
+        private readonly int minSalary;
+        private readonly int maxSalary;
 
         /// <summary>
-        /// Gets max amount of salary.
+        /// Initializes a new instance of the <see cref="SalaryValidator"/> class.
         /// </summary>
-        /// <value> Amount of salary.
-        /// </value>
-        public int MaxSalary { get; } = 100_000;
+        /// <param name="minSalary">min Salary.</param>
+        /// <param name="maxSalary">max Salary.</param>
+        public SalaryValidator(int minSalary, int maxSalary)
+        {
+            this.minSalary = minSalary;
+            this.maxSalary = maxSalary;
+        }
 
         /// <inheritdoc/>
         [System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.ReadabilityRules", "SA1118:Parameter should not span multiple lines", Justification = "It done to comfort code visualisation.")]
@@ -34,10 +34,10 @@ namespace FileCabinetApp
 
             var salary = parametresOfRecord.Salary;
 
-            if (salary < this.MinSalary || salary > this.MaxSalary)
+            if (salary < this.minSalary || salary > this.maxSalary)
             {
-                throw new ValidationException(parametresOfRecord.Id, $"The salary must be greater than or equal to {this.MinSalary} " +
-                    $"and less than or equal to {this.MaxSalary}", nameof(salary));
+                throw new ValidationException(parametresOfRecord.Id, $"The salary must be greater than or equal to {this.minSalary} " +
+                    $"and less than or equal to {this.maxSalary}", nameof(salary));
             }
         }
     }

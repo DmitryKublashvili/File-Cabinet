@@ -3,23 +3,23 @@
 namespace FileCabinetApp
 {
     /// <summary>
-    /// Default YearsOfService Validator.
+    /// Custom YearsOfService Validator.
     /// </summary>
-    public class DefaultYearsOfServiceValidator : IRecordValidator
+    public class YearsOfServiceValidator : IRecordValidator
     {
-        /// <summary>
-        /// Gets min valid years of service.
-        /// </summary>
-        /// <value> Count of years.
-        /// </value>
-        public int MinYearsOfService { get; } = 5;
+        private readonly int minYearsOfService;
+        private readonly int maxYearsOfService;
 
         /// <summary>
-        /// Gets max valid years of service.
+        /// Initializes a new instance of the <see cref="YearsOfServiceValidator"/> class.
         /// </summary>
-        /// <value> Count of years.
-        /// </value>
-        public int MaxYearsOfService { get; } = 50;
+        /// <param name="minYearsOfService">min YearsOfService.</param>
+        /// <param name="maxYearsOfService">max YearsOfService.</param>
+        public YearsOfServiceValidator(int minYearsOfService, int maxYearsOfService)
+        {
+            this.minYearsOfService = minYearsOfService;
+            this.maxYearsOfService = maxYearsOfService;
+        }
 
         /// <summary>
         /// Validate parametres.
@@ -37,10 +37,10 @@ namespace FileCabinetApp
 
             var yearsOfService = parametresOfRecord.YearsOfService;
 
-            if (yearsOfService < this.MinYearsOfService || yearsOfService > this.MaxYearsOfService)
+            if (yearsOfService < this.minYearsOfService || yearsOfService > this.maxYearsOfService)
             {
-                throw new ValidationException(parametresOfRecord.Id, $"The years of service parameter must be greater than or equal to {this.MinYearsOfService} " +
-                    $"and less than or equal to {this.MaxYearsOfService}", nameof(yearsOfService));
+                throw new ValidationException(parametresOfRecord.Id, $"The years of service parameter must be greater than or equal to {this.minYearsOfService} " +
+                    $"and less than or equal to {this.maxYearsOfService}", nameof(yearsOfService));
             }
         }
     }

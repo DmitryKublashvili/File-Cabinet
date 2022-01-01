@@ -46,16 +46,16 @@ namespace FileCabinetApp.CommandHandlers
                 string lastName = ReadInput<string>(NamesConverter, NamesValidator);
 
                 Console.Write("Date of birth: ");
-                DateTime dateOfBirth = ReadInput<DateTime>(DateOfBirthConverter, DateOfBirthValidator);
+                DateTime dateOfBirth = ReadInput(DateOfBirthConverter, ValidationMethods.DateOfBirthValidator);
 
                 Console.Write("Sex (M or F): ");
-                char sex = ReadInput<char>(SexConverter, SexValidator);
+                char sex = ReadInput(SexConverter, ValidationMethods.SexValidator);
 
                 Console.Write("Salary: ");
-                decimal salary = ReadInput<decimal>(SalaryConverter, SalaryValidator);
+                decimal salary = ReadInput(SalaryConverter, ValidationMethods.SalaryValidator);
 
                 Console.Write("Years Of Service: ");
-                short yearsOfService = ReadInput<short>(YearsOfServiceConverter, YearsOfServiceValidator);
+                short yearsOfService = ReadInput(YearsOfServiceConverter, ValidationMethods.YearsOfServiceValidator);
 
                 this.service.EditRecord(new ParametresOfRecord(id, firstName, lastName, dateOfBirth, sex, salary, yearsOfService));
 

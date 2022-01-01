@@ -3,16 +3,20 @@
 namespace FileCabinetApp
 {
     /// <summary>
-    /// Default DateOfBirth Validator.
+    /// Custom DateOfBirth Validator.
     /// </summary>
-    public class DefaultDateOfBirthValidator : IRecordValidator
+    public class DateOfBirthValidator : IRecordValidator
     {
+        private readonly DateTime minDateOfBirth;
+
         /// <summary>
-        /// Gets min date of birth.
+        /// Initializes a new instance of the <see cref="DateOfBirthValidator"/> class.
         /// </summary>
-        /// <value> Date of birth.
-        /// </value>
-        public DateTime MinDateOfBirth { get; } = new (1950, 1, 1);
+        /// <param name="minDateOfBirth">Min DateOfBirth.</param>
+        public DateOfBirthValidator(DateTime minDateOfBirth)
+        {
+            this.minDateOfBirth = minDateOfBirth;
+        }
 
         /// <summary>
         /// Validate parametres.
@@ -30,9 +34,9 @@ namespace FileCabinetApp
 
             var dateOfBirth = parametresOfRecord.DateOfBirth;
 
-            if (dateOfBirth < this.MinDateOfBirth || dateOfBirth > DateTime.Now)
+            if (dateOfBirth < this.minDateOfBirth || dateOfBirth > DateTime.Now)
             {
-                throw new ValidationException(parametresOfRecord.Id, $"Date of birth must be no earlier than {this.MinDateOfBirth} " +
+                throw new ValidationException(parametresOfRecord.Id, $"Date of birth must be no earlier than {this.minDateOfBirth} " +
                     "and no later than the current date", nameof(dateOfBirth));
             }
         }

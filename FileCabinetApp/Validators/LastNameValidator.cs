@@ -3,26 +3,25 @@
 namespace FileCabinetApp
 {
     /// <summary>
-    /// Default FirstName Validator.
+    /// Custom LastName Validator.
     /// </summary>
-    public class DefaultFirstNameValidator : IRecordValidator
+    public class LastNameValidator : IRecordValidator
     {
         private const string NotValidEmptyNameMessage = "The name must not be null or contain only spaces";
         private const string NotValidSimbolsInNameMessage = "The name must consists of only letters";
+        private readonly int minLettersCountInName;
+        private readonly int maxLettersCountInName;
 
         /// <summary>
-        /// Gets min letters count in name.
+        /// Initializes a new instance of the <see cref="LastNameValidator"/> class.
         /// </summary>
-        /// <value> Count of leters.
-        /// </value>
-        public int MinLettersCountInName { get; } = 2;
-
-        /// <summary>
-        /// Gets max letters count in name.
-        /// </summary>
-        /// <value> Count of leters.
-        /// </value>
-        public int MaxLettersCountInName { get; } = 60;
+        /// <param name="minLettersCountInName">Min Letters Count In Name.</param>
+        /// <param name="maxLettersCountInName">Max Letters Count In Name.</param>
+        public LastNameValidator(int minLettersCountInName, int maxLettersCountInName)
+        {
+            this.minLettersCountInName = minLettersCountInName;
+            this.maxLettersCountInName = maxLettersCountInName;
+        }
 
         /// <summary>
         /// Validate parametres.
@@ -37,16 +36,16 @@ namespace FileCabinetApp
             }
 
             var id = parametresOfRecord.Id;
-            var name = parametresOfRecord.FirstName;
+            var name = parametresOfRecord.LastName;
 
             if (string.IsNullOrWhiteSpace(name))
             {
                 throw new ValidationException(id, nameof(name), NotValidEmptyNameMessage);
             }
 
-            if (name.Length < this.MinLettersCountInName || name.Length > this.MaxLettersCountInName)
+            if (name.Length < this.minLettersCountInName || name.Length > this.maxLettersCountInName)
             {
-                throw new ValidationException(id, $"The name must be {this.MinLettersCountInName}-{this.MaxLettersCountInName} characters long", nameof(name));
+                throw new ValidationException(id, $"The name must be {this.minLettersCountInName}-{this.maxLettersCountInName} characters long", nameof(name));
             }
 
             for (int i = 0; i < name.Length; i++)

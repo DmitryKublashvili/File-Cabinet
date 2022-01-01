@@ -3,9 +3,9 @@
 namespace FileCabinetApp
 {
     /// <summary>
-    /// Default Sex Validator.
+    /// Custom Sex Validator.
     /// </summary>
-    public class DefaultSexValidator : IRecordValidator
+    public class SexValidator : IRecordValidator
     {
         private const string IncorrectSexMessage = "Only the letters 'M' or 'F' are valid";
 
