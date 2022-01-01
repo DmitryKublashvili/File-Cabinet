@@ -140,7 +140,14 @@ namespace FileCabinetApp
             {
                 ValidationMethods.IsDefaultValidatoinRules = false;
                 isDefaultValidatoinRules = false;
-                Validator = new CustomValidator();
+                Validator = new ValidatorBuilder()
+                    .ValidateFirstName(CustomValidationParams.MinLettersCountInName, CustomValidationParams.MaxLettersCountInName)
+                    .ValidateLastName(CustomValidationParams.MinLettersCountInName, CustomValidationParams.MaxLettersCountInName)
+                    .ValidateDateOfBirth(CustomValidationParams.MinDateOfBirth)
+                    .ValidateSex()
+                    .ValidateSalary(CustomValidationParams.MinSalary, CustomValidationParams.MaxSalary)
+                    .ValidateYearsOfService(CustomValidationParams.MinYearsOfService, CustomValidationParams.MaxYearsOfService)
+                    .Create();
 
                 if (parameterOfValidation.Contains("--STORAGE=FILE") || parameterOfValidation.Contains("-S FILE"))
                 {
@@ -158,7 +165,14 @@ namespace FileCabinetApp
             {
                 ValidationMethods.IsDefaultValidatoinRules = true;
                 isDefaultValidatoinRules = true;
-                Validator = new DefaultValidator();
+                Validator = new ValidatorBuilder()
+                    .ValidateFirstName(DefaultValidationParams.MinLettersCountInName, DefaultValidationParams.MaxLettersCountInName)
+                    .ValidateLastName(DefaultValidationParams.MinLettersCountInName, DefaultValidationParams.MaxLettersCountInName)
+                    .ValidateDateOfBirth(DefaultValidationParams.MinDateOfBirth)
+                    .ValidateSex()
+                    .ValidateSalary(DefaultValidationParams.MinSalary, DefaultValidationParams.MaxSalary)
+                    .ValidateYearsOfService(DefaultValidationParams.MinYearsOfService, DefaultValidationParams.MaxYearsOfService)
+                    .Create();
 
                 if (parameterOfValidation.Contains("--STORAGE=FILE") || parameterOfValidation.Contains("-S FILE"))
                 {

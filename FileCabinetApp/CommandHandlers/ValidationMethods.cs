@@ -33,7 +33,7 @@ namespace FileCabinetApp.CommandHandlers
         {
             get
             {
-                return IsDefaultValidatoinRules ? new DefaultValidator().MinLettersCountInName : new CustomValidator().MinLettersCountInName;
+                return IsDefaultValidatoinRules ? DefaultValidationParams.MinLettersCountInName : CustomValidationParams.MinLettersCountInName;
             }
         }
 
@@ -46,7 +46,7 @@ namespace FileCabinetApp.CommandHandlers
         {
             get
             {
-                return IsDefaultValidatoinRules ? new DefaultValidator().MaxLettersCountInName : new CustomValidator().MaxLettersCountInName;
+                return IsDefaultValidatoinRules ? DefaultValidationParams.MaxLettersCountInName : CustomValidationParams.MaxLettersCountInName;
             }
         }
 
@@ -55,11 +55,11 @@ namespace FileCabinetApp.CommandHandlers
         /// </summary>
         /// <value> Amount of salary.
         /// </value>
-        public static int MinSalary
+        public static decimal MinSalary
         {
             get
             {
-                return IsDefaultValidatoinRules ? new DefaultValidator().MinSalary : new CustomValidator().MinSalary;
+                return IsDefaultValidatoinRules ? DefaultValidationParams.MinSalary : CustomValidationParams.MinSalary;
             }
         }
 
@@ -68,11 +68,11 @@ namespace FileCabinetApp.CommandHandlers
         /// </summary>
         /// <value> Amount of salary.
         /// </value>
-        public static int MaxSalary
+        public static decimal MaxSalary
         {
             get
             {
-                return IsDefaultValidatoinRules ? new DefaultValidator().MaxSalary : new CustomValidator().MaxSalary;
+                return IsDefaultValidatoinRules ? DefaultValidationParams.MaxSalary : CustomValidationParams.MaxSalary;
             }
         }
 
@@ -85,7 +85,7 @@ namespace FileCabinetApp.CommandHandlers
         {
             get
             {
-                return IsDefaultValidatoinRules ? new DefaultValidator().MinYearsOfService : new CustomValidator().MinYearsOfService;
+                return IsDefaultValidatoinRules ? DefaultValidationParams.MinYearsOfService : CustomValidationParams.MinYearsOfService;
             }
         }
 
@@ -98,7 +98,7 @@ namespace FileCabinetApp.CommandHandlers
         {
             get
             {
-                return IsDefaultValidatoinRules ? new DefaultValidator().MaxYearsOfService : new CustomValidator().MaxYearsOfService;
+                return IsDefaultValidatoinRules ? DefaultValidationParams.MaxYearsOfService : CustomValidationParams.MaxYearsOfService;
             }
         }
 
@@ -111,7 +111,7 @@ namespace FileCabinetApp.CommandHandlers
         {
             get
             {
-                return IsDefaultValidatoinRules ? new DefaultValidator().MinDateOfBirth : new CustomValidator().MinDateOfBirth;
+                return IsDefaultValidatoinRules ? DefaultValidationParams.MinDateOfBirth : CustomValidationParams.MinDateOfBirth;
             }
         }
 
