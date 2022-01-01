@@ -44,11 +44,18 @@ namespace FileCabinetApp
 
             long startPosition = this.fileStream.Length;
 
-            int id = parametresOfRecord.Id;
+            for (int i = 1; ; i++)
+            {
+                if (!this.IsRecordExist(i))
+                {
+                    parametresOfRecord.Id = i;
+                    break;
+                }
+            }
 
             this.WriteRecordInFile(parametresOfRecord, startPosition);
 
-            return id;
+            return parametresOfRecord.Id;
         }
 
         /// <summary>
@@ -69,34 +76,9 @@ namespace FileCabinetApp
 
             this.recordValidator.ValidateParameters(parametresOfRecord);
 
-            this.GetPositionOfTheRecordById(parametresOfRecord.Id);
+            var position = this.GetPositionOfTheRecordById(parametresOfRecord.Id);
 
-            //long startPosition = -1;
-
-            //long recordsCount = this.fileStream.Length / 278;
-
-            //byte[] bytesFromId = new byte[4];
-
-            //// find and set position
-            //for (int i = 0; i < recordsCount; i++)
-            //{
-            //    this.fileStream.Seek((i * 278) + 2, SeekOrigin.Begin);
-            //    this.fileStream.Read(bytesFromId);
-
-            //    if (parametresOfRecord.Id == BitConverter.ToInt32(bytesFromId, 0))
-            //    {
-            //        startPosition = i * 278;
-            //        break;
-            //    }
-
-            //    if (i == recordsCount - 1)
-            //    {
-            //        Console.WriteLine($"Record {parametresOfRecord.Id} not found.");
-            //        return;
-            //    }
-            //}
-
-            this.WriteRecordInFile(parametresOfRecord, this.GetPositionOfTheRecordById(parametresOfRecord.Id));
+            this.WriteRecordInFile(parametresOfRecord, position);
         }
 
         /// <summary>
@@ -112,7 +94,7 @@ namespace FileCabinetApp
 
             for (long i = 0; i < this.fileStream.Length; i += 278)
             {
-                if (!this.IsDeleted(i))
+                if (this.IsDeleted(i))
                 {
                     continue;
                 }
@@ -148,7 +130,7 @@ namespace FileCabinetApp
 
             for (long i = 0; i < this.fileStream.Length; i += 278)
             {
-                if (!this.IsDeleted(i))
+                if (this.IsDeleted(i))
                 {
                     continue;
                 }
@@ -184,7 +166,7 @@ namespace FileCabinetApp
 
             for (long i = 0; i < this.fileStream.Length; i += 278)
             {
-                if (!this.IsDeleted(i))
+                if (this.IsDeleted(i))
                 {
                     continue;
                 }
@@ -323,7 +305,7 @@ namespace FileCabinetApp
 
             long position = this.GetPositionOfTheRecordById(id);
 
-            return position >= 0; // && !this.IsDeleted(position);
+            return position >= 0;
         }
 
         /// <summary>
@@ -359,12 +341,38 @@ namespace FileCabinetApp
 
             // char[] FirstName 120
             this.fileStream.Seek(startPosition + 6, SeekOrigin.Begin);
-            var bytesFirstName = Encoding.ASCII.GetBytes(parametresOfRecord.FirstName.Length <= 60 ? parametresOfRecord.FirstName : parametresOfRecord.FirstName[..60]);
+
+            byte[] bytesFirstName;
+
+            if (parametresOfRecord.FirstName.Length < 60)
+            {
+                string defaultStr = new string(default, 60);
+                defaultStr = defaultStr.Insert(0, parametresOfRecord.FirstName);
+                bytesFirstName = Encoding.ASCII.GetBytes(defaultStr);
+            }
+            else
+            {
+                bytesFirstName = Encoding.ASCII.GetBytes(parametresOfRecord.FirstName[..60]);
+            }
+
             this.fileStream.Write(bytesFirstName);
 
             // char[] LastName 120
             this.fileStream.Seek(startPosition + 126, SeekOrigin.Begin);
-            var bytesLastName = Encoding.ASCII.GetBytes(parametresOfRecord.LastName.Length <= 60 ? parametresOfRecord.LastName : parametresOfRecord.LastName[..60]);
+
+            byte[] bytesLastName;
+
+            if (parametresOfRecord.LastName.Length < 60)
+            {
+                string defaultStr = new string(default, 60);
+                defaultStr = defaultStr.Insert(0, parametresOfRecord.LastName);
+                bytesLastName = Encoding.ASCII.GetBytes(defaultStr);
+            }
+            else
+            {
+                bytesLastName = Encoding.ASCII.GetBytes(parametresOfRecord.LastName[..60]);
+            }
+
             this.fileStream.Write(bytesLastName);
 
             // int Year 4
@@ -422,6 +430,7 @@ namespace FileCabinetApp
             int year = BitConverter.ToInt32(bytes[246..250], 0);
             int month = BitConverter.ToInt32(bytes[250..254], 0);
             int day = BitConverter.ToInt32(bytes[254..258], 0);
+
             record.DateOfBirth = DateTime.Parse($"{month}/{day}/{year}", cultureInfo, DateTimeStyles.AdjustToUniversal);
 
             // get Sex
@@ -457,6 +466,11 @@ namespace FileCabinetApp
             return false;
         }
 
+        /// <summary>
+        /// Gets position of the record by Id.
+        /// </summary>
+        /// <param name="id">Id of the record.</param>
+        /// <returns>Position of first byte of record in file or -1 if record with it's id doe's not exist.</returns>
         private long GetPositionOfTheRecordById(int id)
         {
             byte[] bytes = new byte[4];

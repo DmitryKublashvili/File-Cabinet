@@ -76,7 +76,7 @@ namespace FileCabinetApp
         /// </summary>
         /// <value> Integer num of record.
         /// </value>
-        public int Id { get; private set; }
+        public int Id { get; set; }
 
         /// <summary>
         /// Gets first name.

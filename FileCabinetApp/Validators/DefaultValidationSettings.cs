@@ -1,65 +1,60 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace FileCabinetApp
 {
     /// <summary>
-    /// Define the functionality of validators type.
+    /// Default validator.
     /// </summary>
-    public interface IRecordValidator
+    public static class DefaultValidationSettings
     {
         /// <summary>
-        /// Gets min letters count in name.
+        /// Gets or sets min letters count in name.
         /// </summary>
         /// <value> Count of leters.
         /// </value>
-        public int MinLettersCountInName { get; }
+        public static int MinLettersCountInName { get; set; } = 2;
 
         /// <summary>
-        /// Gets max letters count in name.
+        /// Gets or sets max letters count in name.
         /// </summary>
         /// <value> Count of leters.
         /// </value>
-        public int MaxLettersCountInName { get; }
+        public static int MaxLettersCountInName { get; set;  } = 60;
+
+        /// <summary>
+        /// Gets or sets min date of birth.
+        /// </summary>
+        /// <value> Date of birth.
+        /// </value>
+        public static DateTime MinDateOfBirth { get; set; } = new (1950, 1, 1);
 
         /// <summary>
         /// Gets min amount of salary.
         /// </summary>
         /// <value> Amount of salary.
         /// </value>
-        public int MinSalary { get; }
+        public static decimal MinSalary { get; } = 2_000;
 
         /// <summary>
         /// Gets max amount of salary.
         /// </summary>
         /// <value> Amount of salary.
         /// </value>
-        public int MaxSalary { get; }
+        public static decimal MaxSalary { get; } = 100_000;
 
         /// <summary>
         /// Gets min valid years of service.
         /// </summary>
         /// <value> Count of years.
         /// </value>
-        public int MinYearsOfService { get; }
+        public static int MinYearsOfService { get; } = 2;
 
         /// <summary>
         /// Gets max valid years of service.
         /// </summary>
         /// <value> Count of years.
         /// </value>
-        public int MaxYearsOfService { get; }
-
-        /// <summary>
-        /// Gets min date of birth.
-        /// </summary>
-        /// <value> Date of birth.
-        /// </value>
-        public DateTime MinDateOfBirth { get; }
-
-        /// <summary>
-        /// Validate parameters of record.
-        /// </summary>
-        /// <param name="parametresOfRecord">ParametresOfRecord instance.</param>
-        void ValidateParameters(ParametresOfRecord parametresOfRecord);
+        public static int MaxYearsOfService { get; } = 42;
     }
 }

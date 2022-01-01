@@ -10,7 +10,7 @@ namespace FileCabinetApp
         /// <summary>
         /// Initializes a new instance of the <see cref="ValidationException"/> class.
         /// </summary>
-        /// <param name="id">Not valid record id</param>
+        /// <param name="id">Not valid record id.</param>
         /// <param name="message">Exception message.</param>
         /// <param name="paramName">Name of not valid parameter.</param>
         public ValidationException(int id, string message, string paramName)
