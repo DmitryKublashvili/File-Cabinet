@@ -6,19 +6,17 @@ namespace FileCabinetApp.CommandHandlers
     /// <summary>
     /// Import command handler.
     /// </summary>
-    public class ImportCommandHandler : CommandHandlerBase
+    public class ImportCommandHandler : ServiceCommandHandlerBase
     {
         private const string IncorrectCommandFormatMessage = "Comand has incorrect format.";
-
-        private readonly IFileCabinetService service;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ImportCommandHandler"/> class.
         /// </summary>
         /// <param name="service">Some instance implemented IFileCabinetService.</param>
         public ImportCommandHandler(IFileCabinetService service)
+            : base(service)
         {
-            this.service = service;
         }
 
         /// <inheritdoc/>

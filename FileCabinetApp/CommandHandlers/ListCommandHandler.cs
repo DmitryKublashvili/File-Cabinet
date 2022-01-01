@@ -5,19 +5,17 @@ namespace FileCabinetApp.CommandHandlers
     /// <summary>
     /// List command handler.
     /// </summary>
-    public class ListCommandHandler : CommandHandlerBase
+    public class ListCommandHandler : ServiceCommandHandlerBase
     {
         private const string ThereAreNoRecordsMessage = "There are no records yet.";
-
-        private readonly IFileCabinetService service;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ListCommandHandler"/> class.
         /// </summary>
         /// <param name="service">Some instance implemented IFileCabinetService.</param>
         public ListCommandHandler(IFileCabinetService service)
+            : base(service)
         {
-            this.service = service;
         }
 
         /// <inheritdoc/>

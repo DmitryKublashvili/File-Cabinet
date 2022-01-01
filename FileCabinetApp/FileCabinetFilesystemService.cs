@@ -404,6 +404,7 @@ namespace FileCabinetApp
             int year = BitConverter.ToInt32(bytes[246..250], 0);
             int month = BitConverter.ToInt32(bytes[250..254], 0);
             int day = BitConverter.ToInt32(bytes[254..258], 0);
+
             record.DateOfBirth = DateTime.Parse($"{month}/{day}/{year}", cultureInfo, DateTimeStyles.AdjustToUniversal);
 
             // get Sex

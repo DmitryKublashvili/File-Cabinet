@@ -141,6 +141,9 @@ namespace FileCabinetApp
             }
             else
             {
+                isDefaultValidatoinRules = true;
+                Validator = new DefaultValidator();
+
                 if (parameterOfValidation.Contains("--STORAGE=FILE") || parameterOfValidation.Contains("-S FILE"))
                 {
                     var fileStream = new FileStream(StorageFilePath, FileMode.OpenOrCreate);
