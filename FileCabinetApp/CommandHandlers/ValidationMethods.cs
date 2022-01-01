@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Globalization;
-using static FileCabinetApp.CommandHandlers.ValidationMethods;
 
 #pragma warning disable CA1062
 
@@ -16,6 +15,105 @@ namespace FileCabinetApp.CommandHandlers
         private const string NotValidEmptyNameMessage = "The name must not be null or contain only spaces";
         private const string NotValidSimbolsInNameMessage = "The name must consists of only letters";
         private const string NotParsedSalaryMessage = "Incorrect summ, please enter again";
+
+        /// <summary>
+        /// Gets or sets a value indicating whether default validatoin Rules set.
+        /// </summary>
+        /// <value>
+        /// A value indicating whether default validatoin Rules set.
+        /// </value>
+        public static bool IsDefaultValidatoinRules { get; set; } = true;
+
+        /// <summary>
+        /// Gets min letters count in name.
+        /// </summary>
+        /// <value> Count of leters.
+        /// </value>
+        public static int MinLettersCountInName
+        {
+            get
+            {
+                return IsDefaultValidatoinRules ? new DefaultFirstNameValidator().MinLettersCountInName : new CustomFirstNameValidator().MinLettersCountInName;
+            }
+        }
+
+        /// <summary>
+        /// Gets max letters count in name.
+        /// </summary>
+        /// <value> Count of leters.
+        /// </value>
+        public static int MaxLettersCountInName
+        {
+            get
+            {
+                return IsDefaultValidatoinRules ? new DefaultFirstNameValidator().MaxLettersCountInName : new CustomFirstNameValidator().MaxLettersCountInName;
+            }
+        }
+
+        /// <summary>
+        /// Gets min amount of salary.
+        /// </summary>
+        /// <value> Amount of salary.
+        /// </value>
+        public static int MinSalary
+        {
+            get
+            {
+                return IsDefaultValidatoinRules ? new DefaultSalaryValidator().MinSalary : new CustomSalaryValidator().MinSalary;
+            }
+        }
+
+        /// <summary>
+        /// Gets max amount of salary.
+        /// </summary>
+        /// <value> Amount of salary.
+        /// </value>
+        public static int MaxSalary
+        {
+            get
+            {
+                return IsDefaultValidatoinRules ? new DefaultSalaryValidator().MaxSalary : new CustomSalaryValidator().MaxSalary;
+            }
+        }
+
+        /// <summary>
+        /// Gets min valid years of service.
+        /// </summary>
+        /// <value> Count of years.
+        /// </value>
+        public static int MinYearsOfService
+        {
+            get
+            {
+                return IsDefaultValidatoinRules ? new DefaultYearsOfServiceValidator().MinYearsOfService : new CustomYearsOfServiceValidator().MinYearsOfService;
+            }
+        }
+
+        /// <summary>
+        /// Gets max valid years of service.
+        /// </summary>
+        /// <value> Count of years.
+        /// </value>
+        public static int MaxYearsOfService
+        {
+            get
+            {
+                return IsDefaultValidatoinRules ? new DefaultYearsOfServiceValidator().MaxYearsOfService : new CustomYearsOfServiceValidator().MaxYearsOfService;
+            }
+        }
+
+        /// <summary>
+        /// Gets min date of birth.
+        /// </summary>
+        /// <value> Date of birth.
+        /// </value>
+        public static DateTime MinDateOfBirth
+        {
+            get
+            {
+                return IsDefaultValidatoinRules ? new DefaultDateOfBirthValidator().MinDateOfBirth : new CustomDateOfBirthValidator().MinDateOfBirth;
+            }
+        }
 
         /// <summary>
         /// Reads and validates input parameters of record.
@@ -60,10 +158,10 @@ namespace FileCabinetApp.CommandHandlers
         /// <returns>Tuple of result of validation.</returns>
         public static Tuple<bool, string> YearsOfServiceValidator(short arg)
         {
-            bool isValid = arg >= Program.Validator.MinYearsOfService && arg <= Program.Validator.MaxYearsOfService;
+            bool isValid = arg >= MinYearsOfService && arg <= MaxYearsOfService;
 
-            string message = $"The years of service parameter must be greater than or equal to {Program.Validator.MinYearsOfService} " +
-                    $"and less than or equal to {Program.Validator.MaxYearsOfService}";
+            string message = $"The years of service parameter must be greater than or equal to {MinYearsOfService} " +
+                    $"and less than or equal to {MaxYearsOfService}";
 
             return new Tuple<bool, string>(isValid, message);
         }
@@ -77,7 +175,7 @@ namespace FileCabinetApp.CommandHandlers
         {
             bool isConverted = short.TryParse(arg, out short checkedYearsOfService);
 
-            string message = $"Incorrect value, only integers in {Program.Validator.MinYearsOfService}-{Program.Validator.MaxYearsOfService} interval are available. Please enter again";
+            string message = $"Incorrect value, only integers in {MinYearsOfService}-{MaxYearsOfService} interval are available. Please enter again";
 
             return new Tuple<bool, string, short>(isConverted, message, checkedYearsOfService);
         }
@@ -130,9 +228,9 @@ namespace FileCabinetApp.CommandHandlers
                 return new Tuple<bool, string>(false, NotValidEmptyNameMessage);
             }
 
-            if (arg.Length < Program.Validator.MinLettersCountInName || arg.Length > Program.Validator.MaxLettersCountInName)
+            if (arg.Length < MinLettersCountInName || arg.Length > MaxLettersCountInName)
             {
-                return new Tuple<bool, string>(false, $"The name must be {Program.Validator.MinLettersCountInName} - {Program.Validator.MaxLettersCountInName} characters long");
+                return new Tuple<bool, string>(false, $"The name must be {MinLettersCountInName} - {MaxLettersCountInName} characters long");
             }
 
             for (int i = 0; i < arg.Length; i++)
@@ -153,10 +251,10 @@ namespace FileCabinetApp.CommandHandlers
         /// <returns>Tuple of result of validation.</returns>
         public static Tuple<bool, string> SalaryValidator(decimal arg)
         {
-            bool isValid = arg >= Program.Validator.MinSalary && arg <= Program.Validator.MaxSalary;
+            bool isValid = arg >= MinSalary && arg <= MaxSalary;
 
-            string message = $"The salary must be greater than or equal to {Program.Validator.MinSalary} " +
-                             $"and less than or equal to {Program.Validator.MaxSalary}";
+            string message = $"The salary must be greater than or equal to {MinSalary} " +
+                             $"and less than or equal to {MaxSalary}";
 
             return new Tuple<bool, string>(isValid, message);
         }
@@ -192,9 +290,9 @@ namespace FileCabinetApp.CommandHandlers
         /// <returns>Tuple of result of validation.</returns>
         public static Tuple<bool, string> DateOfBirthValidator(DateTime arg)
         {
-            bool isValid = arg >= Program.Validator.MinDateOfBirth && arg <= DateTime.Now;
+            bool isValid = arg >= MinDateOfBirth && arg <= DateTime.Now;
 
-            string message = $"Date of birth must be no earlier than {Program.Validator.MinDateOfBirth.ToShortDateString()} " +
+            string message = $"Date of birth must be no earlier than {MinDateOfBirth.ToShortDateString()} " +
                       "and no later than the current date";
 
             return new Tuple<bool, string>(isValid, message);

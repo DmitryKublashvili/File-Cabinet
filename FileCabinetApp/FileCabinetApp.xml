@@ -243,6 +243,63 @@
             Provides methods of validating record parameters.
             </summary>
         </member>
+        <member name="P:FileCabinetApp.CommandHandlers.ValidationMethods.IsDefaultValidatoinRules">
+            <summary>
+            Gets or sets a value indicating whether default validatoin Rules set.
+            </summary>
+            <value>
+            A value indicating whether default validatoin Rules set.
+            </value>
+        </member>
+        <member name="P:FileCabinetApp.CommandHandlers.ValidationMethods.MinLettersCountInName">
+            <summary>
+            Gets min letters count in name.
+            </summary>
+            <value> Count of leters.
+            </value>
+        </member>
+        <member name="P:FileCabinetApp.CommandHandlers.ValidationMethods.MaxLettersCountInName">
+            <summary>
+            Gets max letters count in name.
+            </summary>
+            <value> Count of leters.
+            </value>
+        </member>
+        <member name="P:FileCabinetApp.CommandHandlers.ValidationMethods.MinSalary">
+            <summary>
+            Gets min amount of salary.
+            </summary>
+            <value> Amount of salary.
+            </value>
+        </member>
+        <member name="P:FileCabinetApp.CommandHandlers.ValidationMethods.MaxSalary">
+            <summary>
+            Gets max amount of salary.
+            </summary>
+            <value> Amount of salary.
+            </value>
+        </member>
+        <member name="P:FileCabinetApp.CommandHandlers.ValidationMethods.MinYearsOfService">
+            <summary>
+            Gets min valid years of service.
+            </summary>
+            <value> Count of years.
+            </value>
+        </member>
+        <member name="P:FileCabinetApp.CommandHandlers.ValidationMethods.MaxYearsOfService">
+            <summary>
+            Gets max valid years of service.
+            </summary>
+            <value> Count of years.
+            </value>
+        </member>
+        <member name="P:FileCabinetApp.CommandHandlers.ValidationMethods.MinDateOfBirth">
+            <summary>
+            Gets min date of birth.
+            </summary>
+            <value> Date of birth.
+            </value>
+        </member>
         <member name="M:FileCabinetApp.CommandHandlers.ValidationMethods.ReadInput``1(System.Func{System.String,System.Tuple{System.Boolean,System.String,``0}},System.Func{``0,System.Tuple{System.Boolean,System.String}})">
             <summary>
             Reads and validates input parameters of record.
@@ -321,126 +378,6 @@
             </summary>
             <param name="arg">String type argument to validation.</param>
             <returns>Tuple of result of validation.</returns>
-        </member>
-        <member name="T:FileCabinetApp.CustomValidator">
-            <summary>
-            Custom validator.
-            </summary>
-        </member>
-        <member name="P:FileCabinetApp.CustomValidator.MinLettersCountInName">
-            <summary>
-            Gets min letters count in name.
-            </summary>
-            <value> Count of leters.
-            </value>
-        </member>
-        <member name="P:FileCabinetApp.CustomValidator.MaxLettersCountInName">
-            <summary>
-            Gets max letters count in name.
-            </summary>
-            <value> Count of leters.
-            </value>
-        </member>
-        <member name="P:FileCabinetApp.CustomValidator.MinSalary">
-            <summary>
-            Gets min amount of salary.
-            </summary>
-            <value> Amount of salary.
-            </value>
-        </member>
-        <member name="P:FileCabinetApp.CustomValidator.MaxSalary">
-            <summary>
-            Gets max amount of salary.
-            </summary>
-            <value> Amount of salary.
-            </value>
-        </member>
-        <member name="P:FileCabinetApp.CustomValidator.MinYearsOfService">
-            <summary>
-            Gets min valid years of service.
-            </summary>
-            <value> Count of years.
-            </value>
-        </member>
-        <member name="P:FileCabinetApp.CustomValidator.MaxYearsOfService">
-            <summary>
-            Gets max valid years of service.
-            </summary>
-            <value> Count of years.
-            </value>
-        </member>
-        <member name="P:FileCabinetApp.CustomValidator.MinDateOfBirth">
-            <summary>
-            Gets min date of birth.
-            </summary>
-            <value> Date of birth.
-            </value>
-        </member>
-        <member name="M:FileCabinetApp.CustomValidator.ValidateParameters(FileCabinetApp.ParametresOfRecord)">
-            <summary>
-            Validate parametres.
-            </summary>
-            <param name="parametresOfRecord">Parametres of record.</param>
-        </member>
-        <member name="T:FileCabinetApp.DefaultValidator">
-            <summary>
-            Parametres validator.
-            </summary>
-        </member>
-        <member name="P:FileCabinetApp.DefaultValidator.MinLettersCountInName">
-            <summary>
-            Gets min letters count in name.
-            </summary>
-            <value> Count of leters.
-            </value>
-        </member>
-        <member name="P:FileCabinetApp.DefaultValidator.MaxLettersCountInName">
-            <summary>
-            Gets max letters count in name.
-            </summary>
-            <value> Count of leters.
-            </value>
-        </member>
-        <member name="P:FileCabinetApp.DefaultValidator.MinSalary">
-            <summary>
-            Gets min amount of salary.
-            </summary>
-            <value> Amount of salary.
-            </value>
-        </member>
-        <member name="P:FileCabinetApp.DefaultValidator.MaxSalary">
-            <summary>
-            Gets max amount of salary.
-            </summary>
-            <value> Amount of salary.
-            </value>
-        </member>
-        <member name="P:FileCabinetApp.DefaultValidator.MinYearsOfService">
-            <summary>
-            Gets min valid years of service.
-            </summary>
-            <value> Count of years.
-            </value>
-        </member>
-        <member name="P:FileCabinetApp.DefaultValidator.MaxYearsOfService">
-            <summary>
-            Gets max valid years of service.
-            </summary>
-            <value> Count of years.
-            </value>
-        </member>
-        <member name="P:FileCabinetApp.DefaultValidator.MinDateOfBirth">
-            <summary>
-            Gets min date of birth.
-            </summary>
-            <value> Date of birth.
-            </value>
-        </member>
-        <member name="M:FileCabinetApp.DefaultValidator.ValidateParameters(FileCabinetApp.ParametresOfRecord)">
-            <summary>
-            Validate parametres.
-            </summary>
-            <param name="parametresOfRecord">Parametres of record.</param>
         </member>
         <member name="T:FileCabinetApp.FileCabinetFilesystemService">
             <summary>
@@ -942,66 +879,6 @@
             Defragments storage file by removing marked as deleted records.
             </summary>
         </member>
-        <member name="T:FileCabinetApp.IRecordValidator">
-            <summary>
-            Define the functionality of validators type.
-            </summary>
-        </member>
-        <member name="P:FileCabinetApp.IRecordValidator.MinLettersCountInName">
-            <summary>
-            Gets min letters count in name.
-            </summary>
-            <value> Count of leters.
-            </value>
-        </member>
-        <member name="P:FileCabinetApp.IRecordValidator.MaxLettersCountInName">
-            <summary>
-            Gets max letters count in name.
-            </summary>
-            <value> Count of leters.
-            </value>
-        </member>
-        <member name="P:FileCabinetApp.IRecordValidator.MinSalary">
-            <summary>
-            Gets min amount of salary.
-            </summary>
-            <value> Amount of salary.
-            </value>
-        </member>
-        <member name="P:FileCabinetApp.IRecordValidator.MaxSalary">
-            <summary>
-            Gets max amount of salary.
-            </summary>
-            <value> Amount of salary.
-            </value>
-        </member>
-        <member name="P:FileCabinetApp.IRecordValidator.MinYearsOfService">
-            <summary>
-            Gets min valid years of service.
-            </summary>
-            <value> Count of years.
-            </value>
-        </member>
-        <member name="P:FileCabinetApp.IRecordValidator.MaxYearsOfService">
-            <summary>
-            Gets max valid years of service.
-            </summary>
-            <value> Count of years.
-            </value>
-        </member>
-        <member name="P:FileCabinetApp.IRecordValidator.MinDateOfBirth">
-            <summary>
-            Gets min date of birth.
-            </summary>
-            <value> Date of birth.
-            </value>
-        </member>
-        <member name="M:FileCabinetApp.IRecordValidator.ValidateParameters(FileCabinetApp.ParametresOfRecord)">
-            <summary>
-            Validate parameters of record.
-            </summary>
-            <param name="parametresOfRecord">ParametresOfRecord instance.</param>
-        </member>
         <member name="T:FileCabinetApp.ParametresOfRecord">
             <summary>
             Provides parameters for creating and editing records.
@@ -1157,6 +1034,291 @@
             <value>
             List of records.
             </value>
+        </member>
+        <member name="T:FileCabinetApp.CustomDateOfBirthValidator">
+            <summary>
+            Custom DateOfBirth Validator.
+            </summary>
+        </member>
+        <member name="P:FileCabinetApp.CustomDateOfBirthValidator.MinDateOfBirth">
+            <summary>
+            Gets min date of birth.
+            </summary>
+            <value> Date of birth.
+            </value>
+        </member>
+        <member name="M:FileCabinetApp.CustomDateOfBirthValidator.ValidateParameters(FileCabinetApp.ParametresOfRecord)">
+            <summary>
+            Validate parametres.
+            </summary>
+            <param name="parametresOfRecord">Parametres of record.</param>
+        </member>
+        <member name="T:FileCabinetApp.CustomFirstNameValidator">
+            <summary>
+            Custom FirstName Validator.
+            </summary>
+        </member>
+        <member name="P:FileCabinetApp.CustomFirstNameValidator.MinLettersCountInName">
+            <summary>
+            Gets min letters count in name.
+            </summary>
+            <value> Count of leters.
+            </value>
+        </member>
+        <member name="P:FileCabinetApp.CustomFirstNameValidator.MaxLettersCountInName">
+            <summary>
+            Gets max letters count in name.
+            </summary>
+            <value> Count of leters.
+            </value>
+        </member>
+        <member name="M:FileCabinetApp.CustomFirstNameValidator.ValidateParameters(FileCabinetApp.ParametresOfRecord)">
+            <summary>
+            Validate parametres.
+            </summary>
+            <param name="parametresOfRecord">Parametres of record.</param>
+        </member>
+        <member name="T:FileCabinetApp.CustomLastNameValidator">
+            <summary>
+            Custom LastName Validator.
+            </summary>
+        </member>
+        <member name="P:FileCabinetApp.CustomLastNameValidator.MinLettersCountInName">
+            <summary>
+            Gets min letters count in name.
+            </summary>
+            <value> Count of leters.
+            </value>
+        </member>
+        <member name="P:FileCabinetApp.CustomLastNameValidator.MaxLettersCountInName">
+            <summary>
+            Gets max letters count in name.
+            </summary>
+            <value> Count of leters.
+            </value>
+        </member>
+        <member name="M:FileCabinetApp.CustomLastNameValidator.ValidateParameters(FileCabinetApp.ParametresOfRecord)">
+            <summary>
+            Validate parametres.
+            </summary>
+            <param name="parametresOfRecord">Parametres of record.</param>
+        </member>
+        <member name="T:FileCabinetApp.CustomSalaryValidator">
+            <summary>
+            Custom Salary Validator.
+            </summary>
+        </member>
+        <member name="P:FileCabinetApp.CustomSalaryValidator.MinSalary">
+            <summary>
+            Gets min amount of salary.
+            </summary>
+            <value> Amount of salary.
+            </value>
+        </member>
+        <member name="P:FileCabinetApp.CustomSalaryValidator.MaxSalary">
+            <summary>
+            Gets max amount of salary.
+            </summary>
+            <value> Amount of salary.
+            </value>
+        </member>
+        <member name="M:FileCabinetApp.CustomSalaryValidator.ValidateParameters(FileCabinetApp.ParametresOfRecord)">
+            <inheritdoc/>
+        </member>
+        <member name="T:FileCabinetApp.CustomSexValidator">
+            <summary>
+            Custom Sex Validator.
+            </summary>
+        </member>
+        <member name="M:FileCabinetApp.CustomSexValidator.ValidateParameters(FileCabinetApp.ParametresOfRecord)">
+            <summary>
+            Validate parametres.
+            </summary>
+            <param name="parametresOfRecord">Parametres of record.</param>
+        </member>
+        <member name="T:FileCabinetApp.CustomValidator">
+            <summary>
+            Custom validator.
+            </summary>
+        </member>
+        <member name="M:FileCabinetApp.CustomValidator.ValidateParameters(FileCabinetApp.ParametresOfRecord)">
+            <summary>
+            Validate parametres.
+            </summary>
+            <param name="parametresOfRecord">Parametres of record.</param>
+        </member>
+        <member name="T:FileCabinetApp.CustomYearsOfServiceValidator">
+            <summary>
+            Custom YearsOfService Validator.
+            </summary>
+        </member>
+        <member name="P:FileCabinetApp.CustomYearsOfServiceValidator.MinYearsOfService">
+            <summary>
+            Gets min valid years of service.
+            </summary>
+            <value> Count of years.
+            </value>
+        </member>
+        <member name="P:FileCabinetApp.CustomYearsOfServiceValidator.MaxYearsOfService">
+            <summary>
+            Gets max valid years of service.
+            </summary>
+            <value> Count of years.
+            </value>
+        </member>
+        <member name="M:FileCabinetApp.CustomYearsOfServiceValidator.ValidateParameters(FileCabinetApp.ParametresOfRecord)">
+            <summary>
+            Validate parametres.
+            </summary>
+            <param name="parametresOfRecord">Parametres of record.</param>
+        </member>
+        <member name="T:FileCabinetApp.DefaultDateOfBirthValidator">
+            <summary>
+            Default DateOfBirth Validator.
+            </summary>
+        </member>
+        <member name="P:FileCabinetApp.DefaultDateOfBirthValidator.MinDateOfBirth">
+            <summary>
+            Gets min date of birth.
+            </summary>
+            <value> Date of birth.
+            </value>
+        </member>
+        <member name="M:FileCabinetApp.DefaultDateOfBirthValidator.ValidateParameters(FileCabinetApp.ParametresOfRecord)">
+            <summary>
+            Validate parametres.
+            </summary>
+            <param name="parametresOfRecord">Parametres of record.</param>
+        </member>
+        <member name="T:FileCabinetApp.DefaultFirstNameValidator">
+            <summary>
+            Default FirstName Validator.
+            </summary>
+        </member>
+        <member name="P:FileCabinetApp.DefaultFirstNameValidator.MinLettersCountInName">
+            <summary>
+            Gets min letters count in name.
+            </summary>
+            <value> Count of leters.
+            </value>
+        </member>
+        <member name="P:FileCabinetApp.DefaultFirstNameValidator.MaxLettersCountInName">
+            <summary>
+            Gets max letters count in name.
+            </summary>
+            <value> Count of leters.
+            </value>
+        </member>
+        <member name="M:FileCabinetApp.DefaultFirstNameValidator.ValidateParameters(FileCabinetApp.ParametresOfRecord)">
+            <summary>
+            Validate parametres.
+            </summary>
+            <param name="parametresOfRecord">Parametres of record.</param>
+        </member>
+        <member name="T:FileCabinetApp.DefaultLastNameValidator">
+            <summary>
+            Default LastName Validator.
+            </summary>
+        </member>
+        <member name="P:FileCabinetApp.DefaultLastNameValidator.MinLettersCountInName">
+            <summary>
+            Gets min letters count in name.
+            </summary>
+            <value> Count of leters.
+            </value>
+        </member>
+        <member name="P:FileCabinetApp.DefaultLastNameValidator.MaxLettersCountInName">
+            <summary>
+            Gets max letters count in name.
+            </summary>
+            <value> Count of leters.
+            </value>
+        </member>
+        <member name="M:FileCabinetApp.DefaultLastNameValidator.ValidateParameters(FileCabinetApp.ParametresOfRecord)">
+            <summary>
+            Validate parametres.
+            </summary>
+            <param name="parametresOfRecord">Parametres of record.</param>
+        </member>
+        <member name="T:FileCabinetApp.DefaultSalaryValidator">
+            <summary>
+            Default Salary Validator.
+            </summary>
+        </member>
+        <member name="P:FileCabinetApp.DefaultSalaryValidator.MinSalary">
+            <summary>
+            Gets min amount of salary.
+            </summary>
+            <value> Amount of salary.
+            </value>
+        </member>
+        <member name="P:FileCabinetApp.DefaultSalaryValidator.MaxSalary">
+            <summary>
+            Gets max amount of salary.
+            </summary>
+            <value> Amount of salary.
+            </value>
+        </member>
+        <member name="M:FileCabinetApp.DefaultSalaryValidator.ValidateParameters(FileCabinetApp.ParametresOfRecord)">
+            <inheritdoc/>
+        </member>
+        <member name="T:FileCabinetApp.DefaultSexValidator">
+            <summary>
+            Default Sex Validator.
+            </summary>
+        </member>
+        <member name="M:FileCabinetApp.DefaultSexValidator.ValidateParameters(FileCabinetApp.ParametresOfRecord)">
+            <summary>
+            Validate parametres.
+            </summary>
+            <param name="parametresOfRecord">Parametres of record.</param>
+        </member>
+        <member name="T:FileCabinetApp.DefaultValidator">
+            <summary>
+            Parametres validator.
+            </summary>
+        </member>
+        <member name="M:FileCabinetApp.DefaultValidator.ValidateParameters(FileCabinetApp.ParametresOfRecord)">
+            <summary>
+            Validate parametres.
+            </summary>
+            <param name="parametresOfRecord">Parametres of record.</param>
+        </member>
+        <member name="T:FileCabinetApp.DefaultYearsOfServiceValidator">
+            <summary>
+            Default YearsOfService Validator.
+            </summary>
+        </member>
+        <member name="P:FileCabinetApp.DefaultYearsOfServiceValidator.MinYearsOfService">
+            <summary>
+            Gets min valid years of service.
+            </summary>
+            <value> Count of years.
+            </value>
+        </member>
+        <member name="P:FileCabinetApp.DefaultYearsOfServiceValidator.MaxYearsOfService">
+            <summary>
+            Gets max valid years of service.
+            </summary>
+            <value> Count of years.
+            </value>
+        </member>
+        <member name="M:FileCabinetApp.DefaultYearsOfServiceValidator.ValidateParameters(FileCabinetApp.ParametresOfRecord)">
+            <summary>
+            Validate parametres.
+            </summary>
+            <param name="parametresOfRecord">Parametres of record.</param>
+        </member>
+        <member name="T:FileCabinetApp.IRecordValidator">
+            <summary>
+            Define the functionality of validators type.
+            </summary>
+        </member>
+        <member name="M:FileCabinetApp.IRecordValidator.ValidateParameters(FileCabinetApp.ParametresOfRecord)">
+            <summary>
+            Validate parameters of record.
+            </summary>
+            <param name="parametresOfRecord">ParametresOfRecord instance.</param>
         </member>
         <member name="T:FileCabinetApp.ValidationException">
             <summary>

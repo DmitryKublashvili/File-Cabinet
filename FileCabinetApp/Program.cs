@@ -138,6 +138,7 @@ namespace FileCabinetApp
 
             if (parameterOfValidation.Contains("--VALIDATION-RULES=CUSTOM") || parameterOfValidation.Contains("-V CUSTOM"))
             {
+                ValidationMethods.IsDefaultValidatoinRules = false;
                 isDefaultValidatoinRules = false;
                 Validator = new CustomValidator();
 
@@ -155,6 +156,7 @@ namespace FileCabinetApp
             }
             else
             {
+                ValidationMethods.IsDefaultValidatoinRules = true;
                 isDefaultValidatoinRules = true;
                 Validator = new DefaultValidator();
 
