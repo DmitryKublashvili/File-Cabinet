@@ -76,9 +76,9 @@ namespace FileCabinetApp
 
             this.recordValidator.ValidateParameters(parametresOfRecord);
 
-            this.GetPositionOfTheRecordById(parametresOfRecord.Id);
+            var position = this.GetPositionOfTheRecordById(parametresOfRecord.Id);
 
-            this.WriteRecordInFile(parametresOfRecord, this.GetPositionOfTheRecordById(parametresOfRecord.Id));
+            this.WriteRecordInFile(parametresOfRecord, position);
         }
 
         /// <summary>
@@ -94,7 +94,7 @@ namespace FileCabinetApp
 
             for (long i = 0; i < this.fileStream.Length; i += 278)
             {
-                if (!this.IsDeleted(i))
+                if (this.IsDeleted(i))
                 {
                     continue;
                 }
@@ -130,7 +130,7 @@ namespace FileCabinetApp
 
             for (long i = 0; i < this.fileStream.Length; i += 278)
             {
-                if (!this.IsDeleted(i))
+                if (this.IsDeleted(i))
                 {
                     continue;
                 }
@@ -166,7 +166,7 @@ namespace FileCabinetApp
 
             for (long i = 0; i < this.fileStream.Length; i += 278)
             {
-                if (!this.IsDeleted(i))
+                if (this.IsDeleted(i))
                 {
                     continue;
                 }
@@ -341,12 +341,38 @@ namespace FileCabinetApp
 
             // char[] FirstName 120
             this.fileStream.Seek(startPosition + 6, SeekOrigin.Begin);
-            var bytesFirstName = Encoding.ASCII.GetBytes(parametresOfRecord.FirstName.Length <= 60 ? parametresOfRecord.FirstName : parametresOfRecord.FirstName[..60]);
+
+            byte[] bytesFirstName;
+
+            if (parametresOfRecord.FirstName.Length < 60)
+            {
+                string defaultStr = new string(default, 60);
+                defaultStr = defaultStr.Insert(0, parametresOfRecord.FirstName);
+                bytesFirstName = Encoding.ASCII.GetBytes(defaultStr);
+            }
+            else
+            {
+                bytesFirstName = Encoding.ASCII.GetBytes(parametresOfRecord.FirstName[..60]);
+            }
+
             this.fileStream.Write(bytesFirstName);
 
             // char[] LastName 120
             this.fileStream.Seek(startPosition + 126, SeekOrigin.Begin);
-            var bytesLastName = Encoding.ASCII.GetBytes(parametresOfRecord.LastName.Length <= 60 ? parametresOfRecord.LastName : parametresOfRecord.LastName[..60]);
+
+            byte[] bytesLastName;
+
+            if (parametresOfRecord.LastName.Length < 60)
+            {
+                string defaultStr = new string(default, 60);
+                defaultStr = defaultStr.Insert(0, parametresOfRecord.LastName);
+                bytesLastName = Encoding.ASCII.GetBytes(defaultStr);
+            }
+            else
+            {
+                bytesLastName = Encoding.ASCII.GetBytes(parametresOfRecord.LastName[..60]);
+            }
+
             this.fileStream.Write(bytesLastName);
 
             // int Year 4

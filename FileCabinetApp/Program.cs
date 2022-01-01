@@ -2,6 +2,7 @@
 using System.Globalization;
 using System.IO;
 using FileCabinetApp.CommandHandlers;
+using FileCabinetApp.Printers;
 
 namespace FileCabinetApp
 {
@@ -79,13 +80,15 @@ namespace FileCabinetApp
 
         private static ICommandHandler CreateCommandHendlers()
         {
+            IRecordPrinter printer = new DefaultPrinter();
+
             HelpCommandHandler helpCommandHandler = new HelpCommandHandler();
             ExitCommandHandler exitCommandHandler = new ExitCommandHandler(Exit);
             StatCommandHandler statCommandHandler = new StatCommandHandler(fileCabinetService);
             CreateCommandHandler createCommandHandler = new CreateCommandHandler(fileCabinetService);
-            ListCommandHandler listCommandHandler = new ListCommandHandler(fileCabinetService, CultureInfoSettings);
+            ListCommandHandler listCommandHandler = new ListCommandHandler(fileCabinetService, printer);
             EditCommandHandler editCommandHandler = new EditCommandHandler(fileCabinetService);
-            FindCommandHandler findCommandHandler = new FindCommandHandler(fileCabinetService, CultureInfoSettings);
+            FindCommandHandler findCommandHandler = new FindCommandHandler(fileCabinetService, printer);
             ExportCommandHandler exportCommandHandler = new ExportCommandHandler(fileCabinetService);
             ImportCommandHandler importCommandHandler = new ImportCommandHandler(fileCabinetService);
             RemoveCommandHandler removeCommandHandler = new RemoveCommandHandler(fileCabinetService);

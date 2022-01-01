@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Globalization;
+using FileCabinetApp.Printers;
 
 namespace FileCabinetApp.CommandHandlers
 {
@@ -10,17 +10,17 @@ namespace FileCabinetApp.CommandHandlers
     {
         private const string ThereAreNoRecordsMessage = "There are no records yet.";
 
-        private readonly CultureInfo cultureInfo;
+        private readonly IRecordPrinter printer;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ListCommandHandler"/> class.
         /// </summary>
         /// <param name="service">Some instance implemented IFileCabinetService.</param>
-        /// <param name="cultureInfo">CultureInfo settings.</param>
-        public ListCommandHandler(IFileCabinetService service, CultureInfo cultureInfo)
+        /// <param name="printer">Concrete printer.</param>
+        public ListCommandHandler(IFileCabinetService service, IRecordPrinter printer)
             : base(service)
         {
-            this.cultureInfo = cultureInfo;
+            this.printer = printer;
         }
 
         /// <inheritdoc/>
@@ -41,14 +41,7 @@ namespace FileCabinetApp.CommandHandlers
                     return;
                 }
 
-                for (int i = 0; i < list.Count; i++)
-                {
-                    Console.WriteLine(
-                        $"#{list[i].Id}, {list[i].FirstName}, {list[i].LastName}, " +
-                        $"{list[i].DateOfBirth.ToString("yyyy-MMM-d", this.cultureInfo)}, " +
-                        $"Sex - {list[i].Sex}, Salary {list[i].Salary.ToString(this.cultureInfo)}, " +
-                        $"{list[i].YearsOfService} years Of Service");
-                }
+                this.printer.Print(list);
             }
             else
             {

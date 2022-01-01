@@ -41,7 +41,7 @@ namespace FileCabinetApp.CommandHandlers
             }
             else
             {
-                this.nextHandler.Handle(request);
+                this.nextHandler?.Handle(request);
             }
         }
     }
