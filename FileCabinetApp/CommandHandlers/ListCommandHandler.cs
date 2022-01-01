@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Globalization;
 
 namespace FileCabinetApp.CommandHandlers
 {
@@ -9,6 +8,17 @@ namespace FileCabinetApp.CommandHandlers
     public class ListCommandHandler : CommandHandlerBase
     {
         private const string ThereAreNoRecordsMessage = "There are no records yet.";
+
+        private readonly IFileCabinetService service;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ListCommandHandler"/> class.
+        /// </summary>
+        /// <param name="service">Some instance implemented IFileCabinetService.</param>
+        public ListCommandHandler(IFileCabinetService service)
+        {
+            this.service = service;
+        }
 
         /// <inheritdoc/>
         public override void Handle(AppCommandRequest request)
@@ -20,7 +30,7 @@ namespace FileCabinetApp.CommandHandlers
 
             if (request.Command == "list")
             {
-                var list = Program.FileCabinetService.GetRecords();
+                var list = this.service.GetRecords();
 
                 if (list is null || list.Count == 0)
                 {

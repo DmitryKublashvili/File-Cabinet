@@ -8,6 +8,17 @@ namespace FileCabinetApp.CommandHandlers
     /// </summary>
     public class EditCommandHandler : CommandHandlerBase
     {
+        private readonly IFileCabinetService service;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="EditCommandHandler"/> class.
+        /// </summary>
+        /// <param name="service">Some instance implemented IFileCabinetService.</param>
+        public EditCommandHandler(IFileCabinetService service)
+        {
+            this.service = service;
+        }
+
         /// <inheritdoc/>
         public override void Handle(AppCommandRequest request)
         {
@@ -24,7 +35,7 @@ namespace FileCabinetApp.CommandHandlers
                     return;
                 }
 
-                if (!Program.FileCabinetService.IsRecordExist(id))
+                if (!this.service.IsRecordExist(id))
                 {
                     Console.WriteLine($"#{request.Parameters} record is not found.");
                     return;
@@ -48,7 +59,7 @@ namespace FileCabinetApp.CommandHandlers
                 Console.Write("Years Of Service: ");
                 short yearsOfService = ReadInput<short>(YearsOfServiceConverter, YearsOfServiceValidator);
 
-                Program.FileCabinetService.EditRecord(new ParametresOfRecord(id, firstName, lastName, dateOfBirth, sex, salary, yearsOfService));
+                this.service.EditRecord(new ParametresOfRecord(id, firstName, lastName, dateOfBirth, sex, salary, yearsOfService));
 
                 Console.WriteLine($"Record #{id} is updated.");
             }

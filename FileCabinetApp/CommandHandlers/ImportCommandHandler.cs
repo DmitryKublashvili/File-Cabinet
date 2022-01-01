@@ -10,6 +10,17 @@ namespace FileCabinetApp.CommandHandlers
     {
         private const string IncorrectCommandFormatMessage = "Comand has incorrect format.";
 
+        private readonly IFileCabinetService service;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ImportCommandHandler"/> class.
+        /// </summary>
+        /// <param name="service">Some instance implemented IFileCabinetService.</param>
+        public ImportCommandHandler(IFileCabinetService service)
+        {
+            this.service = service;
+        }
+
         /// <inheritdoc/>
         public override void Handle(AppCommandRequest request)
         {
@@ -56,11 +67,11 @@ namespace FileCabinetApp.CommandHandlers
 
                 if (parameters[0].ToUpperInvariant() == "CSV")
                 {
-                    ImportCSV(filePath);
+                    this.ImportCSV(filePath);
                 }
                 else
                 {
-                    ImportXML(filePath);
+                    this.ImportXML(filePath);
                 }
             }
             else
@@ -69,29 +80,29 @@ namespace FileCabinetApp.CommandHandlers
             }
         }
 
-        private static void ImportXML(string filePath)
+        private void ImportXML(string filePath)
         {
             Console.WriteLine($"Import XML started from {filePath}");
 
             var snapShot = new FileCabinetServiceSnapshot();
             snapShot.LoadFromXML(new StreamReader(filePath));
 
-            CommonImportCompletion(snapShot, filePath);
+            this.CommonImportCompletion(snapShot, filePath);
         }
 
-        private static void ImportCSV(string filePath)
+        private void ImportCSV(string filePath)
         {
             Console.WriteLine($"Import CSV started from {filePath}");
 
             var snapShot = new FileCabinetServiceSnapshot();
             snapShot.LoadFromCSV(new StreamReader(filePath));
 
-            CommonImportCompletion(snapShot, filePath);
+            this.CommonImportCompletion(snapShot, filePath);
         }
 
-        private static void CommonImportCompletion(FileCabinetServiceSnapshot snapShot, string filePath)
+        private void CommonImportCompletion(FileCabinetServiceSnapshot snapShot, string filePath)
         {
-            var validationViolations = Program.FileCabinetService.Restore(snapShot);
+            var validationViolations = this.service.Restore(snapShot);
 
             int countOfViolations = 0;
 

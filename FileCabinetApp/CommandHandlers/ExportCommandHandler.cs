@@ -10,6 +10,17 @@ namespace FileCabinetApp.CommandHandlers
     {
         private const string IncorrectCommandFormatMessage = "Comand has incorrect format.";
 
+        private readonly IFileCabinetService service;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ExportCommandHandler"/> class.
+        /// </summary>
+        /// <param name="service">Some instance implemented IFileCabinetService.</param>
+        public ExportCommandHandler(IFileCabinetService service)
+        {
+            this.service = service;
+        }
+
         /// <inheritdoc/>
         public override void Handle(AppCommandRequest request)
         {
@@ -60,7 +71,7 @@ namespace FileCabinetApp.CommandHandlers
 
                 using (StreamWriter sw = new StreamWriter(parameters[1]))
                 {
-                    var snapShot = (Program.FileCabinetService as FileCabinetMemoryService).MakeSnapshot();
+                    var snapShot = this.service.MakeSnapshot();
 
                     if (parameters[0].ToUpperInvariant() == "CSV")
                     {

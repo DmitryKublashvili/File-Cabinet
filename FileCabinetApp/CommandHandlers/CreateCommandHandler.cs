@@ -8,6 +8,17 @@ namespace FileCabinetApp.CommandHandlers
     /// </summary>
     public class CreateCommandHandler : CommandHandlerBase
     {
+        private readonly IFileCabinetService service;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="CreateCommandHandler"/> class.
+        /// </summary>
+        /// <param name="service">Some instance implemented IFileCabinetService.</param>
+        public CreateCommandHandler(IFileCabinetService service)
+        {
+            this.service = service;
+        }
+
         /// <inheritdoc/>
         public override void Handle(AppCommandRequest request)
         {
@@ -36,7 +47,7 @@ namespace FileCabinetApp.CommandHandlers
                 Console.Write("Years Of Service: ");
                 short yearsOfService = ReadInput<short>(YearsOfServiceConverter, YearsOfServiceValidator);
 
-                var id = Program.FileCabinetService.CreateRecord(new ParametresOfRecord(firstName, lastName, dateOfBirth, sex, salary, yearsOfService));
+                var id = this.service.CreateRecord(new ParametresOfRecord(firstName, lastName, dateOfBirth, sex, salary, yearsOfService));
 
                 Console.WriteLine($"Record #{id} is created.");
             }

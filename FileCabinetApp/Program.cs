@@ -16,6 +16,7 @@ namespace FileCabinetApp
         private const string HintMessage = "Enter your command, or enter 'help' to get help.";
         private const string StorageFilePath = "cabinet-records.db";
         private static bool isDefaultValidatoinRules = true;
+        private static IFileCabinetService fileCabinetService;
 
         /// <summary>
         /// Gets CultureInfo settings.
@@ -42,14 +43,6 @@ namespace FileCabinetApp
         public static IRecordValidator Validator { get; private set; }
 
         /// <summary>
-        /// Gets fileCabinetService instanse.
-        /// </summary>
-        /// <value>
-        /// FileCabinetService instanse.
-        /// </value>
-        public static IFileCabinetService FileCabinetService { get; private set; }
-
-        /// <summary>
         /// Gets or sets a value indicating whether reperesents state of application run.
         /// </summary>
         /// <value>
@@ -64,15 +57,11 @@ namespace FileCabinetApp
         public static void Main(string[] args)
         {
             IsRunning = true;
-            Validator = new DefaultValidator();
             CultureInfoSettings = new ("en");
 
-            ICommandHandler commandHandler = CreateCommandHendlers();
+            CommandLineArgumentsApplying(args);
 
-            if (!(args is null) && args.Length > 0)
-            {
-                CommandLineArgumentsApplying(args);
-            }
+            ICommandHandler commandHandler = CreateCommandHendlers();
 
             Console.WriteLine($"File Cabinet Application, developed by {Program.DeveloperName}");
             Console.WriteLine(isDefaultValidatoinRules ? DefaultValidationRulesMessage : CustomValidationRulesMessage);
@@ -105,15 +94,15 @@ namespace FileCabinetApp
         {
             HelpCommandHandler helpCommandHandler = new HelpCommandHandler();
             ExitCommandHandler exitCommandHandler = new ExitCommandHandler();
-            StatCommandHandler statCommandHandler = new StatCommandHandler();
-            CreateCommandHandler createCommandHandler = new CreateCommandHandler();
-            ListCommandHandler listCommandHandler = new ListCommandHandler();
-            EditCommandHandler editCommandHandler = new EditCommandHandler();
-            FindCommandHandler findCommandHandler = new FindCommandHandler();
-            ExportCommandHandler exportCommandHandler = new ExportCommandHandler();
-            ImportCommandHandler importCommandHandler = new ImportCommandHandler();
-            RemoveCommandHandler removeCommandHandler = new RemoveCommandHandler();
-            PurgeCommandHandler purgeCommandHandler = new PurgeCommandHandler();
+            StatCommandHandler statCommandHandler = new StatCommandHandler(fileCabinetService);
+            CreateCommandHandler createCommandHandler = new CreateCommandHandler(fileCabinetService);
+            ListCommandHandler listCommandHandler = new ListCommandHandler(fileCabinetService);
+            EditCommandHandler editCommandHandler = new EditCommandHandler(fileCabinetService);
+            FindCommandHandler findCommandHandler = new FindCommandHandler(fileCabinetService);
+            ExportCommandHandler exportCommandHandler = new ExportCommandHandler(fileCabinetService);
+            ImportCommandHandler importCommandHandler = new ImportCommandHandler(fileCabinetService);
+            RemoveCommandHandler removeCommandHandler = new RemoveCommandHandler(fileCabinetService);
+            PurgeCommandHandler purgeCommandHandler = new PurgeCommandHandler(fileCabinetService);
 
             helpCommandHandler.SetNext(exitCommandHandler);
             exitCommandHandler.SetNext(statCommandHandler);
@@ -141,13 +130,13 @@ namespace FileCabinetApp
                 if (parameterOfValidation.Contains("--STORAGE=FILE") || parameterOfValidation.Contains("-S FILE"))
                 {
                     var fileStream = new FileStream(StorageFilePath, FileMode.OpenOrCreate);
-                    FileCabinetService = new FileCabinetFilesystemService(Validator, fileStream);
+                    fileCabinetService = new FileCabinetFilesystemService(Validator, fileStream);
                     IsFileSystemStorageUsed = true;
                     Console.WriteLine("Used storage in file.");
                 }
                 else
                 {
-                    FileCabinetService = new FileCabinetMemoryService(Validator);
+                    fileCabinetService = new FileCabinetMemoryService(Validator);
                 }
             }
             else
@@ -155,7 +144,7 @@ namespace FileCabinetApp
                 if (parameterOfValidation.Contains("--STORAGE=FILE") || parameterOfValidation.Contains("-S FILE"))
                 {
                     var fileStream = new FileStream(StorageFilePath, FileMode.OpenOrCreate);
-                    FileCabinetService = new FileCabinetFilesystemService(Validator, fileStream);
+                    fileCabinetService = new FileCabinetFilesystemService(Validator, fileStream);
                     IsFileSystemStorageUsed = true;
                     Console.WriteLine("Used storage in file.");
                 }

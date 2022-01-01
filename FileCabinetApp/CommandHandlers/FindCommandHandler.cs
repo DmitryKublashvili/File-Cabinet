@@ -12,6 +12,17 @@ namespace FileCabinetApp.CommandHandlers
     {
         private const string NoMatchesMessage = "No matches were found.";
 
+        private readonly IFileCabinetService service;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="FindCommandHandler"/> class.
+        /// </summary>
+        /// <param name="service">Some instance implemented IFileCabinetService.</param>
+        public FindCommandHandler(IFileCabinetService service)
+        {
+            this.service = service;
+        }
+
         /// <inheritdoc/>
         public override void Handle(AppCommandRequest request)
         {
@@ -44,17 +55,17 @@ namespace FileCabinetApp.CommandHandlers
 
                 if (firstParameter == "FIRSTNAME")
                 {
-                    foundRecords = Program.FileCabinetService.FindByFirstName(secondParameter);
+                    foundRecords = this.service.FindByFirstName(secondParameter);
                 }
                 else if (firstParameter == "LASTNAME")
                 {
-                    foundRecords = Program.FileCabinetService.FindByLastName(secondParameter);
+                    foundRecords = this.service.FindByLastName(secondParameter);
                 }
                 else
                 {
                     if (DateTime.TryParse(secondParameter, Program.CultureInfoSettings, DateTimeStyles.AdjustToUniversal, out DateTime date))
                     {
-                        foundRecords = Program.FileCabinetService.FindByDateOfBirth(date);
+                        foundRecords = this.service.FindByDateOfBirth(date);
                     }
                     else
                     {
