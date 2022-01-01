@@ -1,8 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using FileCabinetApp.CommandHandlers;
-using FileCabinetApp.Printers;
 
 namespace FileCabinetApp
 {
@@ -78,17 +78,41 @@ namespace FileCabinetApp
             while (isRunning);
         }
 
+        /// <summary>
+        /// Prints records.
+        /// </summary>
+        /// <param name="records">Records to print.</param>
+        public static void Print(IEnumerable<FileCabinetRecord> records)
+        {
+            if (records is null)
+            {
+                throw new ArgumentNullException(nameof(records));
+            }
+
+            foreach (var item in records)
+            {
+                if (item is null)
+                {
+                    continue;
+                }
+
+                Console.WriteLine(
+                    $"#{item.Id}, {item.FirstName}, {item.LastName}, " +
+                    $"{item.DateOfBirth.ToString("yyyy-MMM-d", Program.CultureInfoSettings)}, " +
+                    $"Sex - {item.Sex}, Salary {item.Salary.ToString(Program.CultureInfoSettings)}, " +
+                    $"{item.YearsOfService} years Of Service");
+            }
+        }
+
         private static ICommandHandler CreateCommandHendlers()
         {
-            IRecordPrinter printer = new DefaultPrinter();
-
             HelpCommandHandler helpCommandHandler = new HelpCommandHandler();
             ExitCommandHandler exitCommandHandler = new ExitCommandHandler(Exit);
             StatCommandHandler statCommandHandler = new StatCommandHandler(fileCabinetService);
             CreateCommandHandler createCommandHandler = new CreateCommandHandler(fileCabinetService);
-            ListCommandHandler listCommandHandler = new ListCommandHandler(fileCabinetService, printer);
+            ListCommandHandler listCommandHandler = new ListCommandHandler(fileCabinetService, Print);
             EditCommandHandler editCommandHandler = new EditCommandHandler(fileCabinetService);
-            FindCommandHandler findCommandHandler = new FindCommandHandler(fileCabinetService, printer);
+            FindCommandHandler findCommandHandler = new FindCommandHandler(fileCabinetService, Print);
             ExportCommandHandler exportCommandHandler = new ExportCommandHandler(fileCabinetService);
             ImportCommandHandler importCommandHandler = new ImportCommandHandler(fileCabinetService);
             RemoveCommandHandler removeCommandHandler = new RemoveCommandHandler(fileCabinetService);

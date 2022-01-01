@@ -13,14 +13,14 @@ namespace FileCabinetApp.CommandHandlers
     {
         private const string NoMatchesMessage = "No matches were found.";
 
-        private readonly IRecordPrinter printer;
+        private readonly Action<IEnumerable<FileCabinetRecord>> printer;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="FindCommandHandler"/> class.
         /// </summary>
         /// <param name="service">Some instance implemented IFileCabinetService.</param>
         /// <param name="printer">Concrete printer.</param>
-        public FindCommandHandler(IFileCabinetService service, IRecordPrinter printer)
+        public FindCommandHandler(IFileCabinetService service, Action<IEnumerable<FileCabinetRecord>> printer)
             : base(service)
         {
             this.printer = printer;
@@ -83,7 +83,7 @@ namespace FileCabinetApp.CommandHandlers
                     return;
                 }
 
-                this.printer.Print(foundRecords);
+                this.printer?.Invoke(foundRecords);
             }
             else
             {
