@@ -1077,28 +1077,28 @@
         </member>
         <member name="P:FileCabinetApp.CustomValidationSettings.MinSalary">
             <summary>
-            Gets min amount of salary.
+            Gets or sets min amount of salary.
             </summary>
             <value> Amount of salary.
             </value>
         </member>
         <member name="P:FileCabinetApp.CustomValidationSettings.MaxSalary">
             <summary>
-            Gets max amount of salary.
+            Gets or sets max amount of salary.
             </summary>
             <value> Amount of salary.
             </value>
         </member>
         <member name="P:FileCabinetApp.CustomValidationSettings.MinYearsOfService">
             <summary>
-            Gets min valid years of service.
+            Gets or sets min valid years of service.
             </summary>
             <value> Count of years.
             </value>
         </member>
         <member name="P:FileCabinetApp.CustomValidationSettings.MaxYearsOfService">
             <summary>
-            Gets max valid years of service.
+            Gets or sets max valid years of service.
             </summary>
             <value> Count of years.
             </value>
@@ -1148,28 +1148,28 @@
         </member>
         <member name="P:FileCabinetApp.DefaultValidationSettings.MinSalary">
             <summary>
-            Gets min amount of salary.
+            Gets or sets min amount of salary.
             </summary>
             <value> Amount of salary.
             </value>
         </member>
         <member name="P:FileCabinetApp.DefaultValidationSettings.MaxSalary">
             <summary>
-            Gets max amount of salary.
+            Gets or sets max amount of salary.
             </summary>
             <value> Amount of salary.
             </value>
         </member>
         <member name="P:FileCabinetApp.DefaultValidationSettings.MinYearsOfService">
             <summary>
-            Gets min valid years of service.
+            Gets or sets min valid years of service.
             </summary>
             <value> Count of years.
             </value>
         </member>
         <member name="P:FileCabinetApp.DefaultValidationSettings.MaxYearsOfService">
             <summary>
-            Gets max valid years of service.
+            Gets or sets max valid years of service.
             </summary>
             <value> Count of years.
             </value>
@@ -1265,6 +1265,84 @@
             Gets not valid record Id.
             </summary>
             <value>Not valid record integer Id.</value>
+        </member>
+        <member name="T:FileCabinetApp.Validators.ValidationSettings.CommonAppValidationSettings">
+            <summary>
+            Common Validation Settings.
+            </summary>
+        </member>
+        <member name="M:FileCabinetApp.Validators.ValidationSettings.CommonAppValidationSettings.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:FileCabinetApp.Validators.ValidationSettings.CommonAppValidationSettings"/> class.
+            </summary>
+        </member>
+        <member name="P:FileCabinetApp.Validators.ValidationSettings.NameValidationRules.MinLettersCountInName">
+            <summary>
+            Gets or sets min letters count in name.
+            </summary>
+            <value> Count of leters.
+            </value>
+        </member>
+        <member name="P:FileCabinetApp.Validators.ValidationSettings.NameValidationRules.MaxLettersCountInName">
+            <summary>
+            Gets or sets max letters count in name.
+            </summary>
+            <value> Count of leters.
+            </value>
+        </member>
+        <member name="P:FileCabinetApp.Validators.ValidationSettings.DateOfBirthValidationRules.MinDateOfBirth">
+            <summary>
+            Gets or sets min date of birth.
+            </summary>
+            <value> Date of birth.
+            </value>
+        </member>
+        <member name="P:FileCabinetApp.Validators.ValidationSettings.SalaryValidationRules.MinSalary">
+            <summary>
+            Gets min amount of salary.
+            </summary>
+            <value> Amount of salary.
+            </value>
+        </member>
+        <member name="P:FileCabinetApp.Validators.ValidationSettings.SalaryValidationRules.MaxSalary">
+            <summary>
+            Gets max amount of salary.
+            </summary>
+            <value> Amount of salary.
+            </value>
+        </member>
+        <member name="P:FileCabinetApp.Validators.ValidationSettings.YearsOfServiceValidationRules.MinYearsOfService">
+            <summary>
+            Gets min valid years of service.
+            </summary>
+            <value> Count of years.
+            </value>
+        </member>
+        <member name="P:FileCabinetApp.Validators.ValidationSettings.YearsOfServiceValidationRules.MaxYearsOfService">
+            <summary>
+            Gets max valid years of service.
+            </summary>
+            <value> Count of years.
+            </value>
+        </member>
+        <member name="T:FileCabinetApp.Validators.ValidatorBuilderExtensions">
+            <summary>
+            Provides extension methods to create Composite Validator with different settings.
+            </summary>
+        </member>
+        <member name="M:FileCabinetApp.Validators.ValidatorBuilderExtensions.CreateDefault(FileCabinetApp.ValidatorBuilder)">
+            <summary>
+            Creates composite validator with default validation settings.
+            </summary>
+            <param name="validatorBuilder">Validator Builder.</param>
+            <returns>Composite validator.</returns>
+        </member>
+        <member name="M:FileCabinetApp.Validators.ValidatorBuilderExtensions.CreateCustom(FileCabinetApp.ValidatorBuilder)">
+            <summary>
+            Creates composite validator with custom validation settings.
+            </summary>
+            <param name="validatorBuilder">Validator Builder.</param>
+            <returns>Composite validator.</returns>
         </member>
         <member name="T:FileCabinetApp.ValidatorBuilder">
             <summary>
@@ -1369,25 +1447,6 @@
             Creates composite validator.
             </summary>
             <returns>CompositeValidator instance.</returns>
-        </member>
-        <member name="T:FileCabinetApp.Validators.ValidatorBuilderExtensions">
-            <summary>
-            Provides extension methods to create Composite Validator with different settings.
-            </summary>
-        </member>
-        <member name="M:FileCabinetApp.Validators.ValidatorBuilderExtensions.CreateDefault(FileCabinetApp.ValidatorBuilder)">
-            <summary>
-            Creates composite validator with default validation settings.
-            </summary>
-            <param name="validatorBuilder">Validator Builder.</param>
-            <returns>Composite validator.</returns>
-        </member>
-        <member name="M:FileCabinetApp.Validators.ValidatorBuilderExtensions.CreateCustom(FileCabinetApp.ValidatorBuilder)">
-            <summary>
-            Creates composite validator with custom validation settings.
-            </summary>
-            <param name="validatorBuilder">Validator Builder.</param>
-            <returns>Composite validator.</returns>
         </member>
         <member name="T:FileCabinetApp.YearsOfServiceValidator">
             <summary>
