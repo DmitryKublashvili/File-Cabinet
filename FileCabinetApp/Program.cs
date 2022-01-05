@@ -186,6 +186,11 @@ namespace FileCabinetApp
             {
                 fileCabinetService = new ServiceMeter(fileCabinetService);
             }
+
+            if (parameterOfValidation.Contains("USE-LOGGER"))
+            {
+                fileCabinetService = new ServiceLogger(fileCabinetService);
+            }
         }
 
         private static void Exit()
