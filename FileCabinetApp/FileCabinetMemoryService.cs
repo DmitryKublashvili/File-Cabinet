@@ -102,7 +102,8 @@ namespace FileCabinetApp
         /// Edits selected (by ID) record.
         /// </summary>
         /// <param name="parametresOfRecord">Parametres of record.</param>
-        public void EditRecord(ParametresOfRecord parametresOfRecord)
+        /// <returns>Is edition completed successfully.</returns>
+        public bool EditRecord(ParametresOfRecord parametresOfRecord)
         {
             if (parametresOfRecord is null)
             {
@@ -136,11 +137,11 @@ namespace FileCabinetApp
 
                     this.ReplaceRecordInDictionaries(previousFirstname, previousLastname, previousDateOfBirth, this.list[i]);
 
-                    return;
+                    return true;
                 }
             }
 
-            throw new ArgumentException($"{id} record is not found.");
+            return false;
         }
 
         /// <summary>
@@ -264,12 +265,21 @@ namespace FileCabinetApp
         /// Removes record by it's ID.
         /// </summary>
         /// <param name="id">ID of record.</param>
-        public void RemoveRecordById(int id)
+        /// <returns>Is removing completed successfully.</returns>
+        public bool RemoveRecordById(int id)
         {
             int indexORemovingRecord = this.list.FindIndex(x => x.Id == id);
+
+            if (indexORemovingRecord == -1)
+            {
+                return false;
+            }
+
             var removingRecord = this.list[indexORemovingRecord];
             this.list.RemoveAt(indexORemovingRecord);
             this.RemoveRecordFromDictionaries(removingRecord);
+
+            return true;
         }
 
         /// <summary>
@@ -282,7 +292,8 @@ namespace FileCabinetApp
         /// <summary>
         /// Defragments storage file by removing marked as deleted records.
         /// </summary>
-        public void Defragment()
+        /// <returns>Is defragmentation completed successfully.</returns>
+        public bool Defragment()
         {
             throw new NotImplementedException();
         }

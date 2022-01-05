@@ -57,9 +57,16 @@ namespace FileCabinetApp.CommandHandlers
                 Console.Write("Years Of Service: ");
                 short yearsOfService = ReadInput(YearsOfServiceConverter, ValidationMethods.YearsOfServiceValidator);
 
-                this.service.EditRecord(new ParametresOfRecord(id, firstName, lastName, dateOfBirth, sex, salary, yearsOfService));
+                var result = this.service.EditRecord(new ParametresOfRecord(id, firstName, lastName, dateOfBirth, sex, salary, yearsOfService));
 
-                Console.WriteLine($"Record #{id} is updated.");
+                if (result)
+                {
+                    Console.WriteLine($"Record #{id} is updated.");
+                }
+                else
+                {
+                    Console.WriteLine($"Record #{id} is not found.");
+                }
             }
             else
             {

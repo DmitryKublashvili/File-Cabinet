@@ -403,6 +403,7 @@
             Edits selected (by ID) record.
             </summary>
             <param name="parametresOfRecord">Parametres of record.</param>
+            <returns>Is edition completed successfully.</returns>
         </member>
         <member name="M:FileCabinetApp.FileCabinetFilesystemService.FindByDateOfBirth(System.DateTime)">
             <summary>
@@ -455,6 +456,7 @@
             Removes record by it's ID.
             </summary>
             <param name="id">ID of record.</param>
+            <returns>Is removing completed successfully.</returns>
         </member>
         <member name="M:FileCabinetApp.FileCabinetFilesystemService.IsRecordExist(System.Int32)">
             <summary>
@@ -467,6 +469,7 @@
             <summary>
             Defragments storage file by removing marked as deleted records.
             </summary>
+            <returns>Is defragmentation completed successfully.</returns>
         </member>
         <member name="M:FileCabinetApp.FileCabinetFilesystemService.GetPositionOfTheRecordById(System.Int32)">
             <summary>
@@ -516,6 +519,7 @@
             Edits selected (by ID) record.
             </summary>
             <param name="parametresOfRecord">Parametres of record.</param>
+            <returns>Is edition completed successfully.</returns>
         </member>
         <member name="M:FileCabinetApp.FileCabinetMemoryService.FindByFirstName(System.String)">
             <summary>
@@ -550,6 +554,7 @@
             Removes record by it's ID.
             </summary>
             <param name="id">ID of record.</param>
+            <returns>Is removing completed successfully.</returns>
         </member>
         <member name="M:FileCabinetApp.FileCabinetMemoryService.IsRecordExist(System.Int32)">
             <summary>
@@ -562,6 +567,7 @@
             <summary>
             Defragments storage file by removing marked as deleted records.
             </summary>
+            <returns>Is defragmentation completed successfully.</returns>
         </member>
         <member name="T:FileCabinetApp.FileCabinetRecord">
             <summary>
@@ -814,6 +820,7 @@
             Edits selected (by ID) record.
             </summary>
             <param name="parametresOfRecord">Parametres of record.</param>
+            <returns>Is edition completed successfully.</returns>
         </member>
         <member name="M:FileCabinetApp.IFileCabinetService.MakeSnapshot">
             <summary>
@@ -866,6 +873,7 @@
             Removes record by it's ID.
             </summary>
             <param name="id">ID of record.</param>
+            <returns>Is removing completed successfully.</returns>
         </member>
         <member name="M:FileCabinetApp.IFileCabinetService.IsRecordExist(System.Int32)">
             <summary>
@@ -878,6 +886,7 @@
             <summary>
             Defragments storage file by removing marked as deleted records.
             </summary>
+            <returns>Is defragmentation completed successfully.</returns>
         </member>
         <member name="T:FileCabinetApp.ParametresOfRecord">
             <summary>
@@ -1034,6 +1043,53 @@
             <value>
             List of records.
             </value>
+        </member>
+        <member name="T:FileCabinetApp.ServiceMeter">
+            <summary>
+            Service Meter.
+            </summary>
+        </member>
+        <member name="M:FileCabinetApp.ServiceMeter.#ctor(FileCabinetApp.IFileCabinetService)">
+            <summary>
+            Initializes a new instance of the <see cref="T:FileCabinetApp.ServiceMeter"/> class.
+            </summary>
+            <param name="fileCabinetService">File Cabinet Service.</param>
+        </member>
+        <member name="M:FileCabinetApp.ServiceMeter.CreateRecord(FileCabinetApp.ParametresOfRecord)">
+            <inheritdoc/>
+        </member>
+        <member name="M:FileCabinetApp.ServiceMeter.Defragment">
+            <inheritdoc/>
+        </member>
+        <member name="M:FileCabinetApp.ServiceMeter.EditRecord(FileCabinetApp.ParametresOfRecord)">
+            <inheritdoc/>
+        </member>
+        <member name="M:FileCabinetApp.ServiceMeter.FindByDateOfBirth(System.DateTime)">
+            <inheritdoc/>
+        </member>
+        <member name="M:FileCabinetApp.ServiceMeter.FindByFirstName(System.String)">
+            <inheritdoc/>
+        </member>
+        <member name="M:FileCabinetApp.ServiceMeter.FindByLastName(System.String)">
+            <inheritdoc/>
+        </member>
+        <member name="M:FileCabinetApp.ServiceMeter.GetRecords">
+            <inheritdoc/>
+        </member>
+        <member name="M:FileCabinetApp.ServiceMeter.GetStat">
+            <inheritdoc/>
+        </member>
+        <member name="M:FileCabinetApp.ServiceMeter.IsRecordExist(System.Int32)">
+            <inheritdoc/>
+        </member>
+        <member name="M:FileCabinetApp.ServiceMeter.MakeSnapshot">
+            <inheritdoc/>
+        </member>
+        <member name="M:FileCabinetApp.ServiceMeter.RemoveRecordById(System.Int32)">
+            <inheritdoc/>
+        </member>
+        <member name="M:FileCabinetApp.ServiceMeter.Restore(FileCabinetApp.FileCabinetServiceSnapshot)">
+            <inheritdoc/>
         </member>
         <member name="T:FileCabinetApp.CompositeValidator">
             <summary>

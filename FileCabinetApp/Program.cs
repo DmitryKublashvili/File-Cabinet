@@ -181,6 +181,11 @@ namespace FileCabinetApp
                     Console.WriteLine("Used storage in memory.");
                 }
             }
+
+            if (parameterOfValidation.Contains("USE-STOPWATCH"))
+            {
+                fileCabinetService = new ServiceMeter(fileCabinetService);
+            }
         }
 
         private static void Exit()

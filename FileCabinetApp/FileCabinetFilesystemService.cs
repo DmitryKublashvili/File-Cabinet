@@ -62,7 +62,8 @@ namespace FileCabinetApp
         /// Edits selected (by ID) record.
         /// </summary>
         /// <param name="parametresOfRecord">Parametres of record.</param>
-        public void EditRecord(ParametresOfRecord parametresOfRecord)
+        /// <returns>Is edition completed successfully.</returns>
+        public bool EditRecord(ParametresOfRecord parametresOfRecord)
         {
             if (parametresOfRecord is null)
             {
@@ -71,7 +72,7 @@ namespace FileCabinetApp
 
             if (!this.IsRecordExist(parametresOfRecord.Id))
             {
-                return;
+                return false;
             }
 
             this.recordValidator.ValidateParameters(parametresOfRecord);
@@ -79,6 +80,8 @@ namespace FileCabinetApp
             var position = this.GetPositionOfTheRecordById(parametresOfRecord.Id);
 
             this.WriteRecordInFile(parametresOfRecord, position);
+
+            return true;
         }
 
         /// <summary>
@@ -283,12 +286,20 @@ namespace FileCabinetApp
         /// Removes record by it's ID.
         /// </summary>
         /// <param name="id">ID of record.</param>
-        public void RemoveRecordById(int id)
+        /// <returns>Is removing completed successfully.</returns>
+        public bool RemoveRecordById(int id)
         {
             long startPosition = this.GetPositionOfTheRecordById(id);
 
+            if (startPosition == -1)
+            {
+                return false;
+            }
+
             this.fileStream.Seek(startPosition, SeekOrigin.Begin);
             this.fileStream.WriteByte(5);
+
+            return true;
         }
 
         /// <summary>
@@ -311,7 +322,8 @@ namespace FileCabinetApp
         /// <summary>
         /// Defragments storage file by removing marked as deleted records.
         /// </summary>
-        public void Defragment()
+        /// <returns>Is defragmentation completed successfully.</returns>
+        public bool Defragment()
         {
             var records = this.GetRecords();
 
@@ -321,6 +333,8 @@ namespace FileCabinetApp
             {
                 this.CreateRecord(new ParametresOfRecord(item));
             }
+
+            return true;
         }
 
         private void WriteRecordInFile(ParametresOfRecord parametresOfRecord, long startPosition)
