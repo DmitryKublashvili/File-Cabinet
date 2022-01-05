@@ -20,7 +20,8 @@ namespace FileCabinetApp
         /// Edits selected (by ID) record.
         /// </summary>
         /// <param name="parametresOfRecord">Parametres of record.</param>
-        void EditRecord(ParametresOfRecord parametresOfRecord);
+        /// <returns>Is edition completed successfully.</returns>
+        bool EditRecord(ParametresOfRecord parametresOfRecord);
 
         /// <summary>
         /// Gets FileCabinetService state on current moment.
@@ -72,7 +73,8 @@ namespace FileCabinetApp
         /// Removes record by it's ID.
         /// </summary>
         /// <param name="id">ID of record.</param>
-        void RemoveRecordById(int id);
+        /// <returns>Is removing completed successfully.</returns>
+        bool RemoveRecordById(int id);
 
         /// <summary>
         /// Define is the record exists by it's ID.
@@ -84,6 +86,7 @@ namespace FileCabinetApp
         /// <summary>
         /// Defragments storage file by removing marked as deleted records.
         /// </summary>
-        void Defragment();
+        /// <returns>Is defragmentation completed successfully.</returns>
+        bool Defragment();
     }
 }

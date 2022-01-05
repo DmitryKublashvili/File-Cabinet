@@ -1,0 +1,44 @@
+{
+  "Default": {
+    "FirstName": {
+      "MinLettersCountInName": 2,
+      "MaxLettersCountInName": 60
+    },
+    "LastName": {
+      "MinLettersCountInName": 2,
+      "MaxLettersCountInName": 60
+    },
+    "DateOfBirth": {
+      "MinDateOfBirth": "1950-01-01T00:00:00"
+    },
+    "Salary": {
+      "MinSalary": 2000,
+      "MaxSalary": 100000
+    },
+    "YearsOfService": {
+      "MinYearsOfService": 2,
+      "MaxYearsOfService": 42
+    }
+  },
+  "Custom": {
+    "FirstName": {
+      "MinLettersCountInName": 1,
+      "MaxLettersCountInName": 20
+    },
+    "LastName": {
+      "MinLettersCountInName": 1,
+      "MaxLettersCountInName": 20
+    },
+    "DateOfBirth": {
+      "MinDateOfBirth": "1970-01-01T00:00:00"
+    },
+    "Salary": {
+      "MinSalary": 5000,
+      "MaxSalary": 70000
+    },
+    "YearsOfService": {
+      "MinYearsOfService": 1,
+      "MaxYearsOfService": 30
+    }
+  }
+}

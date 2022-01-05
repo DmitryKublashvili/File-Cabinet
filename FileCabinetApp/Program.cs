@@ -4,6 +4,8 @@ using System.Globalization;
 using System.IO;
 using FileCabinetApp.CommandHandlers;
 using FileCabinetApp.Validators;
+using FileCabinetApp.Validators.ValidationSettings;
+using Microsoft.Extensions.Configuration;
 
 namespace FileCabinetApp
 {
@@ -45,6 +47,8 @@ namespace FileCabinetApp
         /// <param name="args">Params.</param>
         public static void Main(string[] args)
         {
+            SetValidationRules();
+
             isRunning = true;
             CultureInfoSettings = new ("en");
 
@@ -177,11 +181,49 @@ namespace FileCabinetApp
                     Console.WriteLine("Used storage in memory.");
                 }
             }
+
+            if (parameterOfValidation.Contains("USE-STOPWATCH"))
+            {
+                fileCabinetService = new ServiceMeter(fileCabinetService);
+            }
+
+            if (parameterOfValidation.Contains("USE-LOGGER"))
+            {
+                fileCabinetService = new ServiceLogger(fileCabinetService);
+            }
         }
 
         private static void Exit()
         {
             isRunning = false;
+        }
+
+        private static void SetValidationRules()
+        {
+            var builder = new ConfigurationBuilder()
+                .SetBasePath(Directory.GetCurrentDirectory())
+                .AddJsonFile("validation-rules.json")
+                .Build();
+
+            CommonAppValidationSettings validationAppSettings = builder.Get<CommonAppValidationSettings>();
+
+            // default
+            DefaultValidationSettings.MaxLettersCountInName = validationAppSettings.Default.FirstName.MaxLettersCountInName;
+            DefaultValidationSettings.MinLettersCountInName = validationAppSettings.Default.FirstName.MinLettersCountInName;
+            DefaultValidationSettings.MinDateOfBirth = validationAppSettings.Default.DateOfBirth.MinDateOfBirth;
+            DefaultValidationSettings.MinSalary = validationAppSettings.Default.Salary.MinSalary;
+            DefaultValidationSettings.MaxSalary = validationAppSettings.Default.Salary.MaxSalary;
+            DefaultValidationSettings.MinYearsOfService = validationAppSettings.Default.YearsOfService.MinYearsOfService;
+            DefaultValidationSettings.MaxYearsOfService = validationAppSettings.Default.YearsOfService.MaxYearsOfService;
+
+            // custom
+            CustomValidationSettings.MaxLettersCountInName = validationAppSettings.Custom.FirstName.MaxLettersCountInName;
+            CustomValidationSettings.MinLettersCountInName = validationAppSettings.Custom.FirstName.MinLettersCountInName;
+            CustomValidationSettings.MinDateOfBirth = validationAppSettings.Custom.DateOfBirth.MinDateOfBirth;
+            CustomValidationSettings.MinSalary = validationAppSettings.Custom.Salary.MinSalary;
+            CustomValidationSettings.MaxSalary = validationAppSettings.Custom.Salary.MaxSalary;
+            CustomValidationSettings.MinYearsOfService = validationAppSettings.Custom.YearsOfService.MinYearsOfService;
+            CustomValidationSettings.MaxYearsOfService = validationAppSettings.Custom.YearsOfService.MaxYearsOfService;
         }
     }
 }

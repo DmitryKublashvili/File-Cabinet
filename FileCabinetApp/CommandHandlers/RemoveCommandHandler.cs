@@ -42,8 +42,14 @@ namespace FileCabinetApp.CommandHandlers
                     return;
                 }
 
-                this.service.RemoveRecordById(id);
-                Console.WriteLine($"Record #{id} is removed.");
+                if (this.service.RemoveRecordById(id))
+                {
+                    Console.WriteLine($"Record #{id} is removed.");
+                }
+                else
+                {
+                    Console.WriteLine($"Record #{id} is not found.");
+                }
             }
             else
             {
