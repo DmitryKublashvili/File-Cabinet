@@ -4,6 +4,7 @@ using System.Collections.ObjectModel;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using FileCabinetApp.Iterators;
 
 #pragma warning disable CA1062
 namespace FileCabinetApp
@@ -63,49 +64,49 @@ namespace FileCabinetApp
         }
 
         /// <inheritdoc/>
-        public ReadOnlyCollection<FileCabinetRecord> FindByDateOfBirth(DateTime searchingDate)
+        public IRecordIterator FindByDateOfBirth(DateTime searchingDate)
         {
             CollingLogCreate("FindByDateOfBirth(DateTime searchingDate)", searchingDate.ToShortDateString());
 
-            ReadOnlyCollection<FileCabinetRecord> result = this.fileCabinetService.FindByDateOfBirth(searchingDate);
+            IRecordIterator result = this.fileCabinetService.FindByDateOfBirth(searchingDate);
 
-            ComplettingLogCreate("FindByDateOfBirth(DateTime searchingDate)", $"ReadOnlyCollection<FileCabinetRecord> with {result.Count} records");
+            ComplettingLogCreate("FindByDateOfBirth(DateTime searchingDate)", $"ReadOnlyCollection<FileCabinetRecord>");
 
             return result;
         }
 
         /// <inheritdoc/>
-        public ReadOnlyCollection<FileCabinetRecord> FindByFirstName(string firstName)
+        public IRecordIterator FindByFirstName(string firstName)
         {
             CollingLogCreate("FindByFirstName(string firstName)", firstName);
 
-            ReadOnlyCollection<FileCabinetRecord> result = this.fileCabinetService.FindByFirstName(firstName);
+            IRecordIterator result = this.fileCabinetService.FindByFirstName(firstName);
 
-            ComplettingLogCreate("FindByFirstName(string firstName)", $"ReadOnlyCollection<FileCabinetRecord> with {result.Count} records");
+            ComplettingLogCreate("FindByFirstName(string firstName)", $"ReadOnlyCollection<FileCabinetRecord>");
 
             return result;
         }
 
         /// <inheritdoc/>
-        public ReadOnlyCollection<FileCabinetRecord> FindByLastName(string lastName)
+        public IRecordIterator FindByLastName(string lastName)
         {
             CollingLogCreate("FindByLastName(string lastName)", lastName);
 
-            ReadOnlyCollection<FileCabinetRecord> result = this.fileCabinetService.FindByLastName(lastName);
+            IRecordIterator result = this.fileCabinetService.FindByLastName(lastName);
 
-            ComplettingLogCreate("FindByLastName(string lastName)", $"ReadOnlyCollection<FileCabinetRecord> with {result.Count} records");
+            ComplettingLogCreate("FindByLastName(string lastName)", $"ReadOnlyCollection<FileCabinetRecord>");
 
             return result;
         }
 
         /// <inheritdoc/>
-        public ReadOnlyCollection<FileCabinetRecord> GetRecords()
+        public IRecordIterator GetRecords()
         {
             CollingLogCreate("GetRecords()");
 
-            ReadOnlyCollection<FileCabinetRecord> result = this.fileCabinetService.GetRecords();
+            IRecordIterator result = this.fileCabinetService.GetRecords();
 
-            ComplettingLogCreate("GetRecords()", $"ReadOnlyCollection<FileCabinetRecord> with {result.Count} records");
+            ComplettingLogCreate("GetRecords()", $"ReadOnlyCollection<FileCabinetRecord>");
 
             return result;
         }

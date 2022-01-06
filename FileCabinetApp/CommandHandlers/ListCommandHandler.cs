@@ -1,6 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using FileCabinetApp.Printers;
+using FileCabinetApp.Iterators;
 
 namespace FileCabinetApp.CommandHandlers
 {
@@ -11,14 +10,14 @@ namespace FileCabinetApp.CommandHandlers
     {
         private const string ThereAreNoRecordsMessage = "There are no records yet.";
 
-        private readonly Action<IEnumerable<FileCabinetRecord>> printer;
+        private readonly Action<IRecordIterator> printer;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ListCommandHandler"/> class.
         /// </summary>
         /// <param name="service">Some instance implemented IFileCabinetService.</param>
         /// <param name="printer">Concrete printer.</param>
-        public ListCommandHandler(IFileCabinetService service, Action<IEnumerable<FileCabinetRecord>> printer)
+        public ListCommandHandler(IFileCabinetService service, Action<IRecordIterator> printer)
             : base(service)
         {
             this.printer = printer;
@@ -34,15 +33,15 @@ namespace FileCabinetApp.CommandHandlers
 
             if (request.Command == "list")
             {
-                var list = this.service.GetRecords();
+                IRecordIterator iterator = this.service.GetRecords();
 
-                if (list is null || list.Count == 0)
+                if (iterator is null || !iterator.HasMore())
                 {
                     Console.WriteLine(ThereAreNoRecordsMessage);
                     return;
                 }
 
-                this.printer?.Invoke(list);
+                this.printer?.Invoke(iterator);
             }
             else
             {

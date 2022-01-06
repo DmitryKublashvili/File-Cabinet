@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
+using FileCabinetApp.Iterators;
 
 namespace FileCabinetApp
 {
@@ -33,28 +33,28 @@ namespace FileCabinetApp
         /// Gets an ReadOnlyCollection of records that have that date of birth.
         /// </summary>
         /// <param name="searchingDate">Search birth date.</param>
-        /// <returns>ReadOnlyCollection of records that have that birth date.</returns>
-        ReadOnlyCollection<FileCabinetRecord> FindByDateOfBirth(DateTime searchingDate);
+        /// <returns>IRecordIterator of records that have that birth date.</returns>
+        IRecordIterator FindByDateOfBirth(DateTime searchingDate);
 
         /// <summary>
         /// Gets an ReadOnlyCollection of records that have that first name.
         /// </summary>
         /// <param name="firstName">Search first name.</param>
-        /// <returns>ReadOnlyCollection of records that have that first name.</returns>
-        ReadOnlyCollection<FileCabinetRecord> FindByFirstName(string firstName);
+        /// <returns>IRecordIterator of records that have that first name.</returns>
+        IRecordIterator FindByFirstName(string firstName);
 
         /// <summary>
         /// Gets an ReadOnlyCollection of records that have that last name.
         /// </summary>
         /// <param name="lastName">Search last name.</param>
-        /// <returns>ReadOnlyCollection of records that have that last name.</returns>
-        ReadOnlyCollection<FileCabinetRecord> FindByLastName(string lastName);
+        /// <returns>IRecordIterator of records that have that last name.</returns>
+        IRecordIterator FindByLastName(string lastName);
 
         /// <summary>
         /// Gets array of all records.
         /// </summary>
-        /// <returns>ReadOnlyCollection of all records.</returns>
-        ReadOnlyCollection<FileCabinetRecord> GetRecords();
+        /// <returns>IRecordIterator of all records.</returns>
+        IRecordIterator GetRecords();
 
         /// <summary>
         /// Gets records count.

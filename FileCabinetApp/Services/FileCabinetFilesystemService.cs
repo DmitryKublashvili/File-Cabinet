@@ -5,6 +5,7 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
+using FileCabinetApp.Iterators;
 
 namespace FileCabinetApp
 {
@@ -101,11 +102,9 @@ namespace FileCabinetApp
         /// Gets an ReadOnlyCollection of records that have that date of birth.
         /// </summary>
         /// <param name="searchingDate">Search birth date.</param>
-        /// <returns>ReadOnlyCollection of records that have that birth date.</returns>
-        public ReadOnlyCollection<FileCabinetRecord> FindByDateOfBirth(DateTime searchingDate)
+        /// <returns>IRecordIterator of records that have that birth date.</returns>
+        public IRecordIterator FindByDateOfBirth(DateTime searchingDate)
         {
-            List<FileCabinetRecord> records = new List<FileCabinetRecord>();
-
             List<long> positions = new List<long>();
 
             if (this.dateOfBirthDictionary.ContainsKey(searchingDate))
@@ -113,27 +112,20 @@ namespace FileCabinetApp
                 positions = this.dateOfBirthDictionary[searchingDate];
             }
 
-            foreach (var position in positions)
-            {
-                records.Add(this.GetRecordFromFile(position));
-            }
-
-            return new ReadOnlyCollection<FileCabinetRecord>(records);
+            return new FileSystemIterator(this, positions);
         }
 
         /// <summary>
         /// Gets an ReadOnlyCollection of records that have that first name.
         /// </summary>
         /// <param name="firstName">Search first name.</param>
-        /// <returns>ReadOnlyCollection of records that have that first name.</returns>
-        public ReadOnlyCollection<FileCabinetRecord> FindByFirstName(string firstName)
+        /// <returns>IRecordIterator of records that have that first name.</returns>
+        public IRecordIterator FindByFirstName(string firstName)
         {
             if (string.IsNullOrEmpty(firstName))
             {
                 throw new ArgumentException("Wanted name was null or empty", nameof(firstName));
             }
-
-            List<FileCabinetRecord> records = new List<FileCabinetRecord>();
 
             List<long> positions = new List<long>();
 
@@ -142,27 +134,20 @@ namespace FileCabinetApp
                 positions = this.firstNameDictionary[firstName];
             }
 
-            foreach (var position in positions)
-            {
-                records.Add(this.GetRecordFromFile(position));
-            }
-
-            return new ReadOnlyCollection<FileCabinetRecord>(records);
+            return new FileSystemIterator(this, positions);
         }
 
         /// <summary>
         /// Gets an ReadOnlyCollection of records that have that last name.
         /// </summary>
         /// <param name="lastName">Search last name.</param>
-        /// <returns>ReadOnlyCollection of records that have that last name.</returns>
-        public ReadOnlyCollection<FileCabinetRecord> FindByLastName(string lastName)
+        /// <returns>IRecordIterator of records that have that last name.</returns>
+        public IRecordIterator FindByLastName(string lastName)
         {
             if (string.IsNullOrEmpty(lastName))
             {
                 throw new ArgumentException("Wanted name was null or empty", nameof(lastName));
             }
-
-            List<FileCabinetRecord> records = new List<FileCabinetRecord>();
 
             List<long> positions = new List<long>();
 
@@ -171,31 +156,26 @@ namespace FileCabinetApp
                 positions = this.lastNameDictionary[lastName.ToUpperInvariant()];
             }
 
-            foreach (var position in positions)
-            {
-                records.Add(this.GetRecordFromFile(position));
-            }
-
-            return new ReadOnlyCollection<FileCabinetRecord>(records);
+            return new FileSystemIterator(this, positions);
         }
 
         /// <summary>
         /// Gets ReadOnlyCollection of all records.
         /// </summary>
         /// <returns>ReadOnlyCollection of all records.</returns>
-        public ReadOnlyCollection<FileCabinetRecord> GetRecords()
+        public IRecordIterator GetRecords()
         {
-            List<FileCabinetRecord> records = new List<FileCabinetRecord>();
+            List<long> positions = new List<long>();
 
             for (long i = 0; i < this.fileStream.Length; i += 278)
             {
                 if (!this.IsDeleted(i))
                 {
-                    records.Add(this.GetRecordFromFile(i));
+                    positions.Add(i);
                 }
             }
 
-            return new ReadOnlyCollection<FileCabinetRecord>(records);
+            return new FileSystemIterator(this, positions);
         }
 
         /// <summary>
@@ -317,25 +297,82 @@ namespace FileCabinetApp
         /// <returns>Is defragmentation completed successfully.</returns>
         public bool Defragment()
         {
-            var records = this.GetRecords();
+            var iterator = this.GetRecords();
+
+            List<FileCabinetRecord> records = new List<FileCabinetRecord>();
+
+            while (iterator.HasMore())
+            {
+                records.Add(iterator.GetNext());
+            }
 
             this.fileStream.SetLength(0);
 
-            foreach (var item in records)
+            foreach (var record in records)
             {
-                this.CreateRecord(new ParametresOfRecord(item));
+
+                this.CreateRecord(new ParametresOfRecord(record));
             }
 
             return true;
         }
 
+        /// <summary>
+        /// Gets record from file by position.
+        /// </summary>
+        /// <param name="position">Position in file.</param>
+        /// <returns>File Cabinet Record.</returns>
+        public FileCabinetRecord GetRecordFromFile(long position)
+        {
+            FileCabinetRecord record = new FileCabinetRecord();
+
+            byte[] bytes = new byte[278];
+            this.fileStream.Seek(position, SeekOrigin.Begin);
+            this.fileStream.Read(bytes);
+
+            // get Id
+            record.Id = BitConverter.ToInt32(bytes[2..6], 0);
+
+            // get FirstName
+            record.FirstName = Encoding.ASCII.GetString(bytes[6..126].TakeWhile(x => x != 0).ToArray()).TrimEnd(' ');
+
+            // get LastName
+            record.LastName = Encoding.ASCII.GetString(bytes[126..246].TakeWhile(x => x != 0).ToArray()).TrimEnd(' ');
+
+            // get DateOfBirth
+            int year = BitConverter.ToInt32(bytes[246..250], 0);
+            int month = BitConverter.ToInt32(bytes[250..254], 0);
+            int day = BitConverter.ToInt32(bytes[254..258], 0);
+
+            record.DateOfBirth = DateTime.Parse($"{month}/{day}/{year}", cultureInfo, DateTimeStyles.AdjustToUniversal);
+
+            // get Sex
+            record.Sex = BitConverter.ToChar(bytes[258..260], 0);
+
+            // get Salary
+            int int0 = BitConverter.ToInt32(bytes[260..264], 0);
+            int int1 = BitConverter.ToInt32(bytes[264..268], 0);
+            int int2 = BitConverter.ToInt32(bytes[268..272], 0);
+            int int3 = BitConverter.ToInt32(bytes[272..276], 0);
+            bool sign = (int3 & 0x80000000) != 0;
+            byte scale = (byte)((int3 >> 16) & 0x7F);
+
+            record.Salary = new decimal(int0, int1, int2, sign, scale);
+
+            // get YearsOfService
+            record.YearsOfService = BitConverter.ToInt16(bytes[276..278], 0);
+
+            return record;
+        }
+
         private void StartingFillDictionariesFromFile()
         {
-            var records = this.GetRecords();
+            FileSystemIterator iterator = (FileSystemIterator)this.GetRecords();
 
-            foreach (var record in records)
+            while (iterator.HasMore())
             {
-                long position = this.GetPositionOfTheRecordById(record.Id);
+                long position = iterator.NextPosition;
+                var record = iterator.GetNext();
                 this.AddRecordInDictionaries(new ParametresOfRecord(record), position);
             }
         }
@@ -478,49 +515,6 @@ namespace FileCabinetApp
             // short YearsOfService 2
             this.fileStream.Seek(startPosition + 276, SeekOrigin.Begin);
             this.fileStream.Write(BitConverter.GetBytes(parametresOfRecord.YearsOfService));
-        }
-
-        private FileCabinetRecord GetRecordFromFile(long position)
-        {
-            FileCabinetRecord record = new FileCabinetRecord();
-
-            byte[] bytes = new byte[278];
-            this.fileStream.Seek(position, SeekOrigin.Begin);
-            this.fileStream.Read(bytes);
-
-            // get Id
-            record.Id = BitConverter.ToInt32(bytes[2..6], 0);
-
-            // get FirstName
-            record.FirstName = Encoding.ASCII.GetString(bytes[6..126].TakeWhile(x => x != 0).ToArray()).TrimEnd(' ');
-
-            // get LastName
-            record.LastName = Encoding.ASCII.GetString(bytes[126..246].TakeWhile(x => x != 0).ToArray()).TrimEnd(' ');
-
-            // get DateOfBirth
-            int year = BitConverter.ToInt32(bytes[246..250], 0);
-            int month = BitConverter.ToInt32(bytes[250..254], 0);
-            int day = BitConverter.ToInt32(bytes[254..258], 0);
-
-            record.DateOfBirth = DateTime.Parse($"{month}/{day}/{year}", cultureInfo, DateTimeStyles.AdjustToUniversal);
-
-            // get Sex
-            record.Sex = BitConverter.ToChar(bytes[258..260], 0);
-
-            // get Salary
-            int int0 = BitConverter.ToInt32(bytes[260..264], 0);
-            int int1 = BitConverter.ToInt32(bytes[264..268], 0);
-            int int2 = BitConverter.ToInt32(bytes[268..272], 0);
-            int int3 = BitConverter.ToInt32(bytes[272..276], 0);
-            bool sign = (int3 & 0x80000000) != 0;
-            byte scale = (byte)((int3 >> 16) & 0x7F);
-
-            record.Salary = new decimal(int0, int1, int2, sign, scale);
-
-            // get YearsOfService
-            record.YearsOfService = BitConverter.ToInt16(bytes[276..278], 0);
-
-            return record;
         }
 
         private bool IsDeleted(long recordPosition)

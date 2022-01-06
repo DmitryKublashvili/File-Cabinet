@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using FileCabinetApp.Iterators;
 
 namespace FileCabinetApp
 {
@@ -83,10 +84,10 @@ namespace FileCabinetApp
         /// <summary>
         /// Gets ReadOnlyCollection of all records.
         /// </summary>
-        /// <returns>ReadOnlyCollection of all records.</returns>
-        public ReadOnlyCollection<FileCabinetRecord> GetRecords()
+        /// <returns>IRecordIterator of all records.</returns>
+        public IRecordIterator GetRecords()
         {
-            return new ReadOnlyCollection<FileCabinetRecord>(this.list);
+            return new MemoryIterator(this.list.ToArray());
         }
 
         /// <summary>
@@ -148,8 +149,8 @@ namespace FileCabinetApp
         /// Gets an ReadOnlyCollection of records that have that first name.
         /// </summary>
         /// <param name="firstName">Search first name.</param>
-        /// <returns>ReadOnlyCollection of records that have that first name.</returns>
-        public ReadOnlyCollection<FileCabinetRecord> FindByFirstName(string firstName)
+        /// <returns>IRecordIterator of records that have that first name.</returns>
+        public IRecordIterator FindByFirstName(string firstName)
         {
             if (string.IsNullOrEmpty(firstName))
             {
@@ -160,11 +161,11 @@ namespace FileCabinetApp
 
             if (this.firstNameDictionary.ContainsKey(firstName))
             {
-                return new ReadOnlyCollection<FileCabinetRecord>(this.firstNameDictionary[firstName]);
+                return new MemoryIterator(this.firstNameDictionary[firstName].ToArray());
             }
             else
             {
-                return new ReadOnlyCollection<FileCabinetRecord>(Array.Empty<FileCabinetRecord>());
+                return new MemoryIterator(Array.Empty<FileCabinetRecord>());
             }
         }
 
@@ -172,8 +173,8 @@ namespace FileCabinetApp
         /// Gets an ReadOnlyCollection of records that have that last name.
         /// </summary>
         /// <param name="lastName">Search last name.</param>
-        /// <returns>ReadOnlyCollection of records that have that last name.</returns>
-        public ReadOnlyCollection<FileCabinetRecord> FindByLastName(string lastName)
+        /// <returns>IRecordIterator of records that have that last name.</returns>
+        public IRecordIterator FindByLastName(string lastName)
         {
             if (string.IsNullOrEmpty(lastName))
             {
@@ -184,11 +185,11 @@ namespace FileCabinetApp
 
             if (this.lastNameDictionary.ContainsKey(lastName))
             {
-                return new ReadOnlyCollection<FileCabinetRecord>(this.lastNameDictionary[lastName]);
+                return new MemoryIterator(this.lastNameDictionary[lastName].ToArray());
             }
             else
             {
-                return new ReadOnlyCollection<FileCabinetRecord>(Array.Empty<FileCabinetRecord>());
+                return new MemoryIterator(Array.Empty<FileCabinetRecord>());
             }
         }
 
@@ -196,16 +197,16 @@ namespace FileCabinetApp
         /// Gets an ReadOnlyCollection of records that have that date of birth.
         /// </summary>
         /// <param name="searchingDate">Search birth date.</param>
-        /// <returns>ReadOnlyCollection of records that have that birth date.</returns>
-        public ReadOnlyCollection<FileCabinetRecord> FindByDateOfBirth(DateTime searchingDate)
+        /// <returns>IRecordIterator of records that have that birth date.</returns>
+        public IRecordIterator FindByDateOfBirth(DateTime searchingDate)
         {
             if (this.dateOfBirthDictionary.ContainsKey(searchingDate))
             {
-                return new ReadOnlyCollection<FileCabinetRecord>(this.dateOfBirthDictionary[searchingDate]);
+                return new MemoryIterator(this.dateOfBirthDictionary[searchingDate].ToArray());
             }
             else
             {
-                return new ReadOnlyCollection<FileCabinetRecord>(Array.Empty<FileCabinetRecord>());
+                return new MemoryIterator(Array.Empty<FileCabinetRecord>());
             }
         }
 

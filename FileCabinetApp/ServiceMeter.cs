@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
+using FileCabinetApp.Iterators;
 
 namespace FileCabinetApp
 {
@@ -60,11 +61,11 @@ namespace FileCabinetApp
         }
 
         /// <inheritdoc/>
-        public ReadOnlyCollection<FileCabinetRecord> FindByDateOfBirth(DateTime searchingDate)
+        public IRecordIterator FindByDateOfBirth(DateTime searchingDate)
         {
             this.StartWatch();
 
-            ReadOnlyCollection<FileCabinetRecord> result = this.fileCabinetService.FindByDateOfBirth(searchingDate);
+            IRecordIterator result = this.fileCabinetService.FindByDateOfBirth(searchingDate);
 
             this.WatchStop("FindByDateOfBirth");
 
@@ -72,11 +73,11 @@ namespace FileCabinetApp
         }
 
         /// <inheritdoc/>
-        public ReadOnlyCollection<FileCabinetRecord> FindByFirstName(string firstName)
+        public IRecordIterator FindByFirstName(string firstName)
         {
             this.StartWatch();
 
-            ReadOnlyCollection<FileCabinetRecord> result = this.fileCabinetService.FindByFirstName(firstName);
+            IRecordIterator result = this.fileCabinetService.FindByFirstName(firstName);
 
             this.WatchStop("FindByFirstName");
 
@@ -84,11 +85,11 @@ namespace FileCabinetApp
         }
 
         /// <inheritdoc/>
-        public ReadOnlyCollection<FileCabinetRecord> FindByLastName(string lastName)
+        public IRecordIterator FindByLastName(string lastName)
         {
             this.StartWatch();
 
-            ReadOnlyCollection<FileCabinetRecord> result = this.fileCabinetService.FindByLastName(lastName);
+            IRecordIterator result = this.fileCabinetService.FindByLastName(lastName);
 
             this.WatchStop("FindByLastName");
 
@@ -96,11 +97,11 @@ namespace FileCabinetApp
         }
 
         /// <inheritdoc/>
-        public ReadOnlyCollection<FileCabinetRecord> GetRecords()
+        public IRecordIterator GetRecords()
         {
             this.StartWatch();
 
-            ReadOnlyCollection<FileCabinetRecord> result = this.fileCabinetService.GetRecords();
+            IRecordIterator result = this.fileCabinetService.GetRecords();
 
             this.WatchStop("GetRecords");
 
@@ -162,7 +163,7 @@ namespace FileCabinetApp
 
             IEnumerable<(int id, string exceptionMessage)> result = this.fileCabinetService.Restore(snapShot);
 
-            this.WatchStop("RemoveRecordById");
+            this.WatchStop("Restore");
 
             return result;
         }
