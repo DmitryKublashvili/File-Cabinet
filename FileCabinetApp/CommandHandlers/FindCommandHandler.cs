@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Globalization;
-using FileCabinetApp.Printers;
 
 namespace FileCabinetApp.CommandHandlers
 {
@@ -54,21 +52,22 @@ namespace FileCabinetApp.CommandHandlers
                 }
 
                 string secondParameter = userCommandParameters[1].Trim('"', ' ').ToUpperInvariant();
-                ReadOnlyCollection<FileCabinetRecord> foundRecords;
+
+                IEnumerable<FileCabinetRecord> records;
 
                 if (firstParameter == "FIRSTNAME")
                 {
-                    foundRecords = this.service.FindByFirstName(secondParameter);
+                    records = this.service.FindByFirstName(secondParameter);
                 }
                 else if (firstParameter == "LASTNAME")
                 {
-                    foundRecords = this.service.FindByLastName(secondParameter);
+                    records = this.service.FindByLastName(secondParameter);
                 }
                 else
                 {
                     if (DateTime.TryParse(secondParameter, Program.CultureInfoSettings, DateTimeStyles.AdjustToUniversal, out DateTime date))
                     {
-                        foundRecords = this.service.FindByDateOfBirth(date);
+                        records = this.service.FindByDateOfBirth(date);
                     }
                     else
                     {
@@ -77,13 +76,13 @@ namespace FileCabinetApp.CommandHandlers
                     }
                 }
 
-                if (foundRecords.Count == 0)
+                if (!records.GetEnumerator().MoveNext())
                 {
                     Console.WriteLine(NoMatchesMessage);
                     return;
                 }
 
-                this.printer?.Invoke(foundRecords);
+                this.printer?.Invoke(records);
             }
             else
             {

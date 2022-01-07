@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using FileCabinetApp.CommandHandlers;
+using FileCabinetApp.Iterators;
 using FileCabinetApp.Validators;
 using FileCabinetApp.Validators.ValidationSettings;
 using Microsoft.Extensions.Configuration;
@@ -86,26 +87,44 @@ namespace FileCabinetApp
         /// <summary>
         /// Prints records.
         /// </summary>
+        /// <param name="iterator">Records to print.</param>
+        public static void Print(IRecordIterator iterator)
+        {
+            if (iterator is null)
+            {
+                throw new ArgumentNullException(nameof(iterator));
+            }
+
+            while (iterator.HasMore())
+            {
+                var record = iterator.GetNext();
+
+                Console.WriteLine(
+                    $"#{record.Id}, {record.FirstName}, {record.LastName}, " +
+                    $"{record.DateOfBirth.ToString("yyyy-MMM-d", Program.CultureInfoSettings)}, " +
+                    $"Sex - {record.Sex}, Salary {record.Salary.ToString(Program.CultureInfoSettings)}, " +
+                    $"{record.YearsOfService} years Of Service");
+            }
+        }
+
+        /// <summary>
+        /// Prints records from IEnumerable.
+        /// </summary>
         /// <param name="records">Records to print.</param>
-        public static void Print(IEnumerable<FileCabinetRecord> records)
+        public static void PrintIEnumerable(IEnumerable<FileCabinetRecord> records)
         {
             if (records is null)
             {
                 throw new ArgumentNullException(nameof(records));
             }
 
-            foreach (var item in records)
+            foreach (var record in records)
             {
-                if (item is null)
-                {
-                    continue;
-                }
-
                 Console.WriteLine(
-                    $"#{item.Id}, {item.FirstName}, {item.LastName}, " +
-                    $"{item.DateOfBirth.ToString("yyyy-MMM-d", Program.CultureInfoSettings)}, " +
-                    $"Sex - {item.Sex}, Salary {item.Salary.ToString(Program.CultureInfoSettings)}, " +
-                    $"{item.YearsOfService} years Of Service");
+                    $"#{record.Id}, {record.FirstName}, {record.LastName}, " +
+                    $"{record.DateOfBirth.ToString("yyyy-MMM-d", Program.CultureInfoSettings)}, " +
+                    $"Sex - {record.Sex}, Salary {record.Salary.ToString(Program.CultureInfoSettings)}, " +
+                    $"{record.YearsOfService} years Of Service");
             }
         }
 
@@ -117,7 +136,7 @@ namespace FileCabinetApp
             CreateCommandHandler createCommandHandler = new CreateCommandHandler(fileCabinetService);
             ListCommandHandler listCommandHandler = new ListCommandHandler(fileCabinetService, Print);
             EditCommandHandler editCommandHandler = new EditCommandHandler(fileCabinetService);
-            FindCommandHandler findCommandHandler = new FindCommandHandler(fileCabinetService, Print);
+            FindCommandHandler findCommandHandler = new FindCommandHandler(fileCabinetService, PrintIEnumerable);
             ExportCommandHandler exportCommandHandler = new ExportCommandHandler(fileCabinetService);
             ImportCommandHandler importCommandHandler = new ImportCommandHandler(fileCabinetService);
             RemoveCommandHandler removeCommandHandler = new RemoveCommandHandler(fileCabinetService);

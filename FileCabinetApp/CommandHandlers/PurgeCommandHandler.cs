@@ -41,6 +41,11 @@ namespace FileCabinetApp.CommandHandlers
             }
             else
             {
+                if (this.nextHandler is null)
+                {
+                    Console.WriteLine("Incorrect command");
+                }
+
                 this.nextHandler?.Handle(request);
             }
         }
