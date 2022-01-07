@@ -115,7 +115,7 @@
             Find command handler.
             </summary>
         </member>
-        <member name="M:FileCabinetApp.CommandHandlers.FindCommandHandler.#ctor(FileCabinetApp.IFileCabinetService,System.Action{FileCabinetApp.Iterators.IRecordIterator})">
+        <member name="M:FileCabinetApp.CommandHandlers.FindCommandHandler.#ctor(FileCabinetApp.IFileCabinetService,System.Action{System.Collections.Generic.IEnumerable{FileCabinetApp.FileCabinetRecord}})">
             <summary>
             Initializes a new instance of the <see cref="T:FileCabinetApp.CommandHandlers.FindCommandHandler"/> class.
             </summary>
@@ -811,6 +811,12 @@
             </summary>
             <param name="iterator">Records to print.</param>
         </member>
+        <member name="M:FileCabinetApp.Program.PrintIEnumerable(System.Collections.Generic.IEnumerable{FileCabinetApp.FileCabinetRecord})">
+            <summary>
+            Prints records from IEnumerable.
+            </summary>
+            <param name="records">Records to print.</param>
+        </member>
         <member name="T:FileCabinetApp.RecordsList">
             <summary>
             Special class for XmlRoot attribut implementation.
@@ -925,7 +931,7 @@
         </member>
         <member name="T:FileCabinetApp.FileCabinetFilesystemService">
             <summary>
-            Implements functions of file cabinet.
+            FileCabinetFilesystemService.
             </summary>
         </member>
         <member name="M:FileCabinetApp.FileCabinetFilesystemService.#ctor(FileCabinetApp.IRecordValidator,System.IO.FileStream)">
@@ -954,21 +960,21 @@
             Gets an ReadOnlyCollection of records that have that date of birth.
             </summary>
             <param name="searchingDate">Search birth date.</param>
-            <returns>IRecordIterator of records that have that birth date.</returns>
+            <returns>IEnumerable of records that have that birth date.</returns>
         </member>
         <member name="M:FileCabinetApp.FileCabinetFilesystemService.FindByFirstName(System.String)">
             <summary>
             Gets an ReadOnlyCollection of records that have that first name.
             </summary>
             <param name="firstName">Search first name.</param>
-            <returns>IRecordIterator of records that have that first name.</returns>
+            <returns>IEnumerable of records that have that first name.</returns>
         </member>
         <member name="M:FileCabinetApp.FileCabinetFilesystemService.FindByLastName(System.String)">
             <summary>
             Gets an ReadOnlyCollection of records that have that last name.
             </summary>
             <param name="lastName">Search last name.</param>
-            <returns>IRecordIterator of records that have that last name.</returns>
+            <returns>IEnumerable of records that have that last name.</returns>
         </member>
         <member name="M:FileCabinetApp.FileCabinetFilesystemService.GetRecords">
             <summary>
@@ -1077,21 +1083,21 @@
             Gets an ReadOnlyCollection of records that have that first name.
             </summary>
             <param name="firstName">Search first name.</param>
-            <returns>IRecordIterator of records that have that first name.</returns>
+            <returns>IEnumerable of records that have that first name.</returns>
         </member>
         <member name="M:FileCabinetApp.FileCabinetMemoryService.FindByLastName(System.String)">
             <summary>
             Gets an ReadOnlyCollection of records that have that last name.
             </summary>
             <param name="lastName">Search last name.</param>
-            <returns>IRecordIterator of records that have that last name.</returns>
+            <returns>IEnumerable of records that have that last name.</returns>
         </member>
         <member name="M:FileCabinetApp.FileCabinetMemoryService.FindByDateOfBirth(System.DateTime)">
             <summary>
             Gets an ReadOnlyCollection of records that have that date of birth.
             </summary>
             <param name="searchingDate">Search birth date.</param>
-            <returns>IRecordIterator of records that have that birth date.</returns>
+            <returns>IEnumerable of records that have that birth date.</returns>
         </member>
         <member name="M:FileCabinetApp.FileCabinetMemoryService.Restore(FileCabinetApp.FileCabinetServiceSnapshot)">
             <summary>

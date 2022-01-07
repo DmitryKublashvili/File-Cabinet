@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -64,11 +63,11 @@ namespace FileCabinetApp
         }
 
         /// <inheritdoc/>
-        public IRecordIterator FindByDateOfBirth(DateTime searchingDate)
+        public IEnumerable<FileCabinetRecord> FindByDateOfBirth(DateTime searchingDate)
         {
             CollingLogCreate("FindByDateOfBirth(DateTime searchingDate)", searchingDate.ToShortDateString());
 
-            IRecordIterator result = this.fileCabinetService.FindByDateOfBirth(searchingDate);
+            IEnumerable<FileCabinetRecord> result = this.fileCabinetService.FindByDateOfBirth(searchingDate);
 
             ComplettingLogCreate("FindByDateOfBirth(DateTime searchingDate)", $"ReadOnlyCollection<FileCabinetRecord>");
 
@@ -76,11 +75,11 @@ namespace FileCabinetApp
         }
 
         /// <inheritdoc/>
-        public IRecordIterator FindByFirstName(string firstName)
+        public IEnumerable<FileCabinetRecord> FindByFirstName(string firstName)
         {
             CollingLogCreate("FindByFirstName(string firstName)", firstName);
 
-            IRecordIterator result = this.fileCabinetService.FindByFirstName(firstName);
+            IEnumerable<FileCabinetRecord> result = this.fileCabinetService.FindByFirstName(firstName);
 
             ComplettingLogCreate("FindByFirstName(string firstName)", $"ReadOnlyCollection<FileCabinetRecord>");
 
@@ -88,11 +87,11 @@ namespace FileCabinetApp
         }
 
         /// <inheritdoc/>
-        public IRecordIterator FindByLastName(string lastName)
+        public IEnumerable<FileCabinetRecord> FindByLastName(string lastName)
         {
             CollingLogCreate("FindByLastName(string lastName)", lastName);
 
-            IRecordIterator result = this.fileCabinetService.FindByLastName(lastName);
+            IEnumerable<FileCabinetRecord> result = this.fileCabinetService.FindByLastName(lastName);
 
             ComplettingLogCreate("FindByLastName(string lastName)", $"ReadOnlyCollection<FileCabinetRecord>");
 

@@ -10,13 +10,13 @@ using FileCabinetApp.Iterators;
 namespace FileCabinetApp
 {
     /// <summary>
-    /// Implements functions of file cabinet.
+    /// FileCabinetFilesystemService.
     /// </summary>
     public class FileCabinetFilesystemService : IFileCabinetService
     {
-        private static CultureInfo cultureInfo = new ("en");
         private readonly IRecordValidator recordValidator;
         private readonly FileStream fileStream;
+        private readonly CultureInfo cultureInfo = new ("en");
 
         private readonly Dictionary<string, List<long>> firstNameDictionary = new Dictionary<string, List<long>>();
         private readonly Dictionary<string, List<long>> lastNameDictionary = new Dictionary<string, List<long>>();
@@ -102,8 +102,8 @@ namespace FileCabinetApp
         /// Gets an ReadOnlyCollection of records that have that date of birth.
         /// </summary>
         /// <param name="searchingDate">Search birth date.</param>
-        /// <returns>IRecordIterator of records that have that birth date.</returns>
-        public IRecordIterator FindByDateOfBirth(DateTime searchingDate)
+        /// <returns>IEnumerable of records that have that birth date.</returns>
+        public IEnumerable<FileCabinetRecord> FindByDateOfBirth(DateTime searchingDate)
         {
             List<long> positions = new List<long>();
 
@@ -112,21 +112,21 @@ namespace FileCabinetApp
                 positions = this.dateOfBirthDictionary[searchingDate];
             }
 
-            return new FileSystemIterator(this, positions);
+            foreach (var position in positions)
+            {
+                yield return this.GetRecordFromFile(position);
+            }
+
+            //return new FileSystemIterator(this, positions);
         }
 
         /// <summary>
         /// Gets an ReadOnlyCollection of records that have that first name.
         /// </summary>
         /// <param name="firstName">Search first name.</param>
-        /// <returns>IRecordIterator of records that have that first name.</returns>
-        public IRecordIterator FindByFirstName(string firstName)
+        /// <returns>IEnumerable of records that have that first name.</returns>
+        public IEnumerable<FileCabinetRecord> FindByFirstName(string firstName)
         {
-            if (string.IsNullOrEmpty(firstName))
-            {
-                throw new ArgumentException("Wanted name was null or empty", nameof(firstName));
-            }
-
             List<long> positions = new List<long>();
 
             if (this.firstNameDictionary.ContainsKey(firstName.ToUpperInvariant()))
@@ -134,21 +134,21 @@ namespace FileCabinetApp
                 positions = this.firstNameDictionary[firstName];
             }
 
-            return new FileSystemIterator(this, positions);
+            foreach (var position in positions)
+            {
+                yield return this.GetRecordFromFile(position);
+            }
+
+            //return new FileSystemIterator(this, positions);
         }
 
         /// <summary>
         /// Gets an ReadOnlyCollection of records that have that last name.
         /// </summary>
         /// <param name="lastName">Search last name.</param>
-        /// <returns>IRecordIterator of records that have that last name.</returns>
-        public IRecordIterator FindByLastName(string lastName)
+        /// <returns>IEnumerable of records that have that last name.</returns>
+        public IEnumerable<FileCabinetRecord> FindByLastName(string lastName)
         {
-            if (string.IsNullOrEmpty(lastName))
-            {
-                throw new ArgumentException("Wanted name was null or empty", nameof(lastName));
-            }
-
             List<long> positions = new List<long>();
 
             if (this.lastNameDictionary.ContainsKey(lastName.ToUpperInvariant()))
@@ -156,7 +156,12 @@ namespace FileCabinetApp
                 positions = this.lastNameDictionary[lastName.ToUpperInvariant()];
             }
 
-            return new FileSystemIterator(this, positions);
+            foreach (var position in positions)
+            {
+                yield return this.GetRecordFromFile(position);
+            }
+
+            //return new FileSystemIterator(this, positions);
         }
 
         /// <summary>
@@ -306,11 +311,14 @@ namespace FileCabinetApp
                 records.Add(iterator.GetNext());
             }
 
+            this.firstNameDictionary.Clear();
+            this.lastNameDictionary.Clear();
+            this.dateOfBirthDictionary.Clear();
+
             this.fileStream.SetLength(0);
 
             foreach (var record in records)
             {
-
                 this.CreateRecord(new ParametresOfRecord(record));
             }
 

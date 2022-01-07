@@ -107,6 +107,27 @@ namespace FileCabinetApp
             }
         }
 
+        /// <summary>
+        /// Prints records from IEnumerable.
+        /// </summary>
+        /// <param name="records">Records to print.</param>
+        public static void PrintIEnumerable(IEnumerable<FileCabinetRecord> records)
+        {
+            if (records is null)
+            {
+                throw new ArgumentNullException(nameof(records));
+            }
+
+            foreach (var record in records)
+            {
+                Console.WriteLine(
+                    $"#{record.Id}, {record.FirstName}, {record.LastName}, " +
+                    $"{record.DateOfBirth.ToString("yyyy-MMM-d", Program.CultureInfoSettings)}, " +
+                    $"Sex - {record.Sex}, Salary {record.Salary.ToString(Program.CultureInfoSettings)}, " +
+                    $"{record.YearsOfService} years Of Service");
+            }
+        }
+
         private static ICommandHandler CreateCommandHendlers()
         {
             HelpCommandHandler helpCommandHandler = new HelpCommandHandler();
@@ -115,7 +136,7 @@ namespace FileCabinetApp
             CreateCommandHandler createCommandHandler = new CreateCommandHandler(fileCabinetService);
             ListCommandHandler listCommandHandler = new ListCommandHandler(fileCabinetService, Print);
             EditCommandHandler editCommandHandler = new EditCommandHandler(fileCabinetService);
-            FindCommandHandler findCommandHandler = new FindCommandHandler(fileCabinetService, Print);
+            FindCommandHandler findCommandHandler = new FindCommandHandler(fileCabinetService, PrintIEnumerable);
             ExportCommandHandler exportCommandHandler = new ExportCommandHandler(fileCabinetService);
             ImportCommandHandler importCommandHandler = new ImportCommandHandler(fileCabinetService);
             RemoveCommandHandler removeCommandHandler = new RemoveCommandHandler(fileCabinetService);

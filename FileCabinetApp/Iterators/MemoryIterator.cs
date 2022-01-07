@@ -38,7 +38,7 @@ namespace FileCabinetApp.Iterators
         /// <inheritdoc/>
         public bool HasMore()
         {
-            return this.indexOfCurrentPosition < this.records.Length;
+            return this.indexOfCurrentPosition < this.records.Length - 1;
         }
     }
 }

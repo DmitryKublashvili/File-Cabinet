@@ -149,65 +149,70 @@ namespace FileCabinetApp
         /// Gets an ReadOnlyCollection of records that have that first name.
         /// </summary>
         /// <param name="firstName">Search first name.</param>
-        /// <returns>IRecordIterator of records that have that first name.</returns>
-        public IRecordIterator FindByFirstName(string firstName)
+        /// <returns>IEnumerable of records that have that first name.</returns>
+        public IEnumerable<FileCabinetRecord> FindByFirstName(string firstName)
         {
-            if (string.IsNullOrEmpty(firstName))
-            {
-                throw new ArgumentException("Wanted name was null or empty", nameof(firstName));
-            }
-
             firstName = firstName.ToUpperInvariant();
 
             if (this.firstNameDictionary.ContainsKey(firstName))
             {
-                return new MemoryIterator(this.firstNameDictionary[firstName].ToArray());
+                foreach (var record in this.firstNameDictionary[firstName])
+                {
+                    yield return record;
+                }
+
+                //return new MemoryIterator(this.firstNameDictionary[firstName].ToArray());
             }
-            else
-            {
-                return new MemoryIterator(Array.Empty<FileCabinetRecord>());
-            }
+            //else
+            //{
+            //    return new MemoryIterator(Array.Empty<FileCabinetRecord>());
+            //}
         }
 
         /// <summary>
         /// Gets an ReadOnlyCollection of records that have that last name.
         /// </summary>
         /// <param name="lastName">Search last name.</param>
-        /// <returns>IRecordIterator of records that have that last name.</returns>
-        public IRecordIterator FindByLastName(string lastName)
+        /// <returns>IEnumerable of records that have that last name.</returns>
+        public IEnumerable<FileCabinetRecord> FindByLastName(string lastName)
         {
-            if (string.IsNullOrEmpty(lastName))
-            {
-                throw new ArgumentException("Wanted name was null or empty", nameof(lastName));
-            }
-
             lastName = lastName.ToUpperInvariant();
 
             if (this.lastNameDictionary.ContainsKey(lastName))
             {
-                return new MemoryIterator(this.lastNameDictionary[lastName].ToArray());
+                foreach (var record in this.lastNameDictionary[lastName])
+                {
+                    yield return record;
+                }
+
+                //return new MemoryIterator(this.lastNameDictionary[lastName].ToArray());
             }
-            else
-            {
-                return new MemoryIterator(Array.Empty<FileCabinetRecord>());
-            }
+            //else
+            //{
+            //    return new MemoryIterator(Array.Empty<FileCabinetRecord>());
+            //}
         }
 
         /// <summary>
         /// Gets an ReadOnlyCollection of records that have that date of birth.
         /// </summary>
         /// <param name="searchingDate">Search birth date.</param>
-        /// <returns>IRecordIterator of records that have that birth date.</returns>
-        public IRecordIterator FindByDateOfBirth(DateTime searchingDate)
+        /// <returns>IEnumerable of records that have that birth date.</returns>
+        public IEnumerable<FileCabinetRecord> FindByDateOfBirth(DateTime searchingDate)
         {
             if (this.dateOfBirthDictionary.ContainsKey(searchingDate))
             {
-                return new MemoryIterator(this.dateOfBirthDictionary[searchingDate].ToArray());
+                foreach (var record in this.dateOfBirthDictionary[searchingDate])
+                {
+                    yield return record;
+                }
+
+                //return new MemoryIterator(this.dateOfBirthDictionary[searchingDate].ToArray());
             }
-            else
-            {
-                return new MemoryIterator(Array.Empty<FileCabinetRecord>());
-            }
+            //else
+            //{
+            //    return new MemoryIterator(Array.Empty<FileCabinetRecord>());
+            //}
         }
 
         /// <summary>

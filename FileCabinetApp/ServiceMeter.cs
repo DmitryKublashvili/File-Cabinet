@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Diagnostics;
 using FileCabinetApp.Iterators;
 
@@ -61,11 +60,11 @@ namespace FileCabinetApp
         }
 
         /// <inheritdoc/>
-        public IRecordIterator FindByDateOfBirth(DateTime searchingDate)
+        public IEnumerable<FileCabinetRecord> FindByDateOfBirth(DateTime searchingDate)
         {
             this.StartWatch();
 
-            IRecordIterator result = this.fileCabinetService.FindByDateOfBirth(searchingDate);
+            IEnumerable<FileCabinetRecord> result = this.fileCabinetService.FindByDateOfBirth(searchingDate);
 
             this.WatchStop("FindByDateOfBirth");
 
@@ -73,11 +72,11 @@ namespace FileCabinetApp
         }
 
         /// <inheritdoc/>
-        public IRecordIterator FindByFirstName(string firstName)
+        public IEnumerable<FileCabinetRecord> FindByFirstName(string firstName)
         {
             this.StartWatch();
 
-            IRecordIterator result = this.fileCabinetService.FindByFirstName(firstName);
+            IEnumerable<FileCabinetRecord> result = this.fileCabinetService.FindByFirstName(firstName);
 
             this.WatchStop("FindByFirstName");
 
@@ -85,11 +84,11 @@ namespace FileCabinetApp
         }
 
         /// <inheritdoc/>
-        public IRecordIterator FindByLastName(string lastName)
+        public IEnumerable<FileCabinetRecord> FindByLastName(string lastName)
         {
             this.StartWatch();
 
-            IRecordIterator result = this.fileCabinetService.FindByLastName(lastName);
+            IEnumerable<FileCabinetRecord> result = this.fileCabinetService.FindByLastName(lastName);
 
             this.WatchStop("FindByLastName");
 

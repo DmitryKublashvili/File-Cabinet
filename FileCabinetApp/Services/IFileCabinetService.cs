@@ -34,21 +34,21 @@ namespace FileCabinetApp
         /// </summary>
         /// <param name="searchingDate">Search birth date.</param>
         /// <returns>IRecordIterator of records that have that birth date.</returns>
-        IRecordIterator FindByDateOfBirth(DateTime searchingDate);
+        IEnumerable<FileCabinetRecord> FindByDateOfBirth(DateTime searchingDate);
 
         /// <summary>
         /// Gets an ReadOnlyCollection of records that have that first name.
         /// </summary>
         /// <param name="firstName">Search first name.</param>
         /// <returns>IRecordIterator of records that have that first name.</returns>
-        IRecordIterator FindByFirstName(string firstName);
+        IEnumerable<FileCabinetRecord> FindByFirstName(string firstName);
 
         /// <summary>
         /// Gets an ReadOnlyCollection of records that have that last name.
         /// </summary>
         /// <param name="lastName">Search last name.</param>
         /// <returns>IRecordIterator of records that have that last name.</returns>
-        IRecordIterator FindByLastName(string lastName);
+        IEnumerable<FileCabinetRecord> FindByLastName(string lastName);
 
         /// <summary>
         /// Gets array of all records.

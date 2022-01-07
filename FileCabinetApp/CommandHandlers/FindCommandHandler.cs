@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
-using FileCabinetApp.Iterators;
 
 namespace FileCabinetApp.CommandHandlers
 {
@@ -12,14 +11,14 @@ namespace FileCabinetApp.CommandHandlers
     {
         private const string NoMatchesMessage = "No matches were found.";
 
-        private readonly Action<IRecordIterator> printer;
+        private readonly Action<IEnumerable<FileCabinetRecord>> printer;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="FindCommandHandler"/> class.
         /// </summary>
         /// <param name="service">Some instance implemented IFileCabinetService.</param>
         /// <param name="printer">Concrete printer.</param>
-        public FindCommandHandler(IFileCabinetService service, Action<IRecordIterator> printer)
+        public FindCommandHandler(IFileCabinetService service, Action<IEnumerable<FileCabinetRecord>> printer)
             : base(service)
         {
             this.printer = printer;
@@ -54,21 +53,21 @@ namespace FileCabinetApp.CommandHandlers
 
                 string secondParameter = userCommandParameters[1].Trim('"', ' ').ToUpperInvariant();
 
-                IRecordIterator iterator;
+                IEnumerable<FileCabinetRecord> records;
 
                 if (firstParameter == "FIRSTNAME")
                 {
-                    iterator = this.service.FindByFirstName(secondParameter);
+                    records = this.service.FindByFirstName(secondParameter);
                 }
                 else if (firstParameter == "LASTNAME")
                 {
-                    iterator = this.service.FindByLastName(secondParameter);
+                    records = this.service.FindByLastName(secondParameter);
                 }
                 else
                 {
                     if (DateTime.TryParse(secondParameter, Program.CultureInfoSettings, DateTimeStyles.AdjustToUniversal, out DateTime date))
                     {
-                        iterator = this.service.FindByDateOfBirth(date);
+                        records = this.service.FindByDateOfBirth(date);
                     }
                     else
                     {
@@ -77,13 +76,13 @@ namespace FileCabinetApp.CommandHandlers
                     }
                 }
 
-                if (!iterator.HasMore())
+                if (!records.GetEnumerator().MoveNext())
                 {
                     Console.WriteLine(NoMatchesMessage);
                     return;
                 }
 
-                this.printer?.Invoke(iterator);
+                this.printer?.Invoke(records);
             }
             else
             {
