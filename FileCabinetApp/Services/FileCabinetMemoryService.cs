@@ -63,9 +63,33 @@ namespace FileCabinetApp
             var salary = parametresOfRecord.Salary;
             var yearsOfService = parametresOfRecord.YearsOfService;
 
+            int id;
+
+            if (parametresOfRecord.Id == -1)
+            {
+                for (int i = 1; ; i++)
+                {
+                    if (!this.IsRecordExist(i))
+                    {
+                        id = i;
+                        break;
+                    }
+                }
+            }
+            else
+            {
+                if (this.IsRecordExist(parametresOfRecord.Id))
+                {
+                    Console.WriteLine($"Record {parametresOfRecord.Id} already exist..");
+                    return -1;
+                }
+
+                id = parametresOfRecord.Id;
+            }
+
             var record = new FileCabinetRecord
             {
-                Id = this.list.Count + 1,
+                Id = id,
                 FirstName = firstName,
                 LastName = lastName,
                 DateOfBirth = dateOfBirth,
@@ -160,13 +184,7 @@ namespace FileCabinetApp
                 {
                     yield return record;
                 }
-
-                //return new MemoryIterator(this.firstNameDictionary[firstName].ToArray());
             }
-            //else
-            //{
-            //    return new MemoryIterator(Array.Empty<FileCabinetRecord>());
-            //}
         }
 
         /// <summary>
@@ -184,13 +202,7 @@ namespace FileCabinetApp
                 {
                     yield return record;
                 }
-
-                //return new MemoryIterator(this.lastNameDictionary[lastName].ToArray());
             }
-            //else
-            //{
-            //    return new MemoryIterator(Array.Empty<FileCabinetRecord>());
-            //}
         }
 
         /// <summary>
@@ -206,13 +218,7 @@ namespace FileCabinetApp
                 {
                     yield return record;
                 }
-
-                //return new MemoryIterator(this.dateOfBirthDictionary[searchingDate].ToArray());
             }
-            //else
-            //{
-            //    return new MemoryIterator(Array.Empty<FileCabinetRecord>());
-            //}
         }
 
         /// <summary>

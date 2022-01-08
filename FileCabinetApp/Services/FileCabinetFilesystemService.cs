@@ -50,12 +50,23 @@ namespace FileCabinetApp
 
             long startPosition = this.fileStream.Length;
 
-            for (int i = 1; ; i++)
+            if (parametresOfRecord.Id == -1)
             {
-                if (!this.IsRecordExist(i))
+                for (int i = 1; ; i++)
                 {
-                    parametresOfRecord.Id = i;
-                    break;
+                    if (!this.IsRecordExist(i))
+                    {
+                        parametresOfRecord.Id = i;
+                        break;
+                    }
+                }
+            }
+            else
+            {
+                if (this.IsRecordExist(parametresOfRecord.Id))
+                {
+                    Console.WriteLine($"Record {parametresOfRecord.Id} already exist..");
+                    return -1;
                 }
             }
 
@@ -116,8 +127,6 @@ namespace FileCabinetApp
             {
                 yield return this.GetRecordFromFile(position);
             }
-
-            //return new FileSystemIterator(this, positions);
         }
 
         /// <summary>
@@ -125,6 +134,7 @@ namespace FileCabinetApp
         /// </summary>
         /// <param name="firstName">Search first name.</param>
         /// <returns>IEnumerable of records that have that first name.</returns>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1062:Validate arguments of public methods", Justification = "Redundant.")]
         public IEnumerable<FileCabinetRecord> FindByFirstName(string firstName)
         {
             List<long> positions = new List<long>();
@@ -138,8 +148,6 @@ namespace FileCabinetApp
             {
                 yield return this.GetRecordFromFile(position);
             }
-
-            //return new FileSystemIterator(this, positions);
         }
 
         /// <summary>
@@ -147,6 +155,7 @@ namespace FileCabinetApp
         /// </summary>
         /// <param name="lastName">Search last name.</param>
         /// <returns>IEnumerable of records that have that last name.</returns>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1062:Validate arguments of public methods", Justification = "Redundant.")]
         public IEnumerable<FileCabinetRecord> FindByLastName(string lastName)
         {
             List<long> positions = new List<long>();
@@ -160,8 +169,6 @@ namespace FileCabinetApp
             {
                 yield return this.GetRecordFromFile(position);
             }
-
-            //return new FileSystemIterator(this, positions);
         }
 
         /// <summary>

@@ -17,6 +17,7 @@ namespace FileCabinetApp.CommandHandlers
             new string[] { "exit", "exits the application", "The 'exit' command exits the application." },
             new string[] { "stat", "prints statistic", "The 'stat' command prints statistic." },
             new string[] { "create", "creates new record", "The 'create' command creates new record." },
+            new string[] { "insert", "inserts new record with the specified parameters", "The 'inserts' command inserts new record with the specified parameters." },
             new string[] { "edit", "edits selected (by id) record", "The 'edit' command allows to edit selected by Id record." },
             new string[] { "list", "shows records information", "The 'list' command shows records information." },
             new string[] { "find", "finds records by the specified parameter", "The 'find' command shows a list of records in which the specified parameter was found." },
@@ -62,7 +63,7 @@ namespace FileCabinetApp.CommandHandlers
             }
             else
             {
-                this.nextHandler.Handle(request);
+                this.nextHandler?.Handle(request);
             }
         }
     }

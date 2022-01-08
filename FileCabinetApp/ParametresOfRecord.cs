@@ -63,6 +63,7 @@ namespace FileCabinetApp
         /// <param name="yearsOfService">Short (integer) count years of service.</param>
         public ParametresOfRecord(string firstName, string lastName, DateTime dateOfBirth, char sex, decimal salary, short yearsOfService)
         {
+            this.Id = -1;
             this.FirstName = firstName;
             this.LastName = lastName;
             this.DateOfBirth = dateOfBirth;
