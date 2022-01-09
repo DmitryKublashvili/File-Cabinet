@@ -86,6 +86,15 @@ namespace FileCabinetApp
         public int[] RemoveAllRecordsByParameter<T>(RecordParameter parameterName, T parameterValue);
 
         /// <summary>
+        /// Apdates all records where specified parameters equals argument values.
+        /// </summary>
+        /// <typeparam name="T">Types of parameters.</typeparam>
+        /// <param name="dataForSearch">Parameters names and their values to search records.</param>
+        /// <param name="dataForUpdate">Parameters names and their values to apdate records.</param>
+        /// <returns>Array of Ids deleted records.</returns>
+        public int[] UpdateRecordsByParameters<T>((RecordParameter parameter, T value)[] dataForSearch, (RecordParameter parameter, T value)[] dataForUpdate);
+
+        /// <summary>
         /// Define is the record exists by it's ID.
         /// </summary>
         /// <param name="id">ID of the record.</param>

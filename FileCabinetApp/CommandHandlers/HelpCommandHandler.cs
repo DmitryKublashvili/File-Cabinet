@@ -19,6 +19,7 @@ namespace FileCabinetApp.CommandHandlers
             new string[] { "create", "creates new record", "The 'create' command creates new record." },
             new string[] { "insert", "inserts new record with the specified parameters", "The 'inserts' command inserts new record with the specified parameters." },
             new string[] { "edit", "edits selected (by id) record", "The 'edit' command allows to edit selected by Id record." },
+            new string[] { "update", "updates records by specified parameters and values", "The 'update' command allows to update records by specified parameters and values." },
             new string[] { "list", "shows records information", "The 'list' command shows records information." },
             new string[] { "find", "finds records by the specified parameter", "The 'find' command shows a list of records in which the specified parameter was found." },
             new string[] { "export", "exports current state in file", "The 'export' command exports current state in file according to the specified parameters." },

@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Globalization;
-using System.Linq;
 using System.Text;
 
 namespace FileCabinetApp.CommandHandlers
@@ -140,7 +139,7 @@ namespace FileCabinetApp.CommandHandlers
 
         private static RecordParameter GetParameterForDeleting(string parameterName)
         {
-            switch (parameterName)
+            switch (parameterName.ToUpperInvariant())
             {
                 case "ID": return RecordParameter.Id;
                 case "FIRSTNAME": return RecordParameter.FirstName;

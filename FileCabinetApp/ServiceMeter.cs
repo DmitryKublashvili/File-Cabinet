@@ -179,6 +179,18 @@ namespace FileCabinetApp
             return result;
         }
 
+        /// <inheritdoc/>
+        public int[] UpdateRecordsByParameters<T>((RecordParameter parameter, T value)[] dataForSearch, (RecordParameter parameter, T value)[] dataForUpdate)
+        {
+            this.StartWatch();
+
+            int[] result = this.fileCabinetService.UpdateRecordsByParameters(dataForSearch, dataForUpdate);
+
+            this.WatchStop("UpdateRecordsByParameters");
+
+            return result;
+        }
+
         private void StartWatch()
         {
             this.stopwatch.Start();

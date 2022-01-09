@@ -179,10 +179,9 @@ namespace FileCabinetApp
         /// </summary>
         /// <param name="firstName">Search first name.</param>
         /// <returns>IEnumerable of records that have that first name.</returns>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1062:Validate arguments of public methods", Justification = "Temp. solution in developing process.")]
         public IEnumerable<FileCabinetRecord> FindByFirstName(string firstName)
         {
-            firstName = firstName.ToUpperInvariant();
-
             if (this.firstNameDictionary.ContainsKey(firstName))
             {
                 foreach (var record in this.firstNameDictionary[firstName])
@@ -197,10 +196,9 @@ namespace FileCabinetApp
         /// </summary>
         /// <param name="lastName">Search last name.</param>
         /// <returns>IEnumerable of records that have that last name.</returns>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1062:Validate arguments of public methods", Justification = "Temp. solution in developing process.")]
         public IEnumerable<FileCabinetRecord> FindByLastName(string lastName)
         {
-            lastName = lastName.ToUpperInvariant();
-
             if (this.lastNameDictionary.ContainsKey(lastName))
             {
                 foreach (var record in this.lastNameDictionary[lastName])
@@ -232,7 +230,7 @@ namespace FileCabinetApp
         /// <param name="parameterName">Parameter name.</param>
         /// <param name="parameterValue">Parameter value.</param>
         /// <typeparam name="T">Type of parameter.</typeparam>
-        /// <returns>Bool execution result.</returns>
+        /// <returns>Array of Ids deleted records.</returns>
         public int[] RemoveAllRecordsByParameter<T>(RecordParameter parameterName, T parameterValue)
         {
             FileCabinetRecord[] recordsToDelete = this.list.Where(record => ((T)record
@@ -243,18 +241,54 @@ namespace FileCabinetApp
             foreach (var record in recordsToDelete)
             {
                 this.list.Remove(record);
-                this.idDictionary[record.Id].Remove(record);
-                this.firstNameDictionary[record.FirstName.ToUpperInvariant()].Remove(record);
-                this.lastNameDictionary[record.LastName.ToUpperInvariant()].Remove(record);
-                this.dateOfBirthDictionary[record.DateOfBirth].Remove(record);
-                this.sexDictionary[record.Sex].Remove(record);
-                this.salaryDictionary[record.Salary].Remove(record);
-                this.yearsOfServiceDictionary[record.YearsOfService].Remove(record);
             }
+
+            this.RemoveRecordsFromDictionaries(recordsToDelete);
 
             this.RemoveEmptyValuesFromAllDictionaries();
 
             return recordsToDelete.Select(record => record.Id).ToArray();
+        }
+
+        /// <summary>
+        /// Apdates all records where specified parameters equals argument values.
+        /// </summary>
+        /// <typeparam name="T">Types of parameters.</typeparam>
+        /// <param name="dataForSearch">Parameters names and their values to search records.</param>
+        /// <param name="dataForUpdate">Parameters names and their values to apdate records.</param>
+        /// <returns>Array of Ids deleted records.</returns>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1062:Validate arguments of public methods", Justification = "Temp. solution in developing process.")]
+        public int[] UpdateRecordsByParameters<T>((RecordParameter parameter, T value)[] dataForSearch, (RecordParameter parameter, T value)[] dataForUpdate)
+        {
+            List<FileCabinetRecord> recordsToUpdate = this.list;
+
+            // find records
+            for (int i = 0; i < dataForSearch.Length; i++)
+            {
+                recordsToUpdate = recordsToUpdate.Where(record => ((T)record
+                .GetType()
+                .GetProperty(dataForSearch[i].parameter.ToString())
+                .GetValue(record)).Equals(dataForSearch[i].value)).ToList();
+            }
+
+            this.RemoveRecordsFromDictionaries(recordsToUpdate.ToArray());
+
+            // update records
+            for (int i = 0; i < dataForUpdate.Length; i++)
+            {
+                for (int j = 0; j < recordsToUpdate.Count; j++)
+                {
+                    recordsToUpdate[j].GetType().GetProperty(dataForUpdate[i].parameter.ToString()).SetValue(recordsToUpdate[j], dataForUpdate[i].value);
+                }
+            }
+
+            foreach (var record in recordsToUpdate)
+            {
+                this.recordValidator.ValidateParameters(new ParametresOfRecord(record));
+                this.AddRecordToAllDictionaries(record);
+            }
+
+            return recordsToUpdate.Select(record => record.Id).ToArray();
         }
 
         /// <summary>
@@ -328,8 +362,8 @@ namespace FileCabinetApp
 
                 if (indexOfRecordWithSameId >= 0)
                 {
-                    string previousFirstname = this.list[indexOfRecordWithSameId].FirstName.ToUpperInvariant();
-                    string previousLastname = this.list[indexOfRecordWithSameId].LastName.ToUpperInvariant();
+                    string previousFirstname = this.list[indexOfRecordWithSameId].FirstName;
+                    string previousLastname = this.list[indexOfRecordWithSameId].LastName;
                     DateTime previousDateOfBirth = this.list[indexOfRecordWithSameId].DateOfBirth;
 
                     this.list[indexOfRecordWithSameId] = newRecords[i];
@@ -368,6 +402,20 @@ namespace FileCabinetApp
             }
         }
 
+        private void RemoveRecordsFromDictionaries(FileCabinetRecord[] records)
+        {
+            foreach (var record in records)
+            {
+                this.idDictionary[record.Id].Remove(record);
+                this.firstNameDictionary[record.FirstName].Remove(record);
+                this.lastNameDictionary[record.LastName].Remove(record);
+                this.dateOfBirthDictionary[record.DateOfBirth].Remove(record);
+                this.sexDictionary[record.Sex].Remove(record);
+                this.salaryDictionary[record.Salary].Remove(record);
+                this.yearsOfServiceDictionary[record.YearsOfService].Remove(record);
+            }
+        }
+
         private void RemoveEmptyValuesFromAllDictionaries()
         {
             RemoveEmptyValuesFromConcreteDictionary(this.idDictionary);
@@ -379,21 +427,6 @@ namespace FileCabinetApp
             RemoveEmptyValuesFromConcreteDictionary(this.yearsOfServiceDictionary);
         }
 
-        private Dictionary<T, List<FileCabinetRecord>> GetDictionaryByParameter<T>(RecordParameter parameterName)
-        {
-            switch (parameterName)
-            {
-                case RecordParameter.Id: return this.idDictionary as Dictionary<T, List<FileCabinetRecord>>;
-                case RecordParameter.FirstName: return this.firstNameDictionary as Dictionary<T, List<FileCabinetRecord>>;
-                case RecordParameter.LastName: return this.lastNameDictionary as Dictionary<T, List<FileCabinetRecord>>;
-                case RecordParameter.DateOfBirth: return this.dateOfBirthDictionary as Dictionary<T, List<FileCabinetRecord>>;
-                case RecordParameter.Sex: return this.sexDictionary as Dictionary<T, List<FileCabinetRecord>>;
-                case RecordParameter.Salary: return this.salaryDictionary as Dictionary<T, List<FileCabinetRecord>>;
-                case RecordParameter.YearsOfService: return this.yearsOfServiceDictionary as Dictionary<T, List<FileCabinetRecord>>;
-                default: return new Dictionary<T, List<FileCabinetRecord>>();
-            }
-        }
-
         private void RemoveRecordFromDictionaries(FileCabinetRecord record)
         {
             if (this.idDictionary.ContainsKey(record.Id))
@@ -401,14 +434,14 @@ namespace FileCabinetApp
                 this.idDictionary[record.Id].Remove(record);
             }
 
-            if (this.firstNameDictionary.ContainsKey(record.FirstName.ToUpperInvariant()))
+            if (this.firstNameDictionary.ContainsKey(record.FirstName))
             {
-                this.firstNameDictionary[record.FirstName.ToUpperInvariant()].Remove(record);
+                this.firstNameDictionary[record.FirstName].Remove(record);
             }
 
-            if (this.lastNameDictionary.ContainsKey(record.LastName.ToUpperInvariant()))
+            if (this.lastNameDictionary.ContainsKey(record.LastName))
             {
-                this.lastNameDictionary[record.LastName.ToUpperInvariant()].Remove(record);
+                this.lastNameDictionary[record.LastName].Remove(record);
             }
 
             if (this.dateOfBirthDictionary.ContainsKey(record.DateOfBirth))
@@ -435,8 +468,8 @@ namespace FileCabinetApp
         private void AddRecordToAllDictionaries(FileCabinetRecord record)
         {
             AddRecordToConcreteDictionary(this.idDictionary, record.Id, record);
-            AddRecordToConcreteDictionary(this.firstNameDictionary, record.FirstName.ToUpperInvariant(), record);
-            AddRecordToConcreteDictionary(this.lastNameDictionary, record.LastName.ToUpperInvariant(), record);
+            AddRecordToConcreteDictionary(this.firstNameDictionary, record.FirstName, record);
+            AddRecordToConcreteDictionary(this.lastNameDictionary, record.LastName, record);
             AddRecordToConcreteDictionary(this.dateOfBirthDictionary, record.DateOfBirth, record);
             AddRecordToConcreteDictionary(this.sexDictionary, record.Sex, record);
             AddRecordToConcreteDictionary(this.salaryDictionary, record.Salary, record);

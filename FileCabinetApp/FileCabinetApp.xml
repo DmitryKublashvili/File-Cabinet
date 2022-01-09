@@ -266,6 +266,20 @@
         <member name="M:FileCabinetApp.CommandHandlers.StatCommandHandler.Handle(FileCabinetApp.CommandHandlers.AppCommandRequest)">
             <inheritdoc/>
         </member>
+        <member name="T:FileCabinetApp.CommandHandlers.UpdateCommandHandler">
+            <summary>
+            Find command handler.
+            </summary>
+        </member>
+        <member name="M:FileCabinetApp.CommandHandlers.UpdateCommandHandler.#ctor(FileCabinetApp.IFileCabinetService)">
+            <summary>
+            Initializes a new instance of the <see cref="T:FileCabinetApp.CommandHandlers.UpdateCommandHandler"/> class.
+            </summary>
+            <param name="service">Some instance implemented IFileCabinetService.</param>
+        </member>
+        <member name="M:FileCabinetApp.CommandHandlers.UpdateCommandHandler.Handle(FileCabinetApp.CommandHandlers.AppCommandRequest)">
+            <inheritdoc/>
+        </member>
         <member name="T:FileCabinetApp.CommandHandlers.ValidationMethods">
             <summary>
             Provides methods of validating record parameters.
@@ -913,6 +927,9 @@
         <member name="M:FileCabinetApp.ServiceLogger.RemoveAllRecordsByParameter``1(FileCabinetApp.RecordParameter,``0)">
             <inheritdoc/>
         </member>
+        <member name="M:FileCabinetApp.ServiceLogger.UpdateRecordsByParameters``1(System.ValueTuple{FileCabinetApp.RecordParameter,``0}[],System.ValueTuple{FileCabinetApp.RecordParameter,``0}[])">
+            <inheritdoc/>
+        </member>
         <member name="T:FileCabinetApp.ServiceMeter">
             <summary>
             Service Meter.
@@ -961,6 +978,9 @@
             <inheritdoc/>
         </member>
         <member name="M:FileCabinetApp.ServiceMeter.Restore(FileCabinetApp.FileCabinetServiceSnapshot)">
+            <inheritdoc/>
+        </member>
+        <member name="M:FileCabinetApp.ServiceMeter.UpdateRecordsByParameters``1(System.ValueTuple{FileCabinetApp.RecordParameter,``0}[],System.ValueTuple{FileCabinetApp.RecordParameter,``0}[])">
             <inheritdoc/>
         </member>
         <member name="T:FileCabinetApp.FileCabinetFilesystemService">
@@ -1049,7 +1069,16 @@
             <param name="parameterName">Parameter name.</param>
             <param name="parameterValue">Parameter value.</param>
             <typeparam name="T">Type of parameter.</typeparam>
-            <returns>Bool execution result.</returns>
+            <returns>Array Ids of deleted records.</returns>
+        </member>
+        <member name="M:FileCabinetApp.FileCabinetFilesystemService.UpdateRecordsByParameters``1(System.ValueTuple{FileCabinetApp.RecordParameter,``0}[],System.ValueTuple{FileCabinetApp.RecordParameter,``0}[])">
+            <summary>
+            Apdates all records where specified parameters equals argument values.
+            </summary>
+            <typeparam name="T">Types of parameters.</typeparam>
+            <param name="dataForSearch">Parameters names and their values to search records.</param>
+            <param name="dataForUpdate">Parameters names and their values to apdate records.</param>
+            <returns>Array of Ids deleted records.</returns>
         </member>
         <member name="M:FileCabinetApp.FileCabinetFilesystemService.IsRecordExist(System.Int32)">
             <summary>
@@ -1149,7 +1178,16 @@
             <param name="parameterName">Parameter name.</param>
             <param name="parameterValue">Parameter value.</param>
             <typeparam name="T">Type of parameter.</typeparam>
-            <returns>Bool execution result.</returns>
+            <returns>Array of Ids deleted records.</returns>
+        </member>
+        <member name="M:FileCabinetApp.FileCabinetMemoryService.UpdateRecordsByParameters``1(System.ValueTuple{FileCabinetApp.RecordParameter,``0}[],System.ValueTuple{FileCabinetApp.RecordParameter,``0}[])">
+            <summary>
+            Apdates all records where specified parameters equals argument values.
+            </summary>
+            <typeparam name="T">Types of parameters.</typeparam>
+            <param name="dataForSearch">Parameters names and their values to search records.</param>
+            <param name="dataForUpdate">Parameters names and their values to apdate records.</param>
+            <returns>Array of Ids deleted records.</returns>
         </member>
         <member name="M:FileCabinetApp.FileCabinetMemoryService.RemoveRecordById(System.Int32)">
             <summary>
@@ -1258,6 +1296,15 @@
             <param name="parameterValue">Parameter value.</param>
             <typeparam name="T">Type of parameter.</typeparam>
             <returns>Deleted records ids.</returns>
+        </member>
+        <member name="M:FileCabinetApp.IFileCabinetService.UpdateRecordsByParameters``1(System.ValueTuple{FileCabinetApp.RecordParameter,``0}[],System.ValueTuple{FileCabinetApp.RecordParameter,``0}[])">
+            <summary>
+            Apdates all records where specified parameters equals argument values.
+            </summary>
+            <typeparam name="T">Types of parameters.</typeparam>
+            <param name="dataForSearch">Parameters names and their values to search records.</param>
+            <param name="dataForUpdate">Parameters names and their values to apdate records.</param>
+            <returns>Array of Ids deleted records.</returns>
         </member>
         <member name="M:FileCabinetApp.IFileCabinetService.IsRecordExist(System.Int32)">
             <summary>

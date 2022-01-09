@@ -182,6 +182,18 @@ namespace FileCabinetApp
             return result;
         }
 
+        /// <inheritdoc/>
+        public int[] UpdateRecordsByParameters<T>((RecordParameter parameter, T value)[] dataForSearch, (RecordParameter parameter, T value)[] dataForUpdate)
+        {
+            CollingLogCreate($"UpdateRecordsByParameters<T>((RecordParameter parameter, T value)", $"Arguments: {dataForSearch}, {dataForUpdate} ");
+
+            int[] result = this.fileCabinetService.UpdateRecordsByParameters(dataForSearch, dataForUpdate);
+
+            ComplettingLogCreate("UpdateRecordsByParameters<T>((RecordParameter parameter, T value)", "int[] contains " + result.Length + " values.");
+
+            return result;
+        }
+
         private static void CollingLogCreate(string methodName, ParametresOfRecord parametresOfRecord)
         {
             DateTime collingDateTime = DateTime.Now;
