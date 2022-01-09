@@ -68,6 +68,20 @@
         <member name="M:FileCabinetApp.CommandHandlers.CreateCommandHandler.Handle(FileCabinetApp.CommandHandlers.AppCommandRequest)">
             <inheritdoc/>
         </member>
+        <member name="T:FileCabinetApp.CommandHandlers.DeleteCommandHandler">
+            <summary>
+            Find command handler.
+            </summary>
+        </member>
+        <member name="M:FileCabinetApp.CommandHandlers.DeleteCommandHandler.#ctor(FileCabinetApp.IFileCabinetService)">
+            <summary>
+            Initializes a new instance of the <see cref="T:FileCabinetApp.CommandHandlers.DeleteCommandHandler"/> class.
+            </summary>
+            <param name="service">Some instance implemented IFileCabinetService.</param>
+        </member>
+        <member name="M:FileCabinetApp.CommandHandlers.DeleteCommandHandler.Handle(FileCabinetApp.CommandHandlers.AppCommandRequest)">
+            <inheritdoc/>
+        </member>
         <member name="T:FileCabinetApp.CommandHandlers.EditCommandHandler">
             <summary>
             Edit command handler.
@@ -723,7 +737,7 @@
         </member>
         <member name="P:FileCabinetApp.ParametresOfRecord.Id">
             <summary>
-            Gets record ID.
+            Gets or sets record ID.
             </summary>
             <value> Integer num of record.
             </value>
@@ -896,6 +910,9 @@
         <member name="M:FileCabinetApp.ServiceLogger.Restore(FileCabinetApp.FileCabinetServiceSnapshot)">
             <inheritdoc/>
         </member>
+        <member name="M:FileCabinetApp.ServiceLogger.RemoveAllRecordsByParameter``1(FileCabinetApp.RecordParameter,``0)">
+            <inheritdoc/>
+        </member>
         <member name="T:FileCabinetApp.ServiceMeter">
             <summary>
             Service Meter.
@@ -935,6 +952,9 @@
             <inheritdoc/>
         </member>
         <member name="M:FileCabinetApp.ServiceMeter.MakeSnapshot">
+            <inheritdoc/>
+        </member>
+        <member name="M:FileCabinetApp.ServiceMeter.RemoveAllRecordsByParameter``1(FileCabinetApp.RecordParameter,``0)">
             <inheritdoc/>
         </member>
         <member name="M:FileCabinetApp.ServiceMeter.RemoveRecordById(System.Int32)">
@@ -1021,6 +1041,15 @@
             </summary>
             <param name="id">ID of record.</param>
             <returns>Is removing completed successfully.</returns>
+        </member>
+        <member name="M:FileCabinetApp.FileCabinetFilesystemService.RemoveAllRecordsByParameter``1(FileCabinetApp.RecordParameter,``0)">
+            <summary>
+            Removes all records where specified parameter equals argument value.
+            </summary>
+            <param name="parameterName">Parameter name.</param>
+            <param name="parameterValue">Parameter value.</param>
+            <typeparam name="T">Type of parameter.</typeparam>
+            <returns>Bool execution result.</returns>
         </member>
         <member name="M:FileCabinetApp.FileCabinetFilesystemService.IsRecordExist(System.Int32)">
             <summary>
@@ -1113,12 +1142,14 @@
             <param name="searchingDate">Search birth date.</param>
             <returns>IEnumerable of records that have that birth date.</returns>
         </member>
-        <member name="M:FileCabinetApp.FileCabinetMemoryService.Restore(FileCabinetApp.FileCabinetServiceSnapshot)">
+        <member name="M:FileCabinetApp.FileCabinetMemoryService.RemoveAllRecordsByParameter``1(FileCabinetApp.RecordParameter,``0)">
             <summary>
-            Restores state according current state and addition state from snapshot.
+            Removes all records where specified parameter equals argument value.
             </summary>
-            <param name="snapShot">Snapshot with some addition or new state.</param>
-            <returns>Information (id, message) about not valid records.</returns>
+            <param name="parameterName">Parameter name.</param>
+            <param name="parameterValue">Parameter value.</param>
+            <typeparam name="T">Type of parameter.</typeparam>
+            <returns>Bool execution result.</returns>
         </member>
         <member name="M:FileCabinetApp.FileCabinetMemoryService.RemoveRecordById(System.Int32)">
             <summary>
@@ -1139,6 +1170,13 @@
             Defragments storage file by removing marked as deleted records.
             </summary>
             <returns>Is defragmentation completed successfully.</returns>
+        </member>
+        <member name="M:FileCabinetApp.FileCabinetMemoryService.Restore(FileCabinetApp.FileCabinetServiceSnapshot)">
+            <summary>
+            Restores state according current state and addition state from snapshot.
+            </summary>
+            <param name="snapShot">Snapshot with some addition or new state.</param>
+            <returns>Information (id, message) about not valid records.</returns>
         </member>
         <member name="T:FileCabinetApp.IFileCabinetService">
             <summary>
@@ -1212,6 +1250,15 @@
             <param name="id">ID of record.</param>
             <returns>Is removing completed successfully.</returns>
         </member>
+        <member name="M:FileCabinetApp.IFileCabinetService.RemoveAllRecordsByParameter``1(FileCabinetApp.RecordParameter,``0)">
+            <summary>
+            Removes all records where specified parameter equals argument value.
+            </summary>
+            <param name="parameterName">Parameter name.</param>
+            <param name="parameterValue">Parameter value.</param>
+            <typeparam name="T">Type of parameter.</typeparam>
+            <returns>Deleted records ids.</returns>
+        </member>
         <member name="M:FileCabinetApp.IFileCabinetService.IsRecordExist(System.Int32)">
             <summary>
             Define is the record exists by it's ID.
@@ -1224,6 +1271,11 @@
             Defragments storage file by removing marked as deleted records.
             </summary>
             <returns>Is defragmentation completed successfully.</returns>
+        </member>
+        <member name="T:FileCabinetApp.RecordParameter">
+            <summary>
+            Parameters names.
+            </summary>
         </member>
         <member name="T:FileCabinetApp.CompositeValidator">
             <summary>

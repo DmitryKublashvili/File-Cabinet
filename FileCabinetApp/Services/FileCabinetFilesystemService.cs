@@ -12,15 +12,19 @@ namespace FileCabinetApp
     /// <summary>
     /// FileCabinetFilesystemService.
     /// </summary>
-    public class FileCabinetFilesystemService : IFileCabinetService
+    public partial class FileCabinetFilesystemService : IFileCabinetService
     {
         private readonly IRecordValidator recordValidator;
         private readonly FileStream fileStream;
         private readonly CultureInfo cultureInfo = new ("en");
 
+        private readonly Dictionary<int, List<long>> idDictionary = new Dictionary<int, List<long>>();
         private readonly Dictionary<string, List<long>> firstNameDictionary = new Dictionary<string, List<long>>();
         private readonly Dictionary<string, List<long>> lastNameDictionary = new Dictionary<string, List<long>>();
         private readonly Dictionary<DateTime, List<long>> dateOfBirthDictionary = new Dictionary<DateTime, List<long>>();
+        private readonly Dictionary<char, List<long>> sexDictionary = new Dictionary<char, List<long>>();
+        private readonly Dictionary<decimal, List<long>> salaryDictionary = new Dictionary<decimal, List<long>>();
+        private readonly Dictionary<short, List<long>> yearsOfServiceDictionary = new Dictionary<short, List<long>>();
 
         /// <summary>
         /// Initializes a new instance of the <see cref="FileCabinetFilesystemService"/> class.
@@ -139,7 +143,7 @@ namespace FileCabinetApp
         {
             List<long> positions = new List<long>();
 
-            if (this.firstNameDictionary.ContainsKey(firstName.ToUpperInvariant()))
+            if (this.firstNameDictionary.ContainsKey(firstName))
             {
                 positions = this.firstNameDictionary[firstName];
             }
@@ -160,9 +164,9 @@ namespace FileCabinetApp
         {
             List<long> positions = new List<long>();
 
-            if (this.lastNameDictionary.ContainsKey(lastName.ToUpperInvariant()))
+            if (this.lastNameDictionary.ContainsKey(lastName))
             {
-                positions = this.lastNameDictionary[lastName.ToUpperInvariant()];
+                positions = this.lastNameDictionary[lastName];
             }
 
             foreach (var position in positions)
@@ -278,12 +282,41 @@ namespace FileCabinetApp
                 return false;
             }
 
-            this.fileStream.Seek(startPosition, SeekOrigin.Begin);
-            this.fileStream.WriteByte(5);
+            return this.RemoveRecordByPosition(startPosition) != -1;
+        }
 
-            this.RemoveRecordFromDictionaries(new ParametresOfRecord(this.GetRecordFromFile(startPosition)), startPosition);
+        /// <summary>
+        /// Removes all records where specified parameter equals argument value.
+        /// </summary>
+        /// <param name="parameterName">Parameter name.</param>
+        /// <param name="parameterValue">Parameter value.</param>
+        /// <typeparam name="T">Type of parameter.</typeparam>
+        /// <returns>Bool execution result.</returns>
+        public int[] RemoveAllRecordsByParameter<T>(RecordParameter parameterName, T parameterValue)
+        {
+            List<long> positions;
 
-            return true;
+            Dictionary<T, List<long>> dictionary = this.GetDictionaryByParameter<T>(parameterName);
+
+            if (dictionary.ContainsKey(parameterValue))
+            {
+                positions = dictionary[parameterValue];
+            }
+            else
+            {
+                return Array.Empty<int>();
+            }
+
+            List<int> deletedRecordsIds = new List<int>();
+
+            dictionary.Remove(parameterValue);
+
+            foreach (var position in positions)
+            {
+                deletedRecordsIds.Add(this.RemoveRecordByPosition(position));
+            }
+
+            return deletedRecordsIds.ToArray();
         }
 
         /// <summary>
@@ -359,7 +392,7 @@ namespace FileCabinetApp
             int month = BitConverter.ToInt32(bytes[250..254], 0);
             int day = BitConverter.ToInt32(bytes[254..258], 0);
 
-            record.DateOfBirth = DateTime.Parse($"{month}/{day}/{year}", cultureInfo, DateTimeStyles.AdjustToUniversal);
+            record.DateOfBirth = DateTime.Parse($"{month}/{day}/{year}", this.cultureInfo, DateTimeStyles.AdjustToUniversal);
 
             // get Sex
             record.Sex = BitConverter.ToChar(bytes[258..260], 0);
@@ -380,6 +413,21 @@ namespace FileCabinetApp
             return record;
         }
 
+        private Dictionary<T, List<long>> GetDictionaryByParameter<T>(RecordParameter parameterName)
+        {
+            switch (parameterName)
+            {
+                case RecordParameter.Id: return this.idDictionary as Dictionary<T, List<long>>;
+                case RecordParameter.FirstName: return this.firstNameDictionary as Dictionary<T, List<long>>;
+                case RecordParameter.LastName: return this.lastNameDictionary as Dictionary<T, List<long>>;
+                case RecordParameter.DateOfBirth: return this.dateOfBirthDictionary as Dictionary<T, List<long>>;
+                case RecordParameter.Sex: return this.sexDictionary as Dictionary<T, List<long>>;
+                case RecordParameter.Salary: return this.salaryDictionary as Dictionary<T, List<long>>;
+                case RecordParameter.YearsOfService: return this.yearsOfServiceDictionary as Dictionary<T, List<long>>;
+                default: return new Dictionary<T, List<long>>();
+            }
+        }
+
         private void StartingFillDictionariesFromFile()
         {
             FileSystemIterator iterator = (FileSystemIterator)this.GetRecords();
@@ -392,57 +440,121 @@ namespace FileCabinetApp
             }
         }
 
-        private void AddRecordInDictionaries(ParametresOfRecord parametresOfRecord, long startPosition)
+        private void AddRecordInDictionaries(ParametresOfRecord parametresOfRecord, long position)
         {
-            // add in firstNameDictionary
-            if (this.firstNameDictionary.ContainsKey(parametresOfRecord.FirstName.ToUpperInvariant()))
+            // add in IdDictionary
+            if (this.idDictionary.ContainsKey(parametresOfRecord.Id))
             {
-                this.firstNameDictionary[parametresOfRecord.FirstName.ToUpperInvariant()].Add(startPosition);
+                this.idDictionary[parametresOfRecord.Id].Add(position);
             }
             else
             {
-                this.firstNameDictionary.Add(parametresOfRecord.FirstName.ToUpperInvariant(), new List<long> { startPosition });
+                this.idDictionary.Add(parametresOfRecord.Id, new List<long> { position });
+            }
+
+            // add in firstNameDictionary
+            if (this.firstNameDictionary.ContainsKey(parametresOfRecord.FirstName))
+            {
+                this.firstNameDictionary[parametresOfRecord.FirstName].Add(position);
+            }
+            else
+            {
+                this.firstNameDictionary.Add(parametresOfRecord.FirstName, new List<long> { position });
             }
 
             // lastNameDictionary
-            if (this.lastNameDictionary.ContainsKey(parametresOfRecord.LastName.ToUpperInvariant()))
+            if (this.lastNameDictionary.ContainsKey(parametresOfRecord.LastName))
             {
-                this.lastNameDictionary[parametresOfRecord.LastName.ToUpperInvariant()].Add(startPosition);
+                this.lastNameDictionary[parametresOfRecord.LastName].Add(position);
             }
             else
             {
-                this.lastNameDictionary.Add(parametresOfRecord.LastName.ToUpperInvariant(), new List<long> { startPosition });
+                this.lastNameDictionary.Add(parametresOfRecord.LastName, new List<long> { position });
             }
 
             // dateOfBirthDictionary
             if (this.dateOfBirthDictionary.ContainsKey(parametresOfRecord.DateOfBirth))
             {
-                this.dateOfBirthDictionary[parametresOfRecord.DateOfBirth].Add(startPosition);
+                this.dateOfBirthDictionary[parametresOfRecord.DateOfBirth].Add(position);
             }
             else
             {
-                this.dateOfBirthDictionary.Add(parametresOfRecord.DateOfBirth, new List<long> { startPosition });
+                this.dateOfBirthDictionary.Add(parametresOfRecord.DateOfBirth, new List<long> { position });
+            }
+
+            // sexDictionary
+            if (this.sexDictionary.ContainsKey(parametresOfRecord.Sex))
+            {
+                this.sexDictionary[parametresOfRecord.Sex].Add(position);
+            }
+            else
+            {
+                this.sexDictionary.Add(parametresOfRecord.Sex, new List<long> { position });
+            }
+
+            // salaryDictionary
+            if (this.salaryDictionary.ContainsKey(parametresOfRecord.Salary))
+            {
+                this.salaryDictionary[parametresOfRecord.Salary].Add(position);
+            }
+            else
+            {
+                this.salaryDictionary.Add(parametresOfRecord.Salary, new List<long> { position });
+            }
+
+            // yearsOfServiceDictionary
+            if (this.yearsOfServiceDictionary.ContainsKey(parametresOfRecord.YearsOfService))
+            {
+                this.yearsOfServiceDictionary[parametresOfRecord.YearsOfService].Add(position);
+            }
+            else
+            {
+                this.yearsOfServiceDictionary.Add(parametresOfRecord.YearsOfService, new List<long> { position });
             }
         }
 
-        private void RemoveRecordFromDictionaries(ParametresOfRecord parametresOfRecord, long startPosition)
+        private void RemoveRecordFromDictionaries(ParametresOfRecord parametresOfRecord, long position)
         {
-            // remove from firstNameDictionary
-            if (this.firstNameDictionary.ContainsKey(parametresOfRecord.FirstName.ToUpperInvariant()))
+            // remove from IdDictionary
+            if (this.idDictionary.ContainsKey(parametresOfRecord.Id))
             {
-                this.firstNameDictionary[parametresOfRecord.FirstName.ToUpperInvariant()].Remove(startPosition);
+                this.idDictionary[parametresOfRecord.Id].Remove(position);
+            }
+
+            // remove from firstNameDictionary
+            if (this.firstNameDictionary.ContainsKey(parametresOfRecord.FirstName))
+            {
+                this.firstNameDictionary[parametresOfRecord.FirstName].Remove(position);
             }
 
             // remove from lastNameDictionary
-            if (this.lastNameDictionary.ContainsKey(parametresOfRecord.LastName.ToUpperInvariant()))
+            if (this.lastNameDictionary.ContainsKey(parametresOfRecord.LastName))
             {
-                this.lastNameDictionary[parametresOfRecord.LastName.ToUpperInvariant()].Remove(startPosition);
+                this.lastNameDictionary[parametresOfRecord.LastName].Remove(position);
             }
 
             // remove from dateOfBirthDictionary
             if (this.dateOfBirthDictionary.ContainsKey(parametresOfRecord.DateOfBirth))
             {
-                this.dateOfBirthDictionary[parametresOfRecord.DateOfBirth].Remove(startPosition);
+                this.dateOfBirthDictionary[parametresOfRecord.DateOfBirth].Remove(position);
+            }
+
+            // remove from sexDictionary
+            if (this.sexDictionary.ContainsKey(parametresOfRecord.Sex))
+            {
+                this.sexDictionary[parametresOfRecord.Sex].Remove(position);
+            }
+
+            // remove from salaryDictionary
+            if (this.salaryDictionary.ContainsKey(parametresOfRecord.Salary))
+            {
+                this.salaryDictionary[parametresOfRecord.Salary].Remove(position);
+            }
+
+            // remove from yearsOfServiceDictionary
+            if (this.yearsOfServiceDictionary.ContainsKey(parametresOfRecord.YearsOfService))
+            {
+                this.yearsOfServiceDictionary[parametresOfRecord.YearsOfService].Remove(position);
             }
         }
 
@@ -544,6 +656,27 @@ namespace FileCabinetApp
             }
 
             return false;
+        }
+
+        private int RemoveRecordByPosition(long position)
+        {
+            if (position == -1)
+            {
+                return -1;
+            }
+
+            this.fileStream.Seek(position, SeekOrigin.Begin);
+            this.fileStream.WriteByte(5);
+
+            byte[] bytes = new byte[6];
+            this.fileStream.Seek(position, SeekOrigin.Begin);
+            this.fileStream.Read(bytes);
+
+            int id = BitConverter.ToInt32(bytes[2..6], 0);
+
+            this.RemoveRecordFromDictionaries(new ParametresOfRecord(this.GetRecordFromFile(position)), position);
+
+            return id;
         }
 
         /// <summary>

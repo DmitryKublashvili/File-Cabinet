@@ -51,7 +51,7 @@ namespace FileCabinetApp.CommandHandlers
                     return;
                 }
 
-                string secondParameter = userCommandParameters[1].Trim('"', ' ').ToUpperInvariant();
+                string secondParameter = userCommandParameters[1].Trim('"', ' ');
 
                 IEnumerable<FileCabinetRecord> records;
 

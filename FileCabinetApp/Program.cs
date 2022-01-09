@@ -137,6 +137,7 @@ namespace FileCabinetApp
             InsertCommandHandler insertCommandHandler = new InsertCommandHandler(fileCabinetService);
             ListCommandHandler listCommandHandler = new ListCommandHandler(fileCabinetService, Print);
             EditCommandHandler editCommandHandler = new EditCommandHandler(fileCabinetService);
+            DeleteCommandHandler deleteCommandHandler = new DeleteCommandHandler(fileCabinetService);
             FindCommandHandler findCommandHandler = new FindCommandHandler(fileCabinetService, PrintIEnumerable);
             ExportCommandHandler exportCommandHandler = new ExportCommandHandler(fileCabinetService);
             ImportCommandHandler importCommandHandler = new ImportCommandHandler(fileCabinetService);
@@ -153,7 +154,8 @@ namespace FileCabinetApp
             findCommandHandler.SetNext(exportCommandHandler);
             exportCommandHandler.SetNext(importCommandHandler);
             importCommandHandler.SetNext(removeCommandHandler);
-            removeCommandHandler.SetNext(purgeCommandHandler);
+            removeCommandHandler.SetNext(deleteCommandHandler);
+            deleteCommandHandler.SetNext(purgeCommandHandler);
 
             return helpCommandHandler;
         }

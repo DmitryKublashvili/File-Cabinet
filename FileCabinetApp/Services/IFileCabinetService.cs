@@ -77,6 +77,15 @@ namespace FileCabinetApp
         bool RemoveRecordById(int id);
 
         /// <summary>
+        /// Removes all records where specified parameter equals argument value.
+        /// </summary>
+        /// <param name="parameterName">Parameter name.</param>
+        /// <param name="parameterValue">Parameter value.</param>
+        /// <typeparam name="T">Type of parameter.</typeparam>
+        /// <returns>Deleted records ids.</returns>
+        public int[] RemoveAllRecordsByParameter<T>(RecordParameter parameterName, T parameterValue);
+
+        /// <summary>
         /// Define is the record exists by it's ID.
         /// </summary>
         /// <param name="id">ID of the record.</param>

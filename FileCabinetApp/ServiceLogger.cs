@@ -170,6 +170,18 @@ namespace FileCabinetApp
             return result;
         }
 
+        /// <inheritdoc/>
+        public int[] RemoveAllRecordsByParameter<T>(RecordParameter parameterName, T parameterValue)
+        {
+            CollingLogCreate($"RemoveAllRecordsByParameter(RecordParameter parameterName, T parameterValue)", $"Arguments: {parameterName}, {parameterValue} ");
+
+            int[] result = this.fileCabinetService.RemoveAllRecordsByParameter(parameterName, parameterValue);
+
+            ComplettingLogCreate("RemoveAllRecordsByParameter(RecordParameter parameterName, T parameterValue)", "int[] contains " + result.Length + " values.");
+
+            return result;
+        }
+
         private static void CollingLogCreate(string methodName, ParametresOfRecord parametresOfRecord)
         {
             DateTime collingDateTime = DateTime.Now;

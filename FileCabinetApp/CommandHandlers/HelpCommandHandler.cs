@@ -24,6 +24,7 @@ namespace FileCabinetApp.CommandHandlers
             new string[] { "export", "exports current state in file", "The 'export' command exports current state in file according to the specified parameters." },
             new string[] { "import", "imports records from file", "The 'import' command imports records from CSV or XML format file." },
             new string[] { "remove", "removes records by ID from storage", "The 'remove' command removes records by ID from storage." },
+            new string[] { "delete", "deletes records by specified parameter value from storage", "The 'delete' command deletes records by specified parameter value from storage." },
             new string[] { "purge", "performs defragmentation of the storage-file (available only for FileCabinetFilesystemService)", "The 'purge' command performs defragmentation of the storage-file." },
         };
 

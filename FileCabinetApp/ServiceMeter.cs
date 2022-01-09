@@ -138,7 +138,19 @@ namespace FileCabinetApp
 
             FileCabinetServiceSnapshot result = this.fileCabinetService.MakeSnapshot();
 
-            this.WatchStop("IsRecordExist");
+            this.WatchStop("MakeSnapshot");
+
+            return result;
+        }
+
+        /// <inheritdoc/>
+        public int[] RemoveAllRecordsByParameter<T>(RecordParameter parameterName, T parameterValue)
+        {
+            this.StartWatch();
+
+            var result = this.fileCabinetService.RemoveAllRecordsByParameter(parameterName, parameterValue);
+
+            this.WatchStop("RemoveAllRecordsByParameter");
 
             return result;
         }

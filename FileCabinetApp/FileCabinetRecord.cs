@@ -7,9 +7,11 @@ namespace FileCabinetApp
     /// <summary>
     /// Implements model of file cabinet record.
     /// </summary>
-    [XmlRoot(ElementName ="Record")]
+    [XmlRoot(ElementName = "Record")]
     public class FileCabinetRecord
     {
+        private char sex;
+
         /// <summary>
         /// Gets or sets record ID.
         /// </summary>
@@ -64,7 +66,7 @@ namespace FileCabinetApp
         /// <value> Char (one letter of M or F) representation of person gender.
         /// </value>
         [XmlIgnore]
-        public char Sex { get; set; }
+        public char Sex { get => this.sex; set => this.sex = char.ToUpperInvariant(value); }
 
         /// <summary>
         /// Gets or sets value for (de)serialisation property Sex in string format.
@@ -76,7 +78,7 @@ namespace FileCabinetApp
         public string SexString
         {
             get => this.Sex.ToString();
-            set => this.Sex = value is null ? throw new ArgumentNullException(nameof(value), "Sex can't be null.") : value[0];
+            set => this.Sex = value is null ? throw new ArgumentNullException(nameof(value), "Sex can't be null.") : char.ToUpperInvariant(value[0]);
         }
 
         /// <summary>

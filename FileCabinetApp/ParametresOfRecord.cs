@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace FileCabinetApp
 {
@@ -11,6 +7,8 @@ namespace FileCabinetApp
     /// </summary>
     public class ParametresOfRecord
     {
+        private char sex;
+
         /// <summary>
         /// Initializes a new instance of the <see cref="ParametresOfRecord"/> class.
         /// </summary>
@@ -73,7 +71,7 @@ namespace FileCabinetApp
         }
 
         /// <summary>
-        /// Gets record ID.
+        /// Gets or sets record ID.
         /// </summary>
         /// <value> Integer num of record.
         /// </value>
@@ -105,7 +103,7 @@ namespace FileCabinetApp
         /// </summary>
         /// <value> Char (one letter of M or F) representation of person gender.
         /// </value>
-        public char Sex { get; private set; }
+        public char Sex { get => this.sex; private set => this.sex = char.ToUpperInvariant(value); }
 
         /// <summary>
         /// Gets salary.
