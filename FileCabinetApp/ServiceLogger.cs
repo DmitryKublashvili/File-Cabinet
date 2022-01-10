@@ -51,18 +51,6 @@ namespace FileCabinetApp
         }
 
         /// <inheritdoc/>
-        public bool EditRecord(ParametresOfRecord parametresOfRecord)
-        {
-            CollingLogCreate("EditRecord(ParametresOfRecord parametresOfRecord)", parametresOfRecord);
-
-            bool result = this.fileCabinetService.EditRecord(parametresOfRecord);
-
-            ComplettingLogCreate("EditRecord(ParametresOfRecord parametresOfRecord)", result.ToString(CultureInfo.InvariantCulture));
-
-            return result;
-        }
-
-        /// <inheritdoc/>
         public IEnumerable<FileCabinetRecord> FindByDateOfBirth(DateTime searchingDate)
         {
             CollingLogCreate("FindByDateOfBirth(DateTime searchingDate)", searchingDate.ToShortDateString());
@@ -147,18 +135,6 @@ namespace FileCabinetApp
         }
 
         /// <inheritdoc/>
-        public bool RemoveRecordById(int id)
-        {
-            CollingLogCreate("RemoveRecordById(int id)", id.ToString(CultureInfo.InvariantCulture));
-
-            bool result = this.fileCabinetService.RemoveRecordById(id);
-
-            ComplettingLogCreate("RemoveRecordById(int id)", result.ToString());
-
-            return result;
-        }
-
-        /// <inheritdoc/>
         public IEnumerable<(int id, string exceptionMessage)> Restore(FileCabinetServiceSnapshot snapShot)
         {
             CollingLogCreate("Restore(FileCabinetServiceSnapshot snapShot)", "FileCabinetServiceSnapshot " + snapShot.GetName());
@@ -166,6 +142,30 @@ namespace FileCabinetApp
             IEnumerable<(int id, string exceptionMessage)> result = this.fileCabinetService.Restore(snapShot);
 
             ComplettingLogCreate("Restore(FileCabinetServiceSnapshot snapShot)", "IEnumerable<(int id, string exceptionMessage)> contains " + result.Count() + " records.");
+
+            return result;
+        }
+
+        /// <inheritdoc/>
+        public int[] RemoveAllRecordsByParameter<T>(RecordParameter parameterName, T parameterValue)
+        {
+            CollingLogCreate($"RemoveAllRecordsByParameter(RecordParameter parameterName, T parameterValue)", $"Arguments: {parameterName}, {parameterValue} ");
+
+            int[] result = this.fileCabinetService.RemoveAllRecordsByParameter(parameterName, parameterValue);
+
+            ComplettingLogCreate("RemoveAllRecordsByParameter(RecordParameter parameterName, T parameterValue)", "int[] contains " + result.Length + " values.");
+
+            return result;
+        }
+
+        /// <inheritdoc/>
+        public int[] UpdateRecordsByParameters<T>((RecordParameter parameter, T value)[] dataForSearch, (RecordParameter parameter, T value)[] dataForUpdate)
+        {
+            CollingLogCreate($"UpdateRecordsByParameters<T>((RecordParameter parameter, T value)", $"Arguments: {dataForSearch}, {dataForUpdate} ");
+
+            int[] result = this.fileCabinetService.UpdateRecordsByParameters(dataForSearch, dataForUpdate);
+
+            ComplettingLogCreate("UpdateRecordsByParameters<T>((RecordParameter parameter, T value)", "int[] contains " + result.Length + " values.");
 
             return result;
         }

@@ -48,18 +48,6 @@ namespace FileCabinetApp
         }
 
         /// <inheritdoc/>
-        public bool EditRecord(ParametresOfRecord parametresOfRecord)
-        {
-            this.StartWatch();
-
-            bool result = this.fileCabinetService.EditRecord(parametresOfRecord);
-
-            this.WatchStop("EditRecord");
-
-            return result;
-        }
-
-        /// <inheritdoc/>
         public IEnumerable<FileCabinetRecord> FindByDateOfBirth(DateTime searchingDate)
         {
             this.StartWatch();
@@ -138,19 +126,19 @@ namespace FileCabinetApp
 
             FileCabinetServiceSnapshot result = this.fileCabinetService.MakeSnapshot();
 
-            this.WatchStop("IsRecordExist");
+            this.WatchStop("MakeSnapshot");
 
             return result;
         }
 
         /// <inheritdoc/>
-        public bool RemoveRecordById(int id)
+        public int[] RemoveAllRecordsByParameter<T>(RecordParameter parameterName, T parameterValue)
         {
             this.StartWatch();
 
-            bool result = this.fileCabinetService.RemoveRecordById(id);
+            var result = this.fileCabinetService.RemoveAllRecordsByParameter(parameterName, parameterValue);
 
-            this.WatchStop("RemoveRecordById");
+            this.WatchStop("RemoveAllRecordsByParameter");
 
             return result;
         }
@@ -163,6 +151,18 @@ namespace FileCabinetApp
             IEnumerable<(int id, string exceptionMessage)> result = this.fileCabinetService.Restore(snapShot);
 
             this.WatchStop("Restore");
+
+            return result;
+        }
+
+        /// <inheritdoc/>
+        public int[] UpdateRecordsByParameters<T>((RecordParameter parameter, T value)[] dataForSearch, (RecordParameter parameter, T value)[] dataForUpdate)
+        {
+            this.StartWatch();
+
+            int[] result = this.fileCabinetService.UpdateRecordsByParameters(dataForSearch, dataForUpdate);
+
+            this.WatchStop("UpdateRecordsByParameters");
 
             return result;
         }

@@ -12,9 +12,14 @@ namespace FileCabinetApp
     public class FileCabinetMemoryService : IFileCabinetService
     {
         private readonly List<FileCabinetRecord> list = new List<FileCabinetRecord>();
+
+        private readonly Dictionary<int, List<FileCabinetRecord>> idDictionary = new Dictionary<int, List<FileCabinetRecord>>();
         private readonly Dictionary<string, List<FileCabinetRecord>> firstNameDictionary = new Dictionary<string, List<FileCabinetRecord>>();
         private readonly Dictionary<string, List<FileCabinetRecord>> lastNameDictionary = new Dictionary<string, List<FileCabinetRecord>>();
         private readonly Dictionary<DateTime, List<FileCabinetRecord>> dateOfBirthDictionary = new Dictionary<DateTime, List<FileCabinetRecord>>();
+        private readonly Dictionary<char, List<FileCabinetRecord>> sexDictionary = new Dictionary<char, List<FileCabinetRecord>>();
+        private readonly Dictionary<decimal, List<FileCabinetRecord>> salaryDictionary = new Dictionary<decimal, List<FileCabinetRecord>>();
+        private readonly Dictionary<short, List<FileCabinetRecord>> yearsOfServiceDictionary = new Dictionary<short, List<FileCabinetRecord>>();
 
         private readonly IRecordValidator recordValidator;
 
@@ -63,9 +68,33 @@ namespace FileCabinetApp
             var salary = parametresOfRecord.Salary;
             var yearsOfService = parametresOfRecord.YearsOfService;
 
+            int id;
+
+            if (parametresOfRecord.Id == -1)
+            {
+                for (int i = 1; ; i++)
+                {
+                    if (!this.IsRecordExist(i))
+                    {
+                        id = i;
+                        break;
+                    }
+                }
+            }
+            else
+            {
+                if (this.IsRecordExist(parametresOfRecord.Id))
+                {
+                    Console.WriteLine($"Record {parametresOfRecord.Id} already exist..");
+                    return -1;
+                }
+
+                id = parametresOfRecord.Id;
+            }
+
             var record = new FileCabinetRecord
             {
-                Id = this.list.Count + 1,
+                Id = id,
                 FirstName = firstName,
                 LastName = lastName,
                 DateOfBirth = dateOfBirth,
@@ -76,7 +105,7 @@ namespace FileCabinetApp
 
             this.list.Add(record);
 
-            this.AddRecordToDictionaries(record);
+            this.AddRecordToAllDictionaries(record);
 
             return record.Id;
         }
@@ -100,73 +129,20 @@ namespace FileCabinetApp
         }
 
         /// <summary>
-        /// Edits selected (by ID) record.
-        /// </summary>
-        /// <param name="parametresOfRecord">Parametres of record.</param>
-        /// <returns>Is edition completed successfully.</returns>
-        public bool EditRecord(ParametresOfRecord parametresOfRecord)
-        {
-            if (parametresOfRecord is null)
-            {
-                throw new ArgumentNullException(nameof(parametresOfRecord));
-            }
-
-            this.recordValidator.ValidateParameters(parametresOfRecord);
-
-            var id = parametresOfRecord.Id;
-            var firstName = parametresOfRecord.FirstName;
-            var lastName = parametresOfRecord.LastName;
-            var dateOfBirth = parametresOfRecord.DateOfBirth;
-            var sex = parametresOfRecord.Sex;
-            var salary = parametresOfRecord.Salary;
-            var yearsOfService = parametresOfRecord.YearsOfService;
-
-            for (int i = 0; i < this.list.Count; i++)
-            {
-                if (id == this.list[i].Id)
-                {
-                    string previousFirstname = this.list[i].FirstName.ToUpperInvariant();
-                    string previousLastname = this.list[i].LastName.ToUpperInvariant();
-                    DateTime previousDateOfBirth = this.list[i].DateOfBirth;
-
-                    this.list[i].FirstName = firstName;
-                    this.list[i].LastName = lastName;
-                    this.list[i].DateOfBirth = dateOfBirth;
-                    this.list[i].Sex = sex;
-                    this.list[i].Salary = salary;
-                    this.list[i].YearsOfService = yearsOfService;
-
-                    this.ReplaceRecordInDictionaries(previousFirstname, previousLastname, previousDateOfBirth, this.list[i]);
-
-                    return true;
-                }
-            }
-
-            return false;
-        }
-
-        /// <summary>
         /// Gets an ReadOnlyCollection of records that have that first name.
         /// </summary>
         /// <param name="firstName">Search first name.</param>
         /// <returns>IEnumerable of records that have that first name.</returns>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1062:Validate arguments of public methods", Justification = "Temp. solution in developing process.")]
         public IEnumerable<FileCabinetRecord> FindByFirstName(string firstName)
         {
-            firstName = firstName.ToUpperInvariant();
-
             if (this.firstNameDictionary.ContainsKey(firstName))
             {
                 foreach (var record in this.firstNameDictionary[firstName])
                 {
                     yield return record;
                 }
-
-                //return new MemoryIterator(this.firstNameDictionary[firstName].ToArray());
             }
-            //else
-            //{
-            //    return new MemoryIterator(Array.Empty<FileCabinetRecord>());
-            //}
         }
 
         /// <summary>
@@ -174,23 +150,16 @@ namespace FileCabinetApp
         /// </summary>
         /// <param name="lastName">Search last name.</param>
         /// <returns>IEnumerable of records that have that last name.</returns>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1062:Validate arguments of public methods", Justification = "Temp. solution in developing process.")]
         public IEnumerable<FileCabinetRecord> FindByLastName(string lastName)
         {
-            lastName = lastName.ToUpperInvariant();
-
             if (this.lastNameDictionary.ContainsKey(lastName))
             {
                 foreach (var record in this.lastNameDictionary[lastName])
                 {
                     yield return record;
                 }
-
-                //return new MemoryIterator(this.lastNameDictionary[lastName].ToArray());
             }
-            //else
-            //{
-            //    return new MemoryIterator(Array.Empty<FileCabinetRecord>());
-            //}
         }
 
         /// <summary>
@@ -206,13 +175,88 @@ namespace FileCabinetApp
                 {
                     yield return record;
                 }
-
-                //return new MemoryIterator(this.dateOfBirthDictionary[searchingDate].ToArray());
             }
-            //else
-            //{
-            //    return new MemoryIterator(Array.Empty<FileCabinetRecord>());
-            //}
+        }
+
+        /// <summary>
+        /// Removes all records where specified parameter equals argument value.
+        /// </summary>
+        /// <param name="parameterName">Parameter name.</param>
+        /// <param name="parameterValue">Parameter value.</param>
+        /// <typeparam name="T">Type of parameter.</typeparam>
+        /// <returns>Array of Ids deleted records.</returns>
+        public int[] RemoveAllRecordsByParameter<T>(RecordParameter parameterName, T parameterValue)
+        {
+            FileCabinetRecord[] recordsToDelete = this.list.Where(record => ((T)record
+            .GetType()
+            .GetProperty(parameterName.ToString())
+            .GetValue(record)).Equals(parameterValue)).ToArray();
+
+            foreach (var record in recordsToDelete)
+            {
+                this.list.Remove(record);
+            }
+
+            this.RemoveRecordsFromDictionaries(recordsToDelete);
+
+            return recordsToDelete.Select(record => record.Id).ToArray();
+        }
+
+        /// <summary>
+        /// Apdates all records where specified parameters equals argument values.
+        /// </summary>
+        /// <typeparam name="T">Types of parameters.</typeparam>
+        /// <param name="dataForSearch">Parameters names and their values to search records.</param>
+        /// <param name="dataForUpdate">Parameters names and their values to apdate records.</param>
+        /// <returns>Array of Ids deleted records.</returns>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1062:Validate arguments of public methods", Justification = "Temp. solution in developing process.")]
+        public int[] UpdateRecordsByParameters<T>((RecordParameter parameter, T value)[] dataForSearch, (RecordParameter parameter, T value)[] dataForUpdate)
+        {
+            List<FileCabinetRecord> recordsToUpdate = this.list;
+
+            // find records
+            for (int i = 0; i < dataForSearch.Length; i++)
+            {
+                recordsToUpdate = recordsToUpdate.Where(record => ((T)record
+                .GetType()
+                .GetProperty(dataForSearch[i].parameter.ToString())
+                .GetValue(record)).Equals(dataForSearch[i].value)).ToList();
+            }
+
+            this.RemoveRecordsFromDictionaries(recordsToUpdate.ToArray());
+
+            // update records
+            for (int i = 0; i < dataForUpdate.Length; i++)
+            {
+                for (int j = 0; j < recordsToUpdate.Count; j++)
+                {
+                    recordsToUpdate[j].GetType().GetProperty(dataForUpdate[i].parameter.ToString()).SetValue(recordsToUpdate[j], dataForUpdate[i].value);
+                }
+            }
+
+            foreach (var record in recordsToUpdate)
+            {
+                this.recordValidator.ValidateParameters(new ParametresOfRecord(record));
+                this.AddRecordToAllDictionaries(record);
+            }
+
+            return recordsToUpdate.Select(record => record.Id).ToArray();
+        }
+
+        /// <summary>
+        /// Define is the record exists by it's ID.
+        /// </summary>
+        /// <param name="id">ID of the record.</param>
+        /// <returns>Result bool value.</returns>
+        public bool IsRecordExist(int id) => this.list.Exists(x => x.Id == id);
+
+        /// <summary>
+        /// Defragments storage file by removing marked as deleted records.
+        /// </summary>
+        /// <returns>Is defragmentation completed successfully.</returns>
+        public bool Defragment()
+        {
+            throw new NotImplementedException();
         }
 
         /// <summary>
@@ -249,149 +293,78 @@ namespace FileCabinetApp
 
                 if (indexOfRecordWithSameId >= 0)
                 {
-                    string previousFirstname = this.list[indexOfRecordWithSameId].FirstName.ToUpperInvariant();
-                    string previousLastname = this.list[indexOfRecordWithSameId].LastName.ToUpperInvariant();
-                    DateTime previousDateOfBirth = this.list[indexOfRecordWithSameId].DateOfBirth;
+                    this.RemoveRecordsFromDictionaries(new FileCabinetRecord[1] { newRecords[i] });
 
                     this.list[indexOfRecordWithSameId] = newRecords[i];
-
-                    this.ReplaceRecordInDictionaries(previousFirstname, previousLastname, previousDateOfBirth, this.list[indexOfRecordWithSameId]);
                 }
                 else
                 {
                     this.list.Add(newRecords[i]);
-                    this.AddRecordToDictionaries(newRecords[i]);
+                    this.AddRecordToAllDictionaries(newRecords[i]);
                 }
             }
 
             return validationViolations;
         }
 
-        /// <summary>
-        /// Removes record by it's ID.
-        /// </summary>
-        /// <param name="id">ID of record.</param>
-        /// <returns>Is removing completed successfully.</returns>
-        public bool RemoveRecordById(int id)
+        private static void RemoveEmptyValuesFromConcreteDictionary<T>(Dictionary<T, List<FileCabinetRecord>> dictionary)
         {
-            int indexORemovingRecord = this.list.FindIndex(x => x.Id == id);
+            T[] keys = dictionary.Where(x => x.Value.Count == 0).Select(x => x.Key).ToArray();
 
-            if (indexORemovingRecord == -1)
+            foreach (var key in keys)
             {
-                return false;
+                dictionary.Remove(key);
             }
-
-            var removingRecord = this.list[indexORemovingRecord];
-            this.list.RemoveAt(indexORemovingRecord);
-            this.RemoveRecordFromDictionaries(removingRecord);
-
-            return true;
         }
 
-        /// <summary>
-        /// Define is the record exists by it's ID.
-        /// </summary>
-        /// <param name="id">ID of the record.</param>
-        /// <returns>Result bool value.</returns>
-        public bool IsRecordExist(int id) => this.list.Exists(x => x.Id == id);
-
-        /// <summary>
-        /// Defragments storage file by removing marked as deleted records.
-        /// </summary>
-        /// <returns>Is defragmentation completed successfully.</returns>
-        public bool Defragment()
+        private static void AddRecordToConcreteDictionary<T>(Dictionary<T, List<FileCabinetRecord>> dictionary, T key, FileCabinetRecord record)
         {
-            throw new NotImplementedException();
+            if (dictionary.ContainsKey(key))
+            {
+                dictionary[key].Add(record);
+            }
+            else
+            {
+                dictionary.Add(key: key, new List<FileCabinetRecord>() { record });
+            }
         }
 
-        private void RemoveRecordFromDictionaries(FileCabinetRecord record)
+        private void RemoveRecordsFromDictionaries(FileCabinetRecord[] records)
         {
-            if (this.firstNameDictionary.ContainsKey(record.FirstName.ToUpperInvariant()))
+            foreach (var record in records)
             {
-                this.firstNameDictionary[record.FirstName.ToUpperInvariant()].Remove(record);
-            }
-
-            if (this.lastNameDictionary.ContainsKey(record.LastName.ToUpperInvariant()))
-            {
-                this.lastNameDictionary[record.LastName.ToUpperInvariant()].Remove(record);
-            }
-
-            if (this.dateOfBirthDictionary.ContainsKey(record.DateOfBirth))
-            {
+                this.idDictionary[record.Id].Remove(record);
+                this.firstNameDictionary[record.FirstName].Remove(record);
+                this.lastNameDictionary[record.LastName].Remove(record);
                 this.dateOfBirthDictionary[record.DateOfBirth].Remove(record);
+                this.sexDictionary[record.Sex].Remove(record);
+                this.salaryDictionary[record.Salary].Remove(record);
+                this.yearsOfServiceDictionary[record.YearsOfService].Remove(record);
             }
+
+            this.RemoveEmptyValuesFromAllDictionaries();
         }
 
-        private void AddRecordToDictionaries(FileCabinetRecord record)
+        private void RemoveEmptyValuesFromAllDictionaries()
         {
-            // adding in firstNameDictionary
-            if (this.firstNameDictionary.ContainsKey(record.FirstName.ToUpperInvariant()))
-            {
-                this.firstNameDictionary[record.FirstName.ToUpperInvariant()].Add(record);
-            }
-            else
-            {
-                this.firstNameDictionary.Add(key: record.FirstName.ToUpperInvariant(), new List<FileCabinetRecord>() { record });
-            }
-
-            // adding in lastNameDictionary
-            if (this.lastNameDictionary.ContainsKey(record.LastName.ToUpperInvariant()))
-            {
-                this.lastNameDictionary[record.LastName.ToUpperInvariant()].Add(record);
-            }
-            else
-            {
-                this.lastNameDictionary.Add(key: record.LastName.ToUpperInvariant(), new List<FileCabinetRecord>() { record });
-            }
-
-            // adding in DateOfBirthDictionary
-            if (this.dateOfBirthDictionary.ContainsKey(record.DateOfBirth))
-            {
-                this.dateOfBirthDictionary[record.DateOfBirth].Add(record);
-            }
-            else
-            {
-                this.dateOfBirthDictionary.Add(key: record.DateOfBirth, new List<FileCabinetRecord>() { record });
-            }
+            RemoveEmptyValuesFromConcreteDictionary(this.idDictionary);
+            RemoveEmptyValuesFromConcreteDictionary(this.firstNameDictionary);
+            RemoveEmptyValuesFromConcreteDictionary(this.lastNameDictionary);
+            RemoveEmptyValuesFromConcreteDictionary(this.dateOfBirthDictionary);
+            RemoveEmptyValuesFromConcreteDictionary(this.sexDictionary);
+            RemoveEmptyValuesFromConcreteDictionary(this.salaryDictionary);
+            RemoveEmptyValuesFromConcreteDictionary(this.yearsOfServiceDictionary);
         }
 
-        private void ReplaceRecordInDictionaries(string previousFirstname, string previousLastname, DateTime previousDateOfBirth, FileCabinetRecord editedRecord)
+        private void AddRecordToAllDictionaries(FileCabinetRecord record)
         {
-            // adding changes in firstNameDictionary
-            this.firstNameDictionary[previousFirstname].Remove(editedRecord);
-
-            if (this.firstNameDictionary.ContainsKey(editedRecord.FirstName.ToUpperInvariant()))
-            {
-                this.firstNameDictionary[editedRecord.FirstName.ToUpperInvariant()].Add(editedRecord);
-            }
-            else
-            {
-                this.firstNameDictionary.Add(key: editedRecord.FirstName.ToUpperInvariant(), new List<FileCabinetRecord>() { editedRecord });
-            }
-
-            // adding changes in lastNameDictionary
-            this.lastNameDictionary[previousLastname].Remove(editedRecord);
-
-            if (this.lastNameDictionary.ContainsKey(editedRecord.LastName.ToUpperInvariant()))
-            {
-                this.lastNameDictionary[editedRecord.LastName.ToUpperInvariant()].Add(editedRecord);
-            }
-            else
-            {
-                this.lastNameDictionary.Add(key: editedRecord.LastName.ToUpperInvariant(), new List<FileCabinetRecord>() { editedRecord });
-            }
-
-            // adding changes in lastNameDictionary
-            this.dateOfBirthDictionary[previousDateOfBirth].Remove(editedRecord);
-
-            if (this.dateOfBirthDictionary.ContainsKey(editedRecord.DateOfBirth))
-            {
-                this.dateOfBirthDictionary[editedRecord.DateOfBirth].Add(editedRecord);
-            }
-            else
-            {
-                this.dateOfBirthDictionary.Add(key: editedRecord.DateOfBirth, new List<FileCabinetRecord>() { editedRecord });
-            }
+            AddRecordToConcreteDictionary(this.idDictionary, record.Id, record);
+            AddRecordToConcreteDictionary(this.firstNameDictionary, record.FirstName, record);
+            AddRecordToConcreteDictionary(this.lastNameDictionary, record.LastName, record);
+            AddRecordToConcreteDictionary(this.dateOfBirthDictionary, record.DateOfBirth, record);
+            AddRecordToConcreteDictionary(this.sexDictionary, record.Sex, record);
+            AddRecordToConcreteDictionary(this.salaryDictionary, record.Salary, record);
+            AddRecordToConcreteDictionary(this.yearsOfServiceDictionary, record.YearsOfService, record);
         }
     }
 }
