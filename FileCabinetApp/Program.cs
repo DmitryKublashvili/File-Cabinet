@@ -136,12 +136,10 @@ namespace FileCabinetApp
             CreateCommandHandler createCommandHandler = new CreateCommandHandler(fileCabinetService);
             InsertCommandHandler insertCommandHandler = new InsertCommandHandler(fileCabinetService);
             ListCommandHandler listCommandHandler = new ListCommandHandler(fileCabinetService, Print);
-            EditCommandHandler editCommandHandler = new EditCommandHandler(fileCabinetService);
             DeleteCommandHandler deleteCommandHandler = new DeleteCommandHandler(fileCabinetService);
             FindCommandHandler findCommandHandler = new FindCommandHandler(fileCabinetService, PrintIEnumerable);
             ExportCommandHandler exportCommandHandler = new ExportCommandHandler(fileCabinetService);
             ImportCommandHandler importCommandHandler = new ImportCommandHandler(fileCabinetService);
-            RemoveCommandHandler removeCommandHandler = new RemoveCommandHandler(fileCabinetService);
             PurgeCommandHandler purgeCommandHandler = new PurgeCommandHandler(fileCabinetService, isFileSystemStorageUsed);
             UpdateCommandHandler updateCommandHandler = new UpdateCommandHandler(fileCabinetService);
 
@@ -150,12 +148,10 @@ namespace FileCabinetApp
             statCommandHandler.SetNext(createCommandHandler);
             createCommandHandler.SetNext(insertCommandHandler);
             insertCommandHandler.SetNext(listCommandHandler);
-            listCommandHandler.SetNext(editCommandHandler);
-            editCommandHandler.SetNext(findCommandHandler);
+            listCommandHandler.SetNext(findCommandHandler);
             findCommandHandler.SetNext(exportCommandHandler);
             exportCommandHandler.SetNext(importCommandHandler);
-            importCommandHandler.SetNext(removeCommandHandler);
-            removeCommandHandler.SetNext(updateCommandHandler);
+            importCommandHandler.SetNext(updateCommandHandler);
             updateCommandHandler.SetNext(deleteCommandHandler);
             deleteCommandHandler.SetNext(purgeCommandHandler);
 

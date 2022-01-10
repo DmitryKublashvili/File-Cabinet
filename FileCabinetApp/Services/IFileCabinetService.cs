@@ -17,13 +17,6 @@ namespace FileCabinetApp
         int CreateRecord(ParametresOfRecord parametresOfRecord);
 
         /// <summary>
-        /// Edits selected (by ID) record.
-        /// </summary>
-        /// <param name="parametresOfRecord">Parametres of record.</param>
-        /// <returns>Is edition completed successfully.</returns>
-        bool EditRecord(ParametresOfRecord parametresOfRecord);
-
-        /// <summary>
         /// Gets FileCabinetService state on current moment.
         /// </summary>
         /// <returns>State on the moment of fixation.</returns>
@@ -74,7 +67,7 @@ namespace FileCabinetApp
         /// </summary>
         /// <param name="id">ID of record.</param>
         /// <returns>Is removing completed successfully.</returns>
-        bool RemoveRecordById(int id);
+        //bool RemoveRecordById(int id);
 
         /// <summary>
         /// Removes all records where specified parameter equals argument value.

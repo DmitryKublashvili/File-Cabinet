@@ -48,18 +48,6 @@ namespace FileCabinetApp
         }
 
         /// <inheritdoc/>
-        public bool EditRecord(ParametresOfRecord parametresOfRecord)
-        {
-            this.StartWatch();
-
-            bool result = this.fileCabinetService.EditRecord(parametresOfRecord);
-
-            this.WatchStop("EditRecord");
-
-            return result;
-        }
-
-        /// <inheritdoc/>
         public IEnumerable<FileCabinetRecord> FindByDateOfBirth(DateTime searchingDate)
         {
             this.StartWatch();
@@ -151,18 +139,6 @@ namespace FileCabinetApp
             var result = this.fileCabinetService.RemoveAllRecordsByParameter(parameterName, parameterValue);
 
             this.WatchStop("RemoveAllRecordsByParameter");
-
-            return result;
-        }
-
-        /// <inheritdoc/>
-        public bool RemoveRecordById(int id)
-        {
-            this.StartWatch();
-
-            bool result = this.fileCabinetService.RemoveRecordById(id);
-
-            this.WatchStop("RemoveRecordById");
 
             return result;
         }

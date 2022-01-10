@@ -51,18 +51,6 @@ namespace FileCabinetApp
         }
 
         /// <inheritdoc/>
-        public bool EditRecord(ParametresOfRecord parametresOfRecord)
-        {
-            CollingLogCreate("EditRecord(ParametresOfRecord parametresOfRecord)", parametresOfRecord);
-
-            bool result = this.fileCabinetService.EditRecord(parametresOfRecord);
-
-            ComplettingLogCreate("EditRecord(ParametresOfRecord parametresOfRecord)", result.ToString(CultureInfo.InvariantCulture));
-
-            return result;
-        }
-
-        /// <inheritdoc/>
         public IEnumerable<FileCabinetRecord> FindByDateOfBirth(DateTime searchingDate)
         {
             CollingLogCreate("FindByDateOfBirth(DateTime searchingDate)", searchingDate.ToShortDateString());
@@ -142,18 +130,6 @@ namespace FileCabinetApp
             FileCabinetServiceSnapshot result = this.fileCabinetService.MakeSnapshot();
 
             ComplettingLogCreate("MakeSnapshot()", "FileCabinetServiceSnapshot " + result.GetName());
-
-            return result;
-        }
-
-        /// <inheritdoc/>
-        public bool RemoveRecordById(int id)
-        {
-            CollingLogCreate("RemoveRecordById(int id)", id.ToString(CultureInfo.InvariantCulture));
-
-            bool result = this.fileCabinetService.RemoveRecordById(id);
-
-            ComplettingLogCreate("RemoveRecordById(int id)", result.ToString());
 
             return result;
         }

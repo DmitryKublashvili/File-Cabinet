@@ -82,38 +82,6 @@ namespace FileCabinetApp
         }
 
         /// <summary>
-        /// Edits selected (by ID) record.
-        /// </summary>
-        /// <param name="parametresOfRecord">Parametres of record.</param>
-        /// <returns>Is edition completed successfully.</returns>
-        public bool EditRecord(ParametresOfRecord parametresOfRecord)
-        {
-            if (parametresOfRecord is null)
-            {
-                throw new ArgumentNullException(nameof(parametresOfRecord));
-            }
-
-            if (!this.IsRecordExist(parametresOfRecord.Id))
-            {
-                return false;
-            }
-
-            this.recordValidator.ValidateParameters(parametresOfRecord);
-
-            var position = this.GetPositionOfTheRecordById(parametresOfRecord.Id);
-
-            var recordForEdit = this.GetRecordFromFile(position);
-
-            this.RemoveRecordFromDictionaries(new ParametresOfRecord(recordForEdit), position);
-
-            this.WriteRecordInFile(parametresOfRecord, position);
-
-            this.AddRecordInDictionaries(parametresOfRecord, position);
-
-            return true;
-        }
-
-        /// <summary>
         /// Gets an ReadOnlyCollection of records that have that date of birth.
         /// </summary>
         /// <param name="searchingDate">Search birth date.</param>
@@ -261,28 +229,19 @@ namespace FileCabinetApp
                 }
                 else
                 {
-                    this.EditRecord(new ParametresOfRecord(newRecords[i]));
+                    var position = this.idDictionary[newRecords[i].Id].SingleOrDefault();
+
+                    ParametresOfRecord parametresOfRecord = new ParametresOfRecord(newRecords[i]);
+
+                    this.RemoveRecordFromDictionaries(parametresOfRecord, position);
+
+                    this.WriteRecordInFile(parametresOfRecord, position);
+
+                    this.AddRecordInDictionaries(parametresOfRecord, position);
                 }
             }
 
             return validationViolations;
-        }
-
-        /// <summary>
-        /// Removes record by it's ID.
-        /// </summary>
-        /// <param name="id">ID of record.</param>
-        /// <returns>Is removing completed successfully.</returns>
-        public bool RemoveRecordById(int id)
-        {
-            long startPosition = this.GetPositionOfTheRecordById(id);
-
-            if (startPosition == -1)
-            {
-                return false;
-            }
-
-            return this.RemoveRecordByPosition(startPosition) != -1;
         }
 
         /// <summary>
