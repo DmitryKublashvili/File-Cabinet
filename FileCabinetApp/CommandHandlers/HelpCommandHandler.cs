@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace FileCabinetApp.CommandHandlers
 {
@@ -27,7 +29,10 @@ namespace FileCabinetApp.CommandHandlers
             new string[] { "purge", "performs defragmentation of the storage-file (available only for FileCabinetFilesystemService)", "The 'purge' command performs defragmentation of the storage-file." },
         };
 
+        private readonly int mistakeSensitivity = 1;
+
         /// <inheritdoc/>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Globalization", "CA1308:Normalize strings to uppercase", Justification = "Used commands already in lower case.")]
         public override void Handle(AppCommandRequest request)
         {
             if (request is null)
@@ -61,10 +66,65 @@ namespace FileCabinetApp.CommandHandlers
 
                 Console.WriteLine();
             }
+            else if (IsUnknounCommand(request.Command.ToLowerInvariant()))
+            {
+                Console.WriteLine(this.GetHelpMessage(request.Command.ToLowerInvariant()));
+            }
             else
             {
                 this.nextHandler?.Handle(request);
             }
+        }
+
+        private static bool IsUnknounCommand(string command)
+        {
+            for (int i = 0; i < helpMessages.Length; i++)
+            {
+                if (command == helpMessages[i][0])
+                {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        private string GetHelpMessage(string userInput)
+        {
+            // filtering by length
+            List<string> nearestCommands = helpMessages
+                .Select(x => x[0])
+                .Where(command => Math.Abs(command.Length - userInput.Length) <= this.mistakeSensitivity)
+                .ToList();
+
+            // filtering by letters
+            for (int i = 0; i < nearestCommands.Count; i++)
+            {
+                int avalibleMistakes = this.mistakeSensitivity + 1;
+
+                for (int j = 0; j < nearestCommands[i].Length; j++)
+                {
+                    if (!userInput.Contains(nearestCommands[i][j]))
+                    {
+                        avalibleMistakes--;
+
+                        if (avalibleMistakes == 0)
+                        {
+                            nearestCommands.Remove(nearestCommands[i]);
+                            i--;
+                            break;
+                        }
+                    }
+                }
+            }
+
+            string mostSimilarCommands = string.Join(Environment.NewLine + "\t", nearestCommands);
+
+            string helpMessage = $"The '{userInput}' is not a File_Cabinet command. See 'help'." +
+                Environment.NewLine + $"The most similar commands are:" +
+                Environment.NewLine + $"\t{mostSimilarCommands}";
+
+            return helpMessage;
         }
     }
 }
